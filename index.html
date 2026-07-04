@@ -108,9 +108,12 @@
   .menu{padding:16px 22px;border-bottom:1px solid var(--line)}
   .menu .lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;flex-direction:column;gap:3px;min-width:96px;transition:.12s;background:var(--surface)}
+  .chip{border:1px solid var(--line);border-radius:14px;padding:12px 10px;font-size:14px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:92px;transition:.12s;background:var(--surface)}
   .chip:hover{border-color:var(--brand);background:var(--brand-soft)}
+  .chip .ci{font-size:30px;line-height:1;margin-bottom:3px}
+  .chip .cn{font-size:13.5px}
   .chip .p{font-size:12.5px;color:var(--muted);font-weight:600}
+  .line .nm .li{font-size:20px;margin-right:9px;vertical-align:-3px}
 
   .cart{flex:1;overflow-y:auto;padding:8px 22px}
   .cart .empty{color:var(--muted);font-size:13.5px;text-align:center;padding:40px 0}
@@ -218,11 +221,13 @@
 
 <script>
 const MENU = [
-  {n:"Baasta", p:12}, {n:"Beef Suqaar", p:15}, {n:"Bariis", p:11},
-  {n:"Xaniid", p:13}, {n:"Soor Malay", p:12},
-  {n:"Burger", p:14}, {n:"Caesar Salad", p:11}, {n:"Margherita", p:16},
-  {n:"Ribeye", p:32}, {n:"Fries", p:6}, {n:"Espresso", p:4},
-  {n:"House Red", p:9}, {n:"Cheesecake", p:8}
+  {n:"Bariis", p:11, img:"🍚"}, {n:"Hilib", p:16, img:"🍖"},
+  {n:"Baasta", p:12, img:"🍝"}, {n:"Beef Suqaar", p:15, img:"🥩"},
+  {n:"Xaniid", p:13, img:"🍛"}, {n:"Soor Malay", p:12, img:"🥣"},
+  {n:"Burger", p:14, img:"🍔"}, {n:"Caesar Salad", p:11, img:"🥗"},
+  {n:"Margherita", p:16, img:"🍕"}, {n:"Fries", p:6, img:"🍟"},
+  {n:"Espresso", p:4, img:"☕"}, {n:"House Red", p:9, img:"🍷"},
+  {n:"Cheesecake", p:8, img:"🍰"}
 ];
 
 const STATUSES = ["available","occupied","reserved","dirty"];
@@ -306,7 +311,7 @@ function openTable(id){
   document.getElementById("dSub").textContent =
     `${active.seats} kuraas · Adeege ${active.server} · ${LBL[active.status]}`;
   document.getElementById("chips").innerHTML = MENU.map((m,i)=>
-    `<button class="chip" data-i="${i}"><span>${m.n}</span><span class="p">$${m.p}</span></button>`).join("");
+    `<button class="chip" data-i="${i}"><span class="ci">${m.img}</span><span class="cn">${m.n}</span><span class="p">$${m.p}</span></button>`).join("");
   document.querySelectorAll(".chip").forEach(c=>
     c.addEventListener("click",()=>addItem(+c.dataset.i)));
   renderCart();
@@ -348,7 +353,7 @@ function renderCart(){
           <span class="n">${o.q}</span>
           <button data-idx="${idx}" data-d="1">+</button>
         </div>
-        <div class="nm">${o.n}</div>
+        <div class="nm"><span class="li">${o.img||"🍽️"}</span>${o.n}</div>
         <div class="lp">$${(o.p*o.q).toFixed(2)}</div>
       </div>`).join("");
     cart.querySelectorAll(".qty button").forEach(b=>

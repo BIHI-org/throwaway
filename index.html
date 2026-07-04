@@ -67,30 +67,30 @@
   .stat .v small{font-size:13px;font-weight:550;color:var(--muted)}
 
   .board{padding:6px 28px 28px}
-  .legend{display:flex;gap:18px;align-items:center;margin:8px 2px 18px;flex-wrap:wrap}
-  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
-  .dot{width:9px;height:9px;border-radius:50%}
+  .legend{display:flex;gap:20px;align-items:center;margin:8px 2px 20px;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+  .dot{width:11px;height:11px;border-radius:50%}
   .dot.available{background:var(--available)}.dot.occupied{background:var(--occupied)}
   .dot.reserved{background:var(--reserved)}.dot.dirty{background:var(--dirty)}
 
-  .tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
-  .table{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);text-align:left;transition:transform .12s ease, box-shadow .12s ease;overflow:hidden}
+  .tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+  .table{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:left;transition:transform .12s ease, box-shadow .12s ease;overflow:hidden}
   .table:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(28,34,30,.09),0 14px 34px rgba(28,34,30,.08)}
   .table::before{content:"";position:absolute;inset:0 auto 0 0;width:4px}
   .table.available::before{background:var(--available)}
   .table.occupied::before{background:var(--occupied)}
   .table.reserved::before{background:var(--reserved)}
   .table.dirty::before{background:var(--dirty)}
-  .table .name{font-size:17px;font-weight:650;letter-spacing:-.01em}
-  .table .seats{font-size:12.5px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px}
-  .badge{position:absolute;top:16px;right:16px;font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;text-transform:capitalize}
+  .table .name{font-size:20px;font-weight:680;letter-spacing:-.01em}
+  .table .seats{font-size:14px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:6px}
+  .badge{position:absolute;top:18px;right:18px;font-size:12.5px;font-weight:650;padding:5px 11px;border-radius:999px;text-transform:capitalize}
   .badge.available{background:var(--available-soft);color:var(--available)}
   .badge.occupied{background:var(--occupied-soft);color:var(--occupied)}
   .badge.reserved{background:var(--reserved-soft);color:var(--reserved)}
   .badge.dirty{background:var(--dirty-soft);color:var(--dirty)}
-  .table .foot{margin-top:20px;display:flex;align-items:flex-end;justify-content:space-between}
-  .table .meta{font-size:12px;color:var(--muted)}
-  .table .amt{font-size:16px;font-weight:680;letter-spacing:-.01em}
+  .table .foot{margin-top:22px;display:flex;align-items:flex-end;justify-content:space-between}
+  .table .meta{font-size:13px;color:var(--muted)}
+  .table .amt{font-size:18px;font-weight:700;letter-spacing:-.01em}
 
   /* order drawer */
   .scrim{position:fixed;inset:0;background:rgba(20,24,20,.38);opacity:0;pointer-events:none;transition:.2s;z-index:40}
@@ -108,9 +108,9 @@
   .menu{padding:16px 22px;border-bottom:1px solid var(--line)}
   .menu .lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;font-weight:550;display:flex;flex-direction:column;gap:2px;min-width:88px;transition:.12s;background:var(--surface)}
+  .chip{border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;flex-direction:column;gap:3px;min-width:96px;transition:.12s;background:var(--surface)}
   .chip:hover{border-color:var(--brand);background:var(--brand-soft)}
-  .chip .p{font-size:11.5px;color:var(--muted);font-weight:600}
+  .chip .p{font-size:12.5px;color:var(--muted);font-weight:600}
 
   .cart{flex:1;overflow-y:auto;padding:8px 22px}
   .cart .empty{color:var(--muted);font-size:13.5px;text-align:center;padding:40px 0}
@@ -144,20 +144,20 @@
 <div class="app">
   <nav class="rail">
     <div class="logo">S</div>
-    <button class="active" title="Floor" aria-label="Floor">
+    <button class="active" title="Miisaska" aria-label="Miisaska">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
     </button>
-    <button title="Orders" aria-label="Orders">
+    <button title="Dalabaad" aria-label="Dalabaad">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
     </button>
-    <button title="Menu" aria-label="Menu">
+    <button title="Cuntada" aria-label="Cuntada">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v18M9 3c0 3-3 3-3 6M18 3v18M18 3c-2 0-3 2-3 4s1 3 3 3"/></svg>
     </button>
-    <button title="Reports" aria-label="Reports">
+    <button title="Warbixin" aria-label="Warbixin">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
     </button>
     <div class="spacer"></div>
-    <button title="Settings" aria-label="Settings">
+    <button title="Dejinta" aria-label="Dejinta">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
     </button>
   </nav>
@@ -165,8 +165,8 @@
   <div class="main">
     <header class="topbar">
       <div>
-        <h1>Floor Plan</h1>
-        <div class="sub">Sage Bistro · Main Dining</div>
+        <h1>Miisaska</h1>
+        <div class="sub">Sage Bistro · Qolka Cuntada</div>
       </div>
       <div class="clock">
         <div class="t" id="clock">—</div>
@@ -178,10 +178,10 @@
 
     <section class="board">
       <div class="legend">
-        <span><i class="dot available"></i> Available</span>
-        <span><i class="dot occupied"></i> Occupied</span>
-        <span><i class="dot reserved"></i> Reserved</span>
-        <span><i class="dot dirty"></i> Needs cleaning</span>
+        <span><i class="dot available"></i> Bannaan</span>
+        <span><i class="dot occupied"></i> Buuxa</span>
+        <span><i class="dot reserved"></i> La qabsaday</span>
+        <span><i class="dot dirty"></i> U baahan nadiifin</span>
       </div>
       <div class="tables" id="tables"></div>
     </section>
@@ -201,17 +201,17 @@
     <div class="dsub" id="dSub">—</div>
   </div>
   <div class="menu">
-    <div class="lbl">Add to order</div>
+    <div class="lbl">Ku dar dalabka</div>
     <div class="chips" id="chips"></div>
   </div>
   <div class="cart" id="cart"></div>
   <div class="checkout">
-    <div class="sum"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-    <div class="sum"><span>Tax (8%)</span><span id="tax">$0.00</span></div>
-    <div class="sum total"><span>Total</span><span id="total">$0.00</span></div>
+    <div class="sum"><span>Wadar hoose</span><span id="subtotal">$0.00</span></div>
+    <div class="sum"><span>Cashuur (8%)</span><span id="tax">$0.00</span></div>
+    <div class="sum total"><span>Wadarta guud</span><span id="total">$0.00</span></div>
     <div class="actions">
-      <button class="btn ghost" id="clearBtn">Clear</button>
-      <button class="btn primary" id="payBtn">Charge</button>
+      <button class="btn ghost" id="clearBtn">Nadiifi</button>
+      <button class="btn primary" id="payBtn">Lacag qaado</button>
     </div>
   </div>
 </aside>
@@ -226,6 +226,7 @@ const MENU = [
 ];
 
 const STATUSES = ["available","occupied","reserved","dirty"];
+const LBL = {available:"Bannaan", occupied:"Buuxa", reserved:"La qabsaday", dirty:"Nadiifin"};
 const NAMES_SEED = [4,2,6,4,2,8,4,4,6,2,4,10];
 // seeded pseudo-random so the floor looks alive but stable (no Date.now/random for reproducibility)
 function seededStatus(i){
@@ -238,7 +239,7 @@ function seededStatus(i){
 let TABLES = NAMES_SEED.map((seats,i)=>{
   const st = seededStatus(i);
   return {
-    id:i+1, name:"Table "+(i+1), seats,
+    id:i+1, name:"Miis "+(i+1), seats,
     status:st,
     guests: st==="occupied" ? Math.max(2,seats-2) : (st==="reserved"? seats: 0),
     since: st==="occupied" ? [22,47,13,58,34,9][i%6]+"m" : null,
@@ -260,10 +261,10 @@ function renderStats(){
   const covers = occ.reduce((s,t)=>s+t.guests,0);
   const revenue = occ.reduce((s,t)=>s+orderTotal(t.order),0);
   const cards = [
-    {k:"Open Tables", v:avail, s:"of "+TABLES.length},
-    {k:"Seated Now", v:occ.length, s:covers+" covers"},
-    {k:"Open Tabs", v:"$"+revenue.toFixed(0), s:"live"},
-    {k:"Avg / Table", v:"$"+(occ.length? (revenue/occ.length).toFixed(0):0), s:"today"}
+    {k:"Miisas Bannaan", v:avail, s:"ka mid "+TABLES.length},
+    {k:"Hadda Fadhiya", v:occ.length, s:covers+" qof"},
+    {k:"Xisaab Furan", v:"$"+revenue.toFixed(0), s:"toos"},
+    {k:"Celcelis Miis", v:"$"+(occ.length? (revenue/occ.length).toFixed(0):0), s:"maanta"}
   ];
   document.getElementById("stats").innerHTML = cards.map(c=>
     `<div class="stat"><div class="k">${c.k}</div><div class="v">${c.v} <small>${c.s}</small></div></div>`
@@ -274,16 +275,16 @@ function renderStats(){
 function renderTables(){
   document.getElementById("tables").innerHTML = TABLES.map(t=>{
     const amt = orderTotal(t.order);
-    const meta = t.status==="occupied" ? `${t.guests} guests · ${t.since} · ${t.server}`
-      : t.status==="reserved" ? `Reserved · ${t.guests} guests`
-      : t.status==="dirty" ? "Awaiting bus"
-      : `Seats ${t.seats}`;
+    const meta = t.status==="occupied" ? `${t.guests} qof · ${t.since} · ${t.server}`
+      : t.status==="reserved" ? `La qabsaday · ${t.guests} qof`
+      : t.status==="dirty" ? "Sugaya nadiifin"
+      : `Wuu bannaan yahay`;
     return `<button class="table ${t.status}" data-id="${t.id}">
-      <span class="badge ${t.status}">${t.status}</span>
+      <span class="badge ${t.status}">${LBL[t.status]}</span>
       <div class="name">${t.name}</div>
       <div class="seats">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
-        ${t.seats} seats
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+        ${t.seats} kuraas
       </div>
       <div class="foot">
         <div class="meta">${meta}</div>
@@ -303,7 +304,7 @@ function openTable(id){
   active = TABLES.find(t=>t.id===id);
   document.getElementById("dTitle").textContent = active.name;
   document.getElementById("dSub").textContent =
-    `${active.seats} seats · Server ${active.server} · ${active.status}`;
+    `${active.seats} kuraas · Adeege ${active.server} · ${LBL[active.status]}`;
   document.getElementById("chips").innerHTML = MENU.map((m,i)=>
     `<button class="chip" data-i="${i}"><span>${m.n}</span><span class="p">$${m.p}</span></button>`).join("");
   document.querySelectorAll(".chip").forEach(c=>
@@ -338,7 +339,7 @@ function changeQty(idx,d){
 function renderCart(){
   const cart=document.getElementById("cart");
   if(!active.order.length){
-    cart.innerHTML=`<div class="empty">No items yet.<br>Tap a menu item to start the tab.</div>`;
+    cart.innerHTML=`<div class="empty">Wali dalab ma jiro.<br>Taabo cunto si aad u bilowdo.</div>`;
   } else {
     cart.innerHTML=active.order.map((o,idx)=>`
       <div class="line">

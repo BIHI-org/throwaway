@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sage · Restaurant POS</title>
+<style>
+  :root{
+    --bg:#f6f7f5;
+    --surface:#ffffff;
+    --ink:#1c221e;
+    --muted:#8a938c;
+    --line:#e9ece8;
+    --brand:#2f6d4f;
+    --brand-soft:#e6f0ea;
+    --available:#2f6d4f;
+    --available-soft:#e6f0ea;
+    --occupied:#c2703a;
+    --occupied-soft:#f8ebe0;
+    --reserved:#6b6fc0;
+    --reserved-soft:#ececf7;
+    --dirty:#a7adaa;
+    --dirty-soft:#eef0ee;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(28,34,30,.04), 0 8px 24px rgba(28,34,30,.05);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#12150f;--surface:#1a1e17;--ink:#eef1ea;--muted:#8f978d;--line:#282d24;
+      --brand:#7fc79f;--brand-soft:#1f2a22;
+      --available:#7fc79f;--available-soft:#1f2a22;
+      --occupied:#e0a170;--occupied-soft:#2c231a;
+      --reserved:#a7abe8;--reserved-soft:#20222e;
+      --dirty:#6c736c;--dirty-soft:#20241f;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+  .app{display:grid;grid-template-columns:76px 1fr;min-height:100vh}
+
+  /* rail */
+  .rail{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:8px}
+  .logo{width:40px;height:40px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px;margin-bottom:14px}
+  .rail button{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--muted);transition:.15s}
+  .rail button svg{width:22px;height:22px}
+  .rail button:hover{background:var(--bg);color:var(--ink)}
+  .rail button.active{background:var(--brand-soft);color:var(--brand)}
+  .rail .spacer{flex:1}
+
+  /* main */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{display:flex;align-items:center;gap:16px;padding:22px 28px 8px}
+  .topbar h1{margin:0;font-size:22px;font-weight:650;letter-spacing:-.02em}
+  .topbar .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .clock{margin-left:auto;text-align:right}
+  .clock .t{font-size:20px;font-weight:650;font-variant-numeric:tabular-nums}
+  .clock .d{font-size:12px;color:var(--muted)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:16px 28px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+  .stat .k{font-size:12px;color:var(--muted);font-weight:550;text-transform:uppercase;letter-spacing:.04em}
+  .stat .v{font-size:26px;font-weight:680;margin-top:6px;letter-spacing:-.02em}
+  .stat .v small{font-size:13px;font-weight:550;color:var(--muted)}
+
+  .board{padding:6px 28px 28px}
+  .legend{display:flex;gap:18px;align-items:center;margin:8px 2px 18px;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .dot.available{background:var(--available)}.dot.occupied{background:var(--occupied)}
+  .dot.reserved{background:var(--reserved)}.dot.dirty{background:var(--dirty)}
+
+  .tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+  .table{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);text-align:left;transition:transform .12s ease, box-shadow .12s ease;overflow:hidden}
+  .table:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(28,34,30,.09),0 14px 34px rgba(28,34,30,.08)}
+  .table::before{content:"";position:absolute;inset:0 auto 0 0;width:4px}
+  .table.available::before{background:var(--available)}
+  .table.occupied::before{background:var(--occupied)}
+  .table.reserved::before{background:var(--reserved)}
+  .table.dirty::before{background:var(--dirty)}
+  .table .name{font-size:17px;font-weight:650;letter-spacing:-.01em}
+  .table .seats{font-size:12.5px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px}
+  .badge{position:absolute;top:16px;right:16px;font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;text-transform:capitalize}
+  .badge.available{background:var(--available-soft);color:var(--available)}
+  .badge.occupied{background:var(--occupied-soft);color:var(--occupied)}
+  .badge.reserved{background:var(--reserved-soft);color:var(--reserved)}
+  .badge.dirty{background:var(--dirty-soft);color:var(--dirty)}
+  .table .foot{margin-top:20px;display:flex;align-items:flex-end;justify-content:space-between}
+  .table .meta{font-size:12px;color:var(--muted)}
+  .table .amt{font-size:16px;font-weight:680;letter-spacing:-.01em}
+
+  /* order drawer */
+  .scrim{position:fixed;inset:0;background:rgba(20,24,20,.38);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:420px;max-width:92vw;background:var(--surface);border-left:1px solid var(--line);
+    box-shadow:-12px 0 40px rgba(20,24,20,.14);transform:translateX(100%);transition:transform .24s cubic-bezier(.22,.61,.36,1);z-index:50;display:flex;flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .drawer .dhead{padding:22px 22px 16px;border-bottom:1px solid var(--line)}
+  .drawer .dhead .row{display:flex;align-items:center;gap:12px}
+  .drawer h2{margin:0;font-size:20px;font-weight:680;letter-spacing:-.02em}
+  .drawer .close{margin-left:auto;width:34px;height:34px;border-radius:10px;color:var(--muted);display:grid;place-items:center}
+  .drawer .close:hover{background:var(--bg);color:var(--ink)}
+  .drawer .dsub{color:var(--muted);font-size:13px;margin-top:4px}
+
+  .menu{padding:16px 22px;border-bottom:1px solid var(--line)}
+  .menu .lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;font-weight:550;display:flex;flex-direction:column;gap:2px;min-width:88px;transition:.12s;background:var(--surface)}
+  .chip:hover{border-color:var(--brand);background:var(--brand-soft)}
+  .chip .p{font-size:11.5px;color:var(--muted);font-weight:600}
+
+  .cart{flex:1;overflow-y:auto;padding:8px 22px}
+  .cart .empty{color:var(--muted);font-size:13.5px;text-align:center;padding:40px 0}
+  .line{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .line .qty{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:10px;padding:4px}
+  .line .qty button{width:24px;height:24px;border-radius:7px;font-size:15px;font-weight:700;color:var(--muted);display:grid;place-items:center}
+  .line .qty button:hover{background:var(--surface);color:var(--ink)}
+  .line .qty .n{min-width:16px;text-align:center;font-weight:600;font-size:13px}
+  .line .nm{flex:1;font-size:14px;font-weight:550}
+  .line .lp{font-weight:650;font-size:14px;font-variant-numeric:tabular-nums}
+
+  .checkout{padding:18px 22px;border-top:1px solid var(--line);background:var(--surface)}
+  .sum{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);margin-bottom:6px}
+  .sum.total{color:var(--ink);font-size:18px;font-weight:700;margin:10px 0 16px}
+  .actions{display:flex;gap:10px}
+  .btn{flex:1;border-radius:12px;padding:13px;font-weight:600;font-size:14px;transition:.15s}
+  .btn.ghost{background:var(--bg);color:var(--ink)}
+  .btn.ghost:hover{background:var(--line)}
+  .btn.primary{background:var(--brand);color:#fff}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  @media (max-width:640px){
+    .app{grid-template-columns:1fr}
+    .rail{display:none}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="rail">
+    <div class="logo">S</div>
+    <button class="active" title="Floor" aria-label="Floor">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    </button>
+    <button title="Orders" aria-label="Orders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+    <button title="Menu" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v18M9 3c0 3-3 3-3 6M18 3v18M18 3c-2 0-3 2-3 4s1 3 3 3"/></svg>
+    </button>
+    <button title="Reports" aria-label="Reports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+    </button>
+    <div class="spacer"></div>
+    <button title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+    </button>
+  </nav>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <h1>Floor Plan</h1>
+        <div class="sub">Sage Bistro · Main Dining</div>
+      </div>
+      <div class="clock">
+        <div class="t" id="clock">—</div>
+        <div class="d" id="date">—</div>
+      </div>
+    </header>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="board">
+      <div class="legend">
+        <span><i class="dot available"></i> Available</span>
+        <span><i class="dot occupied"></i> Occupied</span>
+        <span><i class="dot reserved"></i> Reserved</span>
+        <span><i class="dot dirty"></i> Needs cleaning</span>
+      </div>
+      <div class="tables" id="tables"></div>
+    </section>
+  </div>
+</div>
+
+<!-- Order drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="dhead">
+    <div class="row">
+      <h2 id="dTitle">Table</h2>
+      <button class="close" id="dClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="dsub" id="dSub">—</div>
+  </div>
+  <div class="menu">
+    <div class="lbl">Add to order</div>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="cart" id="cart"></div>
+  <div class="checkout">
+    <div class="sum"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+    <div class="sum"><span>Tax (8%)</span><span id="tax">$0.00</span></div>
+    <div class="sum total"><span>Total</span><span id="total">$0.00</span></div>
+    <div class="actions">
+      <button class="btn ghost" id="clearBtn">Clear</button>
+      <button class="btn primary" id="payBtn">Charge</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+const MENU = [
+  {n:"Burger", p:14}, {n:"Caesar Salad", p:11}, {n:"Margherita", p:16},
+  {n:"Ribeye", p:32}, {n:"Fries", p:6}, {n:"Espresso", p:4},
+  {n:"House Red", p:9}, {n:"Cheesecake", p:8}
+];
+
+const STATUSES = ["available","occupied","reserved","dirty"];
+const NAMES_SEED = [4,2,6,4,2,8,4,4,6,2,4,10];
+// seeded pseudo-random so the floor looks alive but stable (no Date.now/random for reproducibility)
+function seededStatus(i){
+  if(i%7===0) return "reserved";
+  if(i%5===0) return "dirty";
+  if(i%2===0) return "occupied";
+  return "available";
+}
+
+let TABLES = NAMES_SEED.map((seats,i)=>{
+  const st = seededStatus(i);
+  return {
+    id:i+1, name:"Table "+(i+1), seats,
+    status:st,
+    guests: st==="occupied" ? Math.max(2,seats-2) : (st==="reserved"? seats: 0),
+    since: st==="occupied" ? [22,47,13,58,34,9][i%6]+"m" : null,
+    server: ["Ana","Leo","Mia","Sam"][i%4],
+    order: st==="occupied" ? seedOrder(i) : []
+  };
+});
+function seedOrder(i){
+  const picks=[[0,4],[3,6],[2,7],[1,5]][i%4];
+  return picks.map(idx=>({...MENU[idx], q: (idx%2)+1}));
+}
+
+let active = null;
+
+/* ---- stats ---- */
+function renderStats(){
+  const occ = TABLES.filter(t=>t.status==="occupied");
+  const avail = TABLES.filter(t=>t.status==="available").length;
+  const covers = occ.reduce((s,t)=>s+t.guests,0);
+  const revenue = occ.reduce((s,t)=>s+orderTotal(t.order),0);
+  const cards = [
+    {k:"Open Tables", v:avail, s:"of "+TABLES.length},
+    {k:"Seated Now", v:occ.length, s:covers+" covers"},
+    {k:"Open Tabs", v:"$"+revenue.toFixed(0), s:"live"},
+    {k:"Avg / Table", v:"$"+(occ.length? (revenue/occ.length).toFixed(0):0), s:"today"}
+  ];
+  document.getElementById("stats").innerHTML = cards.map(c=>
+    `<div class="stat"><div class="k">${c.k}</div><div class="v">${c.v} <small>${c.s}</small></div></div>`
+  ).join("");
+}
+
+/* ---- floor ---- */
+function renderTables(){
+  document.getElementById("tables").innerHTML = TABLES.map(t=>{
+    const amt = orderTotal(t.order);
+    const meta = t.status==="occupied" ? `${t.guests} guests · ${t.since} · ${t.server}`
+      : t.status==="reserved" ? `Reserved · ${t.guests} guests`
+      : t.status==="dirty" ? "Awaiting bus"
+      : `Seats ${t.seats}`;
+    return `<button class="table ${t.status}" data-id="${t.id}">
+      <span class="badge ${t.status}">${t.status}</span>
+      <div class="name">${t.name}</div>
+      <div class="seats">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+        ${t.seats} seats
+      </div>
+      <div class="foot">
+        <div class="meta">${meta}</div>
+        <div class="amt">${amt? "$"+amt.toFixed(2):""}</div>
+      </div>
+    </button>`;
+  }).join("");
+  document.querySelectorAll(".table").forEach(el=>
+    el.addEventListener("click",()=>openTable(+el.dataset.id)));
+}
+
+/* ---- order math ---- */
+function orderTotal(order){ return order.reduce((s,it)=>s+it.p*it.q,0); }
+
+/* ---- drawer ---- */
+function openTable(id){
+  active = TABLES.find(t=>t.id===id);
+  document.getElementById("dTitle").textContent = active.name;
+  document.getElementById("dSub").textContent =
+    `${active.seats} seats · Server ${active.server} · ${active.status}`;
+  document.getElementById("chips").innerHTML = MENU.map((m,i)=>
+    `<button class="chip" data-i="${i}"><span>${m.n}</span><span class="p">$${m.p}</span></button>`).join("");
+  document.querySelectorAll(".chip").forEach(c=>
+    c.addEventListener("click",()=>addItem(+c.dataset.i)));
+  renderCart();
+  document.getElementById("drawer").classList.add("open");
+  document.getElementById("scrim").classList.add("open");
+  document.getElementById("drawer").setAttribute("aria-hidden","false");
+}
+function closeDrawer(){
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("scrim").classList.remove("open");
+  document.getElementById("drawer").setAttribute("aria-hidden","true");
+  active=null; renderTables(); renderStats();
+}
+function addItem(i){
+  const m=MENU[i];
+  const ex=active.order.find(o=>o.n===m.n);
+  if(ex) ex.q++; else active.order.push({...m,q:1});
+  if(active.status==="available"||active.status==="dirty"){
+    active.status="occupied";
+    if(!active.guests) active.guests=2;
+    if(!active.since) active.since="0m";
+  }
+  renderCart();
+}
+function changeQty(idx,d){
+  active.order[idx].q+=d;
+  if(active.order[idx].q<=0) active.order.splice(idx,1);
+  renderCart();
+}
+function renderCart(){
+  const cart=document.getElementById("cart");
+  if(!active.order.length){
+    cart.innerHTML=`<div class="empty">No items yet.<br>Tap a menu item to start the tab.</div>`;
+  } else {
+    cart.innerHTML=active.order.map((o,idx)=>`
+      <div class="line">
+        <div class="qty">
+          <button data-idx="${idx}" data-d="-1">−</button>
+          <span class="n">${o.q}</span>
+          <button data-idx="${idx}" data-d="1">+</button>
+        </div>
+        <div class="nm">${o.n}</div>
+        <div class="lp">$${(o.p*o.q).toFixed(2)}</div>
+      </div>`).join("");
+    cart.querySelectorAll(".qty button").forEach(b=>
+      b.addEventListener("click",()=>changeQty(+b.dataset.idx,+b.dataset.d)));
+  }
+  const sub=orderTotal(active.order), tax=sub*0.08;
+  document.getElementById("subtotal").textContent="$"+sub.toFixed(2);
+  document.getElementById("tax").textContent="$"+tax.toFixed(2);
+  document.getElementById("total").textContent="$"+(sub+tax).toFixed(2);
+  document.getElementById("payBtn").disabled=!active.order.length;
+}
+
+document.getElementById("dClose").addEventListener("click",closeDrawer);
+document.getElementById("scrim").addEventListener("click",closeDrawer);
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  if(active){ active.order=[]; renderCart(); }
+});
+document.getElementById("payBtn").addEventListener("click",()=>{
+  if(!active) return;
+  active.order=[]; active.status="dirty"; active.guests=0; active.since=null;
+  closeDrawer();
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeDrawer(); });
+
+/* ---- clock ---- */
+function tick(){
+  const now=new Date();
+  document.getElementById("clock").textContent=
+    now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  document.getElementById("date").textContent=
+    now.toLocaleDateString([], {weekday:"short",month:"short",day:"numeric"});
+}
+setInterval(tick,1000); tick();
+
+renderStats();
+renderTables();
+</script>
+</body>
+</html>

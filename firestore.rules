@@ -1,0 +1,10 @@
+rules_version = '2';
+// Every device signs in anonymously before it can read or write.
+// Anyone who opens the POS link can still use it, so share the link only with staff.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /shops/{shop}/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "settings": {"name": "Bismillah Restaurant", "tax": 5, "tables": 12},
+  "settings": {"name": "Bismillah Restaurant", "tax": 5, "tables": 15},
   "note": "Menu from https://bismillahrest.netlify.app/menu (Nov 2026). Price 0 = market price, asked at the till. Tax 5% = Alberta GST.",
   "cats": ["Breakfast", "Main Dishes", "Rice & Pasta", "Hot Drinks", "Juices & Drinks", "Shakes & Desserts"],
   "menu": [

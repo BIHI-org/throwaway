@@ -94,6 +94,16 @@ web/ns/                       the NS site (manifest, sw.js, icons)
 
 To update it: save the new export over `src/NS_Cellphone_Store.html`, run `python3 scripts/build_ns.py`, push.
 
-Data is saved in each browser. To share it across devices, set up **Menu → BiixiPay Cloud** (Supabase).
+Data is saved in each browser. To share it across devices, set up **Menu → BiixiPay Cloud** (Supabase):
+
+1. https://supabase.com → **New project** (free plan is fine).
+2. **SQL Editor → New query** → paste all of `supabase/ns-store-setup.sql` → **Run**.
+3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into the app
+   (Menu → BiixiPay Cloud → Connection → Save). Never use the `service_role` key in the app.
+4. In the app: **Create account**, sign in, then **Create & upload this device's data**.
+   On every other device: sign in with the same account (or add staff by email) and pick the store.
+
+New accounts get a confirmation email by default. To skip it: Supabase → **Authentication → Sign In / Providers → Email**,
+turn off **Confirm email**.
 Moving from an old copy: in the old copy use **Menu → Backup → Download backup**, then on the website
 use **Restore from backup**.

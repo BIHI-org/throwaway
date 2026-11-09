@@ -1,5 +1,5 @@
 /* Offline support: the app shell loads even with no internet. Firestore keeps its own offline cache. */
-const CACHE = 'mrchef-v2';
+const CACHE = 'mrchef-v3';
 const SHELL = ['./', 'index.html', 'platform.js', 'firebase-config.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

@@ -93,8 +93,8 @@ scripts/build_ns.py           turns it into web/ns/index.html
 web/ns/                       the NS site (manifest, sw.js, icons)
 ```
 
-Its own address, **https://nsphonerepair.ca**, comes from a Cloudflare Worker (`cloudflare/nsphonerepair-worker.js`)
-that serves `web/ns/` from GitHub Pages. Pushing to `main` updates both addresses.
+It now has its own repository and address: **nscellphone01/nsphonerepair**, live at https://nsphonerepair.ca.
+Make NS changes there; this copy at `/ns/` is no longer updated.
 
 To update it: save the new export over `src/NS_Cellphone_Store.html`, run `python3 scripts/build_ns.py`, push.
 

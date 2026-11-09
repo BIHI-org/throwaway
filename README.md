@@ -11,7 +11,7 @@ web/                  the site (deploy this folder as-is, no build step)
   platform.js         connects the POS to Firebase (shared orders) and handles file saving
   firebase-config.js  paste your Firebase keys here
   sw.js, manifest.webmanifest, icons/   make it installable and able to open offline
-firestore.rules       database security rules
+firestore.rules       database security rules (Bismillah and NS Cellphone Store)
 .github/workflows/pages.yml   publishes web/ to GitHub Pages on every push
 ```
 
@@ -88,22 +88,25 @@ name ("NS Store") and offline cache, and does not share data with the Bismillah 
 
 ```
 src/NS_Cellphone_Store.html   the POS as exported from claude.ai
+src/ns_cloud_firebase.js      BiixiPay Cloud sync on Firebase (replaces the export's Supabase sync)
 scripts/build_ns.py           turns it into web/ns/index.html
 web/ns/                       the NS site (manifest, sw.js, icons)
 ```
 
 To update it: save the new export over `src/NS_Cellphone_Store.html`, run `python3 scripts/build_ns.py`, push.
 
-Data is saved in each browser. To share it across devices, set up **Menu → BiixiPay Cloud** (Supabase):
+Data is saved in each browser. **BiixiPay Cloud** shares it across devices through the same Firebase project
+as the Bismillah POS (`mrchef-b8507`), in its own `nsStores` collection. People sign in with email and password,
+and only members of a store can read or change its data. One-time setup in the Firebase console:
 
-1. https://supabase.com → **New project** (free plan is fine).
-2. **SQL Editor → New query** → paste all of `supabase/ns-store-setup.sql` → **Run**.
-3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into the app
-   (Menu → BiixiPay Cloud → Connection → Save). Never use the `service_role` key in the app.
-4. In the app: **Create account**, sign in, then **Create & upload this device's data**.
-   On every other device: sign in with the same account (or add staff by email) and pick the store.
+1. **Authentication → Sign-in method → Add new provider → Email/Password → Enable** (leave Anonymous on for Bismillah).
+2. **Firestore Database → Rules**: replace everything with the contents of `firestore.rules` → **Publish**.
+   The file keeps the Bismillah rule and adds the NS one.
 
-New accounts get a confirmation email by default. To skip it: Supabase → **Authentication → Sign In / Providers → Email**,
-turn off **Confirm email**.
+Then in the app, **Menu → BiixiPay Cloud**: **Create account**, then **Create & upload this device's data**.
+For staff: invite their email there; on their device they tap **Create account** with that email, click the
+confirmation link in the email they get, then **Join**. Owners can remove staff from the same screen.
+
+The sync code is `src/ns_cloud_firebase.js`; `scripts/build_ns.py` puts it in place of the export's Supabase sync.
 Moving from an old copy: in the old copy use **Menu → Backup → Download backup**, then on the website
 use **Restore from backup**.

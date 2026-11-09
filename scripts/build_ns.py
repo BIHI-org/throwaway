@@ -1,7 +1,8 @@
 """Build web/ns/index.html (NS Cellphone Store POS) from src/NS_Cellphone_Store.html.
 
 Usage: python3 scripts/build_ns.py [path/to/new-export.html]
-It adds what makes it an installable, offline website; the app itself is unchanged.
+It adds what makes it an installable, offline website, and swaps BiixiPay Cloud from Supabase to
+Firebase (src/ns_cloud_firebase.js). The rest of the app is unchanged.
 """
 import pathlib, sys
 
@@ -28,6 +29,14 @@ def once(old, new):
     s = s.replace(old, new, 1)
 
 once('</title>\n', '</title>\n' + HEAD)
+
+# BiixiPay Cloud on Firebase instead of Supabase: swap the whole sync section.
+A = '/* ================= BIIXIPAY CLOUD SYNC (Supabase) ================= */'
+B = '/* ================= START ================= */'
+if s.count(A) != 1 or s.count(B) != 1:
+    sys.exit('build_ns: could not find the BiixiPay Cloud section in the export')
+fb = (ROOT / 'src' / 'ns_cloud_firebase.js').read_text(encoding='utf8')
+s = s[:s.index(A)] + fb + s[s.index(B):]
 i = s.rfind('</body>')  # the page's own closing tag (an earlier one is inside the print template)
 s = s[:i] + SW + s[i:]
 out = ROOT / 'web' / 'ns' / 'index.html'

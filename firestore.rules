@@ -1,10 +1,59 @@
 rules_version = '2';
-// Every device signs in anonymously before it can read or write.
-// Anyone who opens the POS link can still use it, so share the link only with staff.
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ---- Bismillah POS (web/) ----
+    // Every device signs in anonymously before it can read or write.
+    // Anyone who opens the POS link can still use it, so share the link only with staff.
     match /shops/{shop}/{document=**} {
       allow read, write: if request.auth != null;
+    }
+
+    // ---- NS Cellphone Store POS (web/ns/), "BiixiPay Cloud" ----
+    // People sign in with email + password. Only members of a store can see or change its data.
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function myEmail() { return request.auth.token.email.lower(); }
+    function verified() { return request.auth.token.email_verified == true; }
+
+    match /nsStores/{sid} {
+      // Members see their store; someone invited (with a confirmed email) sees it so they can join.
+      allow read: if signedIn() && (me() in resource.data.memberIds
+                   || (verified() && myEmail() in resource.data.invites));
+
+      // Anyone signed in can create a store with only themselves as owner.
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'memberIds', 'roles', 'emails', 'invites', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.memberIds == [me()]
+        && request.resource.data.roles.keys().hasOnly([me()])
+        && request.resource.data.roles[me()] == 'owner'
+        && request.resource.data.emails.keys().hasOnly([me()])
+        && request.resource.data.invites == [];
+
+      allow update: if signedIn() && (
+        // The owner can rename the store, invite and remove staff, but must stay owner.
+        (resource.data.roles.get(me(), '') == 'owner'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'memberIds', 'roles', 'emails', 'invites'])
+          && me() in request.resource.data.memberIds
+          && request.resource.data.roles.get(me(), '') == 'owner')
+        ||
+        // An invited person joins as staff: adds only themselves and uses up their invite.
+        (verified() && myEmail() in resource.data.invites && !(me() in resource.data.memberIds)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberIds', 'roles', 'emails', 'invites'])
+          && request.resource.data.memberIds.toSet() == resource.data.memberIds.toSet().union([me()].toSet())
+          && request.resource.data.roles.diff(resource.data.roles).affectedKeys().hasOnly([me()])
+          && request.resource.data.roles[me()] == 'staff'
+          && request.resource.data.emails.diff(resource.data.emails).affectedKeys().hasOnly([me()])
+          && request.resource.data.invites.toSet() == resource.data.invites.toSet().difference([myEmail()].toSet()))
+      );
+
+      // Products, phones, sales, repairs, customers…: members only. Records are never hard-deleted
+      // (the app marks them deleted so every device learns about it).
+      match /records/{rid} {
+        allow read, create, update: if signedIn()
+          && me() in get(/databases/$(database)/documents/nsStores/$(sid)).data.memberIds;
+      }
     }
   }
 }

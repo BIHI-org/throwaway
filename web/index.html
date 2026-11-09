@@ -1142,7 +1142,7 @@ document.addEventListener('click',e=>{
       logEv('refund',{table:s.table,detail:'Receipt #'+(s.no||''),amount:s.paid,approvedBy:by});toast('Refunded '+fmt(s.paid));openReceipt(s,false);render()})}
   if(d.delsale){const s=S.sales.find(x=>x.id===d.delsale);if(!s)return;
     if(confirmKey!=='delsale'+s.id){confirmKey='delsale'+s.id;return openReceipt(s,false)}
-    confirmKey=null;return needAdmin('delete a sale',()=>{S.sales=S.sales.filter(x=>x.id!==s.id);put('sales/'+s.id,null);closeLayer();render();toast('Sale '+(s.no?'#'+s.no+' ':'')+'deleted')})}
+    confirmKey=null;return needAdmin('delete a sale',()=>{S.sales=S.sales.filter(x=>x.id!==s.id);put('sales/'+s.id,null);if(s.no){const rx='Receipt #'+s.no,mine=e=>e.type==='refund'&&e.detail===rx;S.log.filter(mine).forEach(e=>{if(mode==='live')put('log/'+e.id,null)});S.log=S.log.filter(e=>!mine(e));if(mode!=='live')saveLocal()}closeLayer();render();toast('Sale '+(s.no?'#'+s.no+' ':'')+'deleted')})}
   if(d.closeday!==undefined)return approve('close the day',by=>openClose(by));
   if(d.doclose)return doClose(d.doclose);
   if(d.setpin){const x=S.staff.find(y=>y.id===d.setpin);if(!x)return;return openPin({title:'New PIN for '+x.name,sub:'Enter 4 digits',set:true,onOk:pin=>{

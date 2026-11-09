@@ -83,6 +83,8 @@ patch("  if(d.closeday!==undefined)",
       "  if(d.delsale){const s=S.sales.find(x=>x.id===d.delsale);if(!s)return;\n"
       "    if(confirmKey!=='delsale'+s.id){confirmKey='delsale'+s.id;return openReceipt(s,false)}\n"
       "    confirmKey=null;return needAdmin('delete a sale',()=>{S.sales=S.sales.filter(x=>x.id!==s.id);put('sales/'+s.id,null);"
+      "if(s.no){const rx='Receipt #'+s.no,mine=e=>e.type==='refund'&&e.detail===rx;"
+      "S.log.filter(mine).forEach(e=>{if(mode==='live')put('log/'+e.id,null)});S.log=S.log.filter(e=>!mine(e));if(mode!=='live')saveLocal()}"
       "closeLayer();render();toast('Sale '+(s.no?'#'+s.no+' ':'')+'deleted')})}\n"
       "  if(d.closeday!==undefined)",
       'delete-sale action')

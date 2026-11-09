@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NS Cellphone Store</title>
+<style>
+:root{--bg:#0b1730;--panel:#11234a;--card:#17305f;--card2:#1d3a72;--line:#2a4686;--ink:#eef3ff;--mut:#9fb0d6;--green:#16a34a;--green2:#128a3e;--mango:#ffb703;--bad:#ef4444;--warn:#f59e0b;--blue:#3b82f6;
+--phone:#3b82f6;--accessory:#14b8a6;--part:#94a3b8;--service:#f97316}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font:16px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+header{background:#071126;display:flex;align-items:center;gap:8px;padding:10px 14px;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:19px;margin-right:auto;white-space:nowrap}.brand b{color:var(--mango)}
+.tab{background:transparent;border:0;color:var(--mut);padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;font-size:16px}
+.tab.on{background:var(--card2);color:#fff}
+.lang{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:700}
+main{padding:14px;max-width:1400px;margin:0 auto}
+input,select,textarea{background:#0d1d3d;border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+.btn{background:var(--green);border:0;color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;min-height:46px}
+.btn:hover{background:var(--green2)}.btn.ghost{background:var(--card2);border:1px solid var(--line)}.btn.bad{background:var(--bad)}.btn.warn{background:var(--warn);color:#111}.btn.blue{background:var(--blue)}
+.btn.sm{padding:7px 11px;min-height:34px;font-size:14px;border-radius:10px}.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>.grow{flex:1}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:14px}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.muted{color:var(--mut)}.small{font-size:13px}.r{text-align:right}.b{font-weight:800}.ok{color:#4ade80}.badc{color:#f87171}.warnc{color:var(--warn)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+h2{margin:0 0 8px;font-size:21px}h3{margin:14px 0 8px;font-size:17px}
+/* sell */
+.sell{display:grid;grid-template-columns:1fr 400px;gap:14px;align-items:start}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--part);border-radius:14px;padding:12px;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;text-align:left}
+.tile:hover{background:var(--card2)}.tile .n{font-weight:700;font-size:15px}.tile .p{font-weight:800;font-size:17px;color:var(--mango)}
+.tile.phone{border-left-color:var(--phone)}.tile.accessory{border-left-color:var(--accessory)}.tile.service{border-left-color:var(--service)}.tile.out{opacity:.45}
+.cart{position:sticky;top:76px}
+.line{display:flex;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.line .nm{flex:1;min-width:0}.line .nm div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qb{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-weight:800}
+.tot{font-size:30px;font-weight:900;text-align:right}
+.pay{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}.pay .btn{min-height:58px;font-size:17px}
+.banner{background:var(--warn);color:#111;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-weight:700;cursor:pointer}
+/* lists */
+.list{display:grid;gap:10px}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.tcard.overdue{border-color:var(--bad)}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800;background:var(--card2)}
+.badge.received{background:#64748b}.badge.repairing{background:var(--blue)}.badge.ready{background:var(--green)}.badge.picked{background:#334155;color:#cbd5e1}
+.badge.in{background:var(--green)}.badge.sold{background:#334155}.badge.returned{background:var(--warn);color:#111}
+table.t{width:100%;border-collapse:collapse;font-size:14px}table.t th{text-align:left;color:var(--mut);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--line)}
+table.t td{padding:9px 6px;border-bottom:1px solid var(--line)}table.t tr.click{cursor:pointer}table.t tr.click:hover td{background:var(--card)}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.mi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;text-align:left}
+.mi:hover{background:var(--card)}.mi .ic{font-size:28px}.mi .tt{font-weight:800;font-size:17px;margin-top:6px}.mi .ds{color:var(--mut);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.kpi .v{font-size:24px;font-weight:900}.kpi .l{color:var(--mut);font-size:13px}
+/* modal */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow:auto;padding:30px 12px}
+#ov.on{display:flex}.modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;width:100%;max-width:640px;position:relative}
+.x{position:absolute;right:12px;top:10px;background:none;border:0;font-size:26px;color:var(--mut);cursor:pointer}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;color:#111;padding:12px 18px;border-radius:12px;font-weight:700;display:none;z-index:99;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.check{display:flex;gap:10px;align-items:center;padding:8px 0}.check input{width:22px;height:22px}
+video{width:100%;border-radius:12px;background:#000}
+#dlg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:90;padding:16px}#dlg.on{display:flex}#dlg .modal{max-width:420px}
+.pin{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.pin button{min-height:58px;font-size:24px;font-weight:800;border-radius:14px;background:var(--card2);border:1px solid var(--line);cursor:pointer}.pin button:active{background:var(--blue)}
+.dots{display:flex;gap:14px;justify-content:center;margin:14px 0 4px}.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--mut)}.dots i.on{background:var(--mango);border-color:var(--mango)}
+#lock{position:fixed;inset:0;background:var(--bg);z-index:85;display:none;align-items:flex-start;justify-content:center;padding:28px 16px}#lock.on{display:flex}
+.who{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:700;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis}
+.brand img{height:30px;vertical-align:middle;margin-right:8px;border-radius:6px;background:#fff;padding:2px}
+.dash{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}.dash .kpi{cursor:pointer}.dash .kpi:hover{background:var(--card)}
+#camov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-start;justify-content:center;z-index:70;padding:30px 12px;overflow:auto}#camov.on{display:flex}
+.scanbox{display:flex;gap:8px;align-items:center;background:var(--card);border:2px dashed var(--blue);border-radius:14px;padding:8px 10px;margin-top:10px}.scanbox input{border:0;background:transparent;font-size:17px}
+@media(max-width:900px){.sell{grid-template-columns:1fr}.cart{position:static}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.g2,.g3{grid-template-columns:1fr}.brand{font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis}header{gap:4px;padding:8px 10px}.tab{padding:9px 8px;font-size:15px}.lang{padding:7px 8px}main{padding:10px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand" id="brand">NS <b>Cellphone</b> Store</div>
+ <button class="tab" data-v="sell" onclick="go('sell')" id="t-sell"></button>
+ <button class="tab" data-v="repairs" onclick="go('repairs')" id="t-repairs"></button>
+ <button class="tab" data-v="menu" onclick="go('menu')" id="t-menu"></button>
+ <span id="cloudSt" style="display:none;font-weight:800;cursor:pointer;padding:0 6px" onclick="go('menu','cloud')"></span>
+ <button class="who" id="whoBtn" style="display:none" onclick="lockNow()"></button>
+ <button class="lang" onclick="toggleLang()" id="langBtn">SO</button>
+</header>
+<main id="app"></main>
+<div id="ov" onclick="if(event.target.id==='ov')closeM()"><div class="modal" id="mod"></div></div>
+<div id="camov"></div>
+<div id="dlg"></div><div id="lock"></div>
+<div id="toast"></div>
+<script>
+/* ================= STORAGE ================= */
+const KEY='ns_store_full_v1';
+function blank(){return{settings:{name:'NS Cellphone Store',addr:'12990 50 St NW, Edmonton, AB',phone:'587-497-3115',gstNo:'',gst:5,warranty:30,repairWarranty:90,
+terms:'We are not responsible for data loss. Back up your phone before repair. Devices not picked up within 60 days may be sold to cover costs.',lang:'en',float:200,taxMode:'added'},
+products:[],units:[],customers:[],sales:[],repairs:[],buys:[],pos:[],closes:[],counts:[],log:[],seq:{sale:1001,repair:101,po:1},lastBackup:0}}
+function seed(d){
+ const P=(o)=>{const p=Object.assign({id:uid(),sku:'',barcode:'',cost:0,qty:0,min:2,serial:false},o);d.products.push(p);return p};
+ const i13=P({name:'iPhone 13 128GB',cat:'phone',price:649,cost:480,serial:true,sku:'IP13-128',min:1});
+ const a15=P({name:'Samsung Galaxy A15 128GB',cat:'phone',price:279,cost:190,serial:true,sku:'SA15-128',min:1});
+ P({name:'USB-C Charger 20W',cat:'accessory',price:29.99,cost:8,qty:15,barcode:'100001',sku:'CHG20'});
+ P({name:'Tempered Glass (iPhone)',cat:'accessory',price:19.99,cost:1.5,qty:40,barcode:'100002',sku:'TG-IP'});
+ P({name:'Clear Case',cat:'accessory',price:24.99,cost:4,qty:25,barcode:'100003',sku:'CASE-CL'});
+ P({name:'iPhone 13 Screen (OLED)',cat:'part',price:0,cost:45,qty:3,sku:'PT-IP13-SCR',min:2});
+ P({name:'iPhone 12 Battery',cat:'part',price:0,cost:18,qty:4,sku:'PT-IP12-BAT',min:2});
+ P({name:'Screen protector install',cat:'service',price:5,cost:0,sku:'SV-INST'});
+ [['356789104523671','A – like new'],['356789104523689','B – good']].forEach(([im,c])=>d.units.push({id:uid(),pid:i13.id,imei:im,cost:480,cond:c,status:'in',source:'stock',added:Date.now()}));
+ d.units.push({id:uid(),pid:a15.id,imei:'352094118842307',cost:190,cond:'New',status:'in',source:'stock',added:Date.now()});
+ d.sample=true;
+}
+function load(){try{const s=localStorage.getItem(KEY);if(s){const o=JSON.parse(s);const b=blank();o.settings=Object.assign(b.settings,o.settings||{});o.seq=Object.assign(b.seq,o.seq||{});return Object.assign(b,o)}}catch(e){}const d=blank();seed(d);return d}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){toast('⚠ Storage full – back up now')}}
+function save(){saveLocal();if(typeof cDirty==='function')cDirty()}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+let D=load();
+
+/* ================= LANGUAGE ================= */
+const L={
+en:{sell:'Sell',repairs:'Repairs',menu:'Menu',search:'Search or scan barcode / IMEI',scan:'📷 Scan',all:'All',phone:'Phones',accessory:'Accessories',part:'Parts',service:'Services',
+cart:'Cart',empty:'Tap an item to add it',cust:'Customer',walkin:'Walk-in customer',discount:'Discount',trade:'Trade-in',clear:'Clear',total:'Total',gstIncl:'GST included',subtotal:'Subtotal',
+cash:'Cash',card:'Card',etransfer:'e-Transfer',inStock:'in stock',out:'Out of stock',newTicket:'+ New ticket',active:'Active',received:'Received',repairing:'Repairing',ready:'Ready',picked:'Picked up',
+start:'Start repair',markReady:'Mark ready',pickup:'Pick up & pay',text:'💬 Text customer',overdue:'OVERDUE',balance:'Balance',quote:'Quote',deposit:'Deposit',device:'Device / model',
+issue:'Problem',passcode:'Passcode / pattern',due:'Ready by',notes:'Notes',save:'Save',cancel:'Cancel',del:'Delete',print:'🖨 Print',newSale:'New sale',change:'Change',tendered:'Cash given',
+exact:'Exact',complete:'Complete sale',name:'Name',phoneNo:'Phone',imei:'IMEI / serial',chooseImei:'Which phone? (by IMEI)',noItems:'Nothing here yet',checks:'Working on arrival',
+parts:'Parts used',addPart:'+ Add part from stock',claimTag:'🏷 Claim tag',refund:'Refund',refunded:'Refunded',backupNow:'⚠ No backup in 7+ days — tap here to back up',sold:'Sale complete',
+stock:'Stock',phones:'Phones (IMEI)',buyPhone:'Buy used phone',customers:'Customers',orders:'Purchase orders',labels:'Barcode labels',reports:'Reports & close day',settings:'Settings',backup:'Backup',
+salesH:'Sales history',today:'Today',week:'7 days',month:'This month',allTime:'All time',revenue:'Sales (incl. GST)',profit:'Profit',gst:'GST collected',txns:'Transactions',
+closeDay:'End of day',float:'Opening cash float',counted:'Cash counted',expected:'Expected cash',overShort:'Over / short',buyOut:'Paid for used phones',invValue:'Stock value (cost)',
+cond:'Condition',cost:'Cost',price:'Price',qty:'Qty',min:'Low stock at',sku:'SKU',barcode:'Barcode',category:'Category',serialQ:'Track each unit by IMEI',addUnits:'Add phones by IMEI (one per line)',
+seller:'Seller',idType:'ID type',idNo:'ID number',paid:'Price paid',resale:'Resale price',blacklist:'🔎 Check blacklist',verified:'Checks done',supplier:'Supplier',receive:'Receive',
+newPO:'+ New order',open:'Open',status:'Status',add:'+ Add',edit:'Edit',history:'History',lowStock:'Low stock',topSellers:'Top sellers',payMethods:'Payment methods',
+methodQ:'How was it paid?',warrantyDays:'Warranty (days)',storeName:'Store name',address:'Address',gstNo:'GST number',gstPct:'GST %',terms:'Repair terms (printed on claim tag)',
+export:'Download backup',import:'Restore from backup',csvSales:'Sales CSV',csvStock:'Stock CSV',lastBk:'Last backup',never:'never',copies:'Copies',printLabels:'Print labels',
+newProduct:'+ New product',newCustomer:'+ New customer',search2:'Search…',tradeTooBig:'Trade-in is more than the sale. Use "Buy used phone" instead.',
+deposits:'Repair deposits',refunds:'Refunds',scanHere:'Scan a barcode here (or scan anytime)',receiveScan:'Receive stock (scan)',countScan:'Stock count (scan)',apply:'Apply to stock',unknown:'Not in your stock list',scanned:'Back to scanning',autoBc:'Make barcode',bcUsed:'This barcode is already used by another product',done:'Done',updated:'items updated',beforeGst:'Before GST',priceMode:'Prices are',pmAdded:'Before GST — add GST at checkout',pmIncl:'GST already included in price',staffT:'Staff & PINs',adminT:'Admin',whoWorks:'Who is working?',hello:'Welcome',ownerPin:'Owner PIN needed',wrongPin:'Wrong PIN',cloudT:'BiixiPay Cloud'},
+so:{sell:'Iib',repairs:'Dayactir',menu:'Liiska',search:'Raadi ama iskaan barcode / IMEI',scan:'📷 Iskaan',all:'Dhammaan',phone:'Taleefanno',accessory:'Qalab dheeri',part:'Qaybo',service:'Adeegyo',
+cart:'Gaadhiga',empty:'Taabo shay si aad ugu darto',cust:'Macmiil',walkin:'Macmiil socda',discount:'Qiimo dhimis',trade:'Beddelasho',clear:'Tirtir',total:'Wadarta',gstIncl:'GST ku jira',subtotal:'Wadar hoose',
+cash:'Caddaan',card:'Kaar',etransfer:'e-Transfer',inStock:'kaydka ku jira',out:'Kaydka kama jiro',newTicket:'+ Tigidh cusub',active:'Socda',received:'La helay',repairing:'La hagaajinayaa',ready:'Diyaar',picked:'La qaatay',
+start:'Bilow dayactirka',markReady:'Diyaar ka dhig',pickup:'Qaado oo bixi',text:'💬 Fariin u dir',overdue:'WAQTIGII DHAAFAY',balance:'Haraaga',quote:'Qiimaha',deposit:'Hormaris',device:'Qalabka / nooca',
+issue:'Cilladda',passcode:'Furaha / qaabka',due:'Diyaar ah',notes:'Qoraal',save:'Kaydi',cancel:'Jooji',del:'Tirtir',print:'🖨 Daabac',newSale:'Iib cusub',change:'Baaqi',tendered:'Lacagta la bixiyay',
+exact:'Sax',complete:'Dhammee iibka',name:'Magac',phoneNo:'Telefoon',imei:'IMEI / taxane',chooseImei:'Taleefankee? (IMEI)',noItems:'Wax halkan ma jiraan',checks:'Wixii shaqaynayay markii la keenay',
+parts:'Qaybaha la isticmaalay',addPart:'+ Ku dar qayb',claimTag:'🏷 Warqadda qaadashada',refund:'Celi lacagta',refunded:'Lacagta waa la celiyay',backupNow:'⚠ 7 maalmood kayd lama samayn — halkan taabo',sold:'Iibka waa dhammaaday',
+stock:'Alaabta',phones:'Taleefannada (IMEI)',buyPhone:'Iibso taleefan la isticmaalay',customers:'Macaamiisha',orders:'Dalabaadka alaabta',labels:'Calaamadaha barcode',reports:'Warbixin & xir maalinta',settings:'Dejinta',backup:'Kayd nuqul',
+salesH:'Taariikhda iibka',today:'Maanta',week:'7 maalmood',month:'Bishan',allTime:'Dhammaan',revenue:'Iibka (GST ku jira)',profit:'Faa\'iido',gst:'GST la ururiyay',txns:'Iibab',
+closeDay:'Xiridda maalinta',float:'Lacagta furitaanka',counted:'Lacagta la tiriyay',expected:'Lacagta la filayo',overShort:'Dheeri / dhimman',buyOut:'Lacagta taleefannada la iibsaday',invValue:'Qiimaha alaabta',
+cond:'Xaaladda',cost:'Kharash',price:'Qiime',qty:'Tirada',min:'Digniin marka ay gaarto',sku:'SKU',barcode:'Barcode',category:'Nooca',serialQ:'Mid kasta ku raac IMEI',addUnits:'Ku dar taleefanno IMEI (sadar kasta mid)',
+seller:'Iibiyaha',idType:'Nooca aqoonsiga',idNo:'Lambarka aqoonsiga',paid:'Lacagta la bixiyay',resale:'Qiimaha dib u iibka',blacklist:'🔎 Hubi liiska madow',verified:'Hubinta',supplier:'Alaab-qeybiye',receive:'Qaado',
+newPO:'+ Dalab cusub',open:'Furan',status:'Xaalad',add:'+ Ku dar',edit:'Wax ka beddel',history:'Taariikh',lowStock:'Alaab yaraatay',topSellers:'Kuwa ugu iibka badan',payMethods:'Habka lacag bixinta',
+methodQ:'Sidee loo bixiyay?',warrantyDays:'Dammaanad (maalmo)',storeName:'Magaca dukaanka',address:'Cinwaan',gstNo:'Lambarka GST',gstPct:'GST %',terms:'Shuruudaha dayactirka',
+export:'Soo deji kayd',import:'Ka soo celi kayd',csvSales:'CSV iibka',csvStock:'CSV alaabta',lastBk:'Kaydkii u dambeeyay',never:'weligii',copies:'Nuqul',printLabels:'Daabac calaamadaha',
+newProduct:'+ Alaab cusub',newCustomer:'+ Macmiil cusub',search2:'Raadi…',tradeTooBig:'Beddelashadu way ka badan tahay iibka. Isticmaal "Iibso taleefan".',
+deposits:'Hormarisyada dayactirka',refunds:'Celinta',scanHere:'Halkan iskaan barcode (ama goor kasta)',receiveScan:'Qaado alaab (iskaan)',countScan:'Tirinta alaabta (iskaan)',apply:'Ku dar kaydka',unknown:'Kuma jiro liiska alaabta',scanned:'Ku noqo iskaanka',autoBc:'Samee barcode',bcUsed:'Barcode-kan alaab kale ayaa leh',done:'Dhammaad',updated:'shay waa la cusboonaysiiyay',beforeGst:'Ka hor GST',priceMode:'Qiimayaashu waa',pmAdded:'Ka hor GST — GST waa lagu darayaa marka la bixinayo',pmIncl:'GST wuu ku jiraa qiimaha',staffT:'Shaqaalaha & PIN',adminT:'Maamule',whoWorks:'Yaa shaqaynaya?',hello:'Soo dhawoow',ownerPin:'Waxaa loo baahan yahay PIN-ka milkiilaha',wrongPin:'PIN khaldan',cloudT:'BiixiPay Cloud'}};
+const t=k=>(L[D.settings.lang]||L.en)[k]||L.en[k]||k;
+function toggleLang(){D.settings.lang=D.settings.lang==='en'?'so':'en';save();render()}
+
+/* ================= HELPERS ================= */
+const $=id=>document.getElementById(id);
+const money=n=>(n<0?'-$':'$')+Math.abs(+n||0).toFixed(2);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?0:n};
+const r2=n=>Math.round(n*100)/100;
+const gstOf=tot=>r2(tot*D.settings.gst/(100+D.settings.gst));
+const ADD=()=>D.settings.taxMode!=='included';
+const gstTag=()=>ADD()?'+ GST':'GST incl.';
+const P=id=>D.products.find(p=>p.id===id);
+const C=id=>D.customers.find(c=>c.id===id);
+const fmtD=ts=>new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+const fmtDT=ts=>new Date(ts).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+const dayStart=(d=new Date())=>{const x=new Date(d);x.setHours(0,0,0,0);return x.getTime()};
+function toast(m){const e=$('toast');e.textContent=m;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2600)}
+function openM(h){$('mod').innerHTML='<button class="x" onclick="closeM()">×</button>'+h;$('ov').classList.add('on');setTimeout(()=>{const a=document.activeElement;if(a&&$('mod').contains(a)&&a.matches('input,textarea,select'))return;const f=$('mod').querySelector('[autofocus]');f&&f.focus()},50)}
+function closeM(){$('ov').classList.remove('on');stopCam()}
+function stockOf(p){if(!p)return 0;if(p.cat==='service')return Infinity;if(p.serial)return D.units.filter(u=>u.pid===p.id&&u.status==='in').length;return p.qty}
+function luhn(s){if(!/^\d{15}$/.test(s))return false;let sum=0;for(let i=0;i<15;i++){let d=+s[14-i];if(i%2){d*=2;if(d>9)d-=9}sum+=d}return sum%10===0}
+function imeiNote(im){if(!im)return'';if(/^\d{15}$/.test(im))return luhn(im)?'<span class="ok small">✓ valid IMEI</span>':'<span class="badc small">✗ IMEI check digit wrong — re-check</span>';return'<span class="muted small">serial number</span>'}
+let DL=null;try{window.claude&&claude.use&&claude.use('downloads').then(d=>{DL=d}).catch(()=>{})}catch(e){}
+async function download(name,text,type='application/json'){if(DL){try{await DL.save({filename:name,data:text});toast('Saved ✓');return true}catch(e){toast(e&&e.code==='declined'?'Download cancelled':'Download not available here');return false}}
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();return true}
+function custName(id){const c=C(id);return c?c.name:''}
+function findOrMakeCustomer(name,phone){name=(name||'').trim();phone=(phone||'').trim();if(!name&&!phone)return null;
+ let c=phone?D.customers.find(x=>x.phone&&x.phone.replace(/\D/g,'')===phone.replace(/\D/g,'')):null;
+ if(!c&&name)c=D.customers.find(x=>x.name.toLowerCase()===name.toLowerCase()&&!x.phone);
+ if(!c){c={id:uid(),name:name||phone,phone,email:'',notes:'',created:Date.now()};D.customers.push(c)}else if(name&&!c.name)c.name=name;return c.id}
+
+/* ================= CODE128 BARCODE ================= */
+const C128='212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112'.split(' ');
+function barcodeSVG(text,h=40){text=String(text).replace(/[^\x20-\x7e]/g,'');const codes=[104];for(const ch of text)codes.push(ch.charCodeAt(0)-32);
+ let ck=104;codes.slice(1).forEach((c,i)=>ck+=c*(i+1));codes.push(ck%103,106);
+ let x=10,bars='';for(const c of codes){const w=C128[c];for(let i=0;i<w.length;i++){const n=+w[i];if(i%2===0)bars+=`<rect x="${x}" y="0" width="${n}" height="${h}"/>`;x+=n}}
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${x+10} ${h}" preserveAspectRatio="none" style="width:100%;height:${h}px">${bars}</svg>`}
+
+/* ================= IN-APP DIALOGS ================= */
+function ask(o){return new Promise(res=>{const d=$('dlg');const ch=o.choices||null;const hasIn=o.input!==undefined;
+ window._dlgRes=v=>{d.classList.remove('on');d.innerHTML='';window._dlgRes=()=>{};res(v)};
+ d.innerHTML=`<div class="modal"><h2>${esc(o.title||'')}</h2>${o.msg?`<p class="muted" style="white-space:pre-line">${esc(o.msg)}</p>`:''}
+ ${hasIn?`<input id="dlgIn" value="${esc(o.input)}" ${o.numeric?'inputmode="decimal"':''} placeholder="${esc(o.ph||'')}" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();$('dlgOk').click()}if(event.key==='Escape'){event.stopPropagation();_dlgRes(null)}">`:''}
+ ${ch?`<div class="chips" id="dlgCh">${ch.map(c=>`<button class="chip ${c.v===o.pick?'on':''}" data-v="${esc(c.v)}" onclick="[...this.parentNode.children].forEach(x=>x.classList.remove('on'));this.classList.add('on')">${esc(c.l)}</button>`).join('')}</div>`:''}
+ <div class="row" style="margin-top:14px;justify-content:flex-end">${o.cancel===false?'':`<button class="btn ghost" onclick="_dlgRes(null)">${esc(o.cancel||t('cancel'))}</button>`}<button class="btn ${o.danger?'bad':''}" id="dlgOk">${esc(o.ok||'OK')}</button></div></div>`;
+ $('dlgOk').onclick=()=>{if(!hasIn&&!ch)return _dlgRes(true);const inp=$('dlgIn'),p=ch&&$('dlgCh').querySelector('.on');_dlgRes({value:inp?inp.value:'',pick:p?p.dataset.v:null})};
+ d.classList.add('on');setTimeout(()=>{const i=$('dlgIn');if(i){i.focus();i.select()}else{const k=$('dlgOk');k&&k.focus()}},30)})}
+const yes=(title,msg,ok,danger)=>ask({title,msg,ok,danger});
+window._dlgRes=()=>{};
+
+/* ================= STAFF & PINs ================= */
+const WKEY='ns_who_v1';
+function phash(pin){let h=2166136261;const x='ns-pin:'+pin;for(let i=0;i<x.length;i++)h=Math.imul(h^x.charCodeAt(i),16777619)>>>0;return h.toString(36)}
+const staffList=()=>D.settings.staff||[];
+let WHO=null;try{WHO=localStorage.getItem(WKEY)}catch(e){}
+const who=()=>staffList().find(x=>x.id===WHO)||null;
+const whoName=()=>{const w=who();return w?w.name:''};
+function isOwner(){if(!staffList().length)return true;const w=who();return !!(w&&w.role==='owner')}
+function setWho(id){WHO=id;try{id?localStorage.setItem(WKEY,id):localStorage.removeItem(WKEY)}catch(e){}updWho()}
+function updWho(){const b=$('whoBtn');if(!b)return;if(!staffList().length&&!adminOn()){b.style.display='none';return}b.style.display='';const w=who();b.textContent=w?'👤 '+w.name+(isAdmin()?' · 🛡':''):isAdmin()?'🛡 Admin':'🔒 Sign in';b.title='Lock / switch user'}
+function pinPad(o){return new Promise(res=>{const d=$('dlg');let pin='',sel=null,err='';const users=o.users||null;
+ function done(v){document.removeEventListener('keydown',kh,true);window._pp=null;d.classList.remove('on');d.innerHTML='';res(v)}
+ function check(){const h=phash(pin);const m=staffList().find(x=>(!o.onlyOwner||x.role==='owner')&&(!sel||x.id===sel)&&x.pin===h);if(m)return done(m);pin='';err=t('wrongPin');logEv('security','Wrong PIN entered');draw()}
+ function draw(){d.innerHTML=`<div class="modal" style="max-width:360px;text-align:center"><h2>${esc(o.title)}</h2>${o.msg?`<p class="muted small">${esc(o.msg)}</p>`:''}
+  ${users?`<div class="chips" style="justify-content:center">${users.map(u=>`<button class="chip ${sel===u.id?'on':''}" onclick="_pp.sel('${u.id}')">${esc(u.name)}</button>`).join('')}</div>`:''}
+  <div class="dots">${[0,1,2,3].map(i=>`<i class="${i<pin.length?'on':''}"></i>`).join('')}</div><div class="badc small" style="min-height:20px">${esc(err)}</div>
+  <div class="pin">${['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k?`<button onclick="_pp.press('${k}')">${k==='del'?'⌫':k}</button>`:'<span></span>').join('')}</div>
+  ${o.adminBtn?`<button class="btn ghost" style="width:100%;margin-top:10px" onclick="_pp.admin()">🛡 Admin login</button>`:''}${o.noCancel?'':`<button class="btn ghost" style="width:100%;margin-top:8px" onclick="_pp.cancel()">${t('cancel')}</button>`}</div>`}
+ function kh(e){if(/^\d$/.test(e.key)){e.preventDefault();e.stopPropagation();window._pp.press(e.key)}else if(e.key==='Backspace'){e.preventDefault();e.stopPropagation();window._pp.press('del')}else if(e.key==='Escape'){e.stopPropagation();if(!o.noCancel)done(null)}}
+ window._pp={press:k=>{err='';if(k==='del')pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;draw();if(pin.length===4)setTimeout(check,120)},sel:id=>{sel=sel===id?null:id;pin='';err='';draw()},cancel:()=>done(null),admin:()=>done('admin')};
+ document.addEventListener('keydown',kh,true);draw();d.classList.add('on')})}
+async function needOwner(reason){if(isAdmin())return true;const w=who();if(w&&w.role==='owner')return true;
+ if(!staffList().length)return adminOn()?adminLogin(reason):true;
+ const m=await pinPad({title:'🔑 '+t('ownerPin'),msg:reason,onlyOwner:true,adminBtn:adminOn()});if(m==='admin')return adminLogin(reason);return !!m}
+async function ownerGo(k){const r=t(k==='cloud'?'cloudT':k==='admin'?'adminT':k);if(adminOn()?await adminLogin(r):await needOwner(r)){V='menu';SUB=k;render();window.scrollTo(0,0)}}
+async function lockNow(){if(!staffList().length&&!adminOn())return;if(isAdmin())logEv('security','Admin signed out (lock)');setWho(null);ADM_UNTIL=0;closeM();stopCam();
+ const l=$('lock');l.innerHTML=`<div style="text-align:center;margin-top:10px"><div class="brand" style="font-size:26px;margin:0">${brandHTML()}</div></div>`;l.classList.add('on');
+ while(true){if(staffList().length){const m=await pinPad({title:'👤 '+t('whoWorks'),users:staffList(),noCancel:true,adminBtn:adminOn()});
+   if(m==='admin'){if(await adminLogin(''))break;continue}setWho(m.id);logEv('security',m.name+' signed in');toast(t('hello')+', '+m.name);break}
+  else if(await adminLogin('',{noCancel:true}))break}
+ l.classList.remove('on');updWho();render()}
+let LAST=Date.now();['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{LAST=Date.now()},true));
+setInterval(()=>{const m=D.settings.autoLock||0;if(m>0&&staffList().length&&who()&&Date.now()-LAST>m*60000&&!$('lock').classList.contains('on'))lockNow()},30000);
+function staffCard(){const ss=staffList();return `<div class="card" style="margin-top:12px"><h3 style="margin-top:0">👥 ${t('staffT')}</h3>
+ <p class="small muted">${ss.length?'Everyone signs in with their own 4-digit PIN. Receipts show who served the customer. Refunds, deletes, big discounts and prices below cost need an owner PIN or the admin login.':'No PINs yet — anyone can do anything. Add yourself as Owner first, then your staff.'}</p>
+ ${ss.map(x=>`<div class="line"><div class="nm"><b>${esc(x.name)}</b> <span class="badge ${x.role==='owner'?'ready':''}">${x.role}</span>${x.id===WHO?' <span class="ok small">(signed in)</span>':''}</div><button class="btn ghost sm" onclick="staffEdit('${x.id}')">${t('edit')}</button></div>`).join('')}
+ <div class="row" style="margin-top:10px"><button class="btn" onclick="staffEdit()">${t('add')} ${ss.length?'staff':'owner'}</button></div>
+ ${ss.length?`<div class="g2"><div><label>Auto-lock after (minutes, 0 = off)</label><input inputmode="numeric" value="${D.settings.autoLock||0}" onchange="D.settings.autoLock=parseInt(this.value)||0;save()"></div>
+ <div><label>Max staff discount without owner (%)</label><input inputmode="numeric" value="${D.settings.maxDisc??15}" onchange="D.settings.maxDisc=num(this.value);save()"></div></div>`:''}</div>`}
+function staffEdit(id){const ss=staffList();const x=id?ss.find(y=>y.id===id):null;const first=!ss.length;
+ openM(`<h2>${x?t('edit')+' — '+esc(x.name):first?'Add owner (you)':'Add staff'}</h2><label>${t('name')}</label><input id="sfn" value="${esc(x?x.name:'')}" autofocus>
+ <label>Role</label><select id="sfr" ${first?'disabled':''}><option value="staff" ${(!first&&!x)||(x&&x.role==='staff')?'selected':''}>Staff — sell, repairs, stock</option><option value="owner" ${first||(x&&x.role==='owner')?'selected':''}>Owner — everything</option></select>
+ <label>4-digit PIN ${x?'(leave blank to keep the current one)':''}</label><input id="sfp" inputmode="numeric" maxlength="4" type="password" autocomplete="new-password">
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="staffSave('${id||''}')">${t('save')}</button>${x?`<button class="btn bad" onclick="staffDel('${id}')">${t('del')}</button>`:''}</div>`)}
+function staffSave(id){const name=$('sfn').value.trim(),role=$('sfr').value,pin=$('sfp').value.trim();if(!name)return toast(t('name')+'?');
+ if((!id||pin)&&!/^\d{4}$/.test(pin))return toast('PIN must be 4 digits');
+ const ss=staffList().slice();if(pin&&ss.some(y=>y.pin===phash(pin)&&y.id!==id))return toast('That PIN is already used — pick another');
+ let x=id?ss.find(y=>y.id===id):null;if(x&&x.role==='owner'&&role!=='owner'&&ss.filter(y=>y.role==='owner').length===1)return toast('Keep at least one owner');
+ if(!x){x={id:uid()};ss.push(x)}x.name=name;x.role=ss.length===1?'owner':role;if(pin)x.pin=phash(pin);
+ D.settings.staff=ss;logEv('settings',(id?'Staff updated: ':'Staff added: ')+x.name+' ('+x.role+')');if(!who())setWho(x.id);closeM();render();toast(t('save')+' ✓')}
+async function staffDel(id){const ss=staffList();const x=ss.find(y=>y.id===id);if(x.role==='owner'&&ss.length>1&&ss.filter(y=>y.role==='owner').length===1)return toast('Keep at least one owner');
+ if(!(await yes(t('del')+' '+x.name+'?',ss.length===1?'This removes the last PIN — anyone can then do anything.':'',t('del'),true)))return;
+ D.settings.staff=ss.filter(y=>y.id!==id);logEv('settings','Staff removed: '+x.name);if(WHO===id)setWho(null);save();closeM();render()}
+
+/* ================= ADMIN LOGIN ================= */
+let ADM_UNTIL=0,LGF='all';
+const adminOn=()=>!!(D.settings.admin&&D.settings.admin.hash);
+const isAdmin=()=>adminOn()&&Date.now()<ADM_UNTIL;
+const tmo=()=>(D.settings.adminTimeout||15)*60000;
+function admTouch(){if(isAdmin())ADM_UNTIL=Date.now()+tmo()}
+document.addEventListener('pointerdown',admTouch,true);document.addEventListener('keydown',admTouch,true);setInterval(updWho,20000);
+function rndHex(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return [...a].map(v=>v.toString(16).padStart(2,'0')).join('')}
+function newCode(){const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';const a=new Uint8Array(12);crypto.getRandomValues(a);const c=[...a].map(v=>A[v%A.length]).join('');return c.slice(0,4)+'-'+c.slice(4,8)+'-'+c.slice(8)}
+const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+async function sha(x){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(x));return [...new Uint8Array(b)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+async function pwHash(pw,salt){let h=salt+':'+pw;for(let i=0;i<3000;i++)h=await sha(salt+h);return h}
+function logEv(type,text){(D.log=D.log||[]).push({id:uid(),ts:Date.now(),by:isAdmin()?(whoName()?whoName()+' + Admin':'Admin'):whoName(),type,text:String(text).slice(0,200)});if(D.log.length>3000)D.log=D.log.slice(-3000);save()}
+function logCSV(){return ['time,who,type,what'].concat((D.log||[]).map(e=>[new Date(e.ts).toISOString(),e.by,e.type,e.text].map(csvE).join(','))).join('\n')}
+function codeBox(code,msg,onOk){return `<h2>🔑 Recovery code</h2><p class="muted small">${esc(msg)}</p>
+ <div style="font:800 26px ui-monospace,monospace;letter-spacing:3px;text-align:center;background:#fff;color:#111;border-radius:12px;padding:16px;margin:10px 0">${code}</div>
+ <div class="row"><button class="btn ghost" onclick="printHTML(storeHead()+'<div class=&quot;c b&quot;>ADMIN RECOVERY CODE</div><div class=&quot;c&quot; style=&quot;font-size:20px;letter-spacing:2px;margin:10px 0&quot;>${code}</div><div class=&quot;c&quot;>Keep this somewhere safe.<br>'+new Date().toLocaleString()+'</div>')">${t('print')}</button><button class="btn" onclick="${onOk}">I saved it</button></div>`}
+function adminLogin(reason,o={}){if(!adminOn())return Promise.resolve(false);if(isAdmin())return Promise.resolve(true);
+ return new Promise(res=>{const d=$('dlg');let busy=false;const err=m=>{const e=$('admE');if(e)e.textContent=m};
+  const done=v=>{d.classList.remove('on');d.innerHTML='';window._adm=null;res(v)};
+  const form=()=>{d.innerHTML=`<div class="modal" style="max-width:380px"><h2>🛡 Admin login</h2>${reason?`<p class="muted small">${esc(reason)}</p>`:''}
+   <label>Username</label><input id="admU" autocomplete="username" onkeydown="if(event.key==='Enter')$('admP').focus()">
+   <label>Password</label><input id="admP" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')_adm.go()">
+   <div id="admE" class="badc small" style="min-height:20px;margin-top:6px"></div>
+   <div class="row" style="justify-content:space-between"><a class="small" style="color:var(--mango);cursor:pointer" onclick="_adm.forgot()">Forgot password?</a>
+   <div class="row">${o.noCancel?'':`<button class="btn ghost" onclick="_adm.cancel()">${t('cancel')}</button>`}<button class="btn" id="admGo" onclick="_adm.go()">Sign in</button></div></div></div>`;setTimeout(()=>{const u=$('admU');u&&u.focus()},30)};
+  window._adm={
+   go:async()=>{if(busy)return;busy=true;const b=$('admGo');if(b)b.disabled=true;const u=$('admU').value.trim(),p=$('admP').value;const A=D.settings.admin;
+    const ok=u.toLowerCase()===String(A.user).toLowerCase()&&(await pwHash(p,A.salt))===A.hash;busy=false;if(b)b.disabled=false;
+    if(ok){ADM_UNTIL=Date.now()+tmo();logEv('security','Admin signed in');updWho();done(true)}else{logEv('security','Failed admin login'+(u?' ('+u+')':''));err('Wrong username or password');$('admP').value='';$('admP').focus()}},
+   cancel:()=>o.noCancel?form():done(false),
+   forgot:()=>{d.innerHTML=`<div class="modal" style="max-width:380px"><h2>🔑 Reset admin password</h2><p class="muted small">Enter the recovery code you saved when the admin account was created.</p>
+    <label>Recovery code</label><input id="rcC" autocomplete="off" placeholder="XXXX-XXXX-XXXX" style="text-transform:uppercase">
+    <label>New password (6+ characters)</label><input id="rcP" type="password" autocomplete="new-password"><label>Confirm new password</label><input id="rcP2" type="password" autocomplete="new-password">
+    <div id="admE" class="badc small" style="min-height:20px;margin-top:6px"></div><div class="row" style="justify-content:flex-end"><button class="btn ghost" onclick="_adm.back()">Back</button><button class="btn" onclick="_adm.reset()">Reset password</button></div></div>`;setTimeout(()=>$('rcC').focus(),30)},
+   back:()=>form(),
+   reset:async()=>{const A=D.settings.admin;const p=$('rcP').value;
+    if((await sha('rc:'+normCode($('rcC').value)))!==A.rhash){logEv('security','Wrong recovery code entered');return err('That recovery code is not correct')}
+    if(p.length<6)return err('Password must be at least 6 characters');if(p!==$('rcP2').value)return err('Passwords do not match');
+    A.salt=rndHex(16);A.hash=await pwHash(p,A.salt);const nc=newCode();A.rhash=await sha('rc:'+normCode(nc));ADM_UNTIL=Date.now()+tmo();save();logEv('security','Admin password reset with recovery code');
+    d.innerHTML=`<div class="modal" style="max-width:420px">${codeBox(nc,'Password changed. This is your NEW recovery code — the old one no longer works. It is shown only once.','_adm.fin()')}</div>`},
+   fin:()=>{updWho();done(true)}};
+  form();d.classList.add('on')})}
+function adminSetup(){openM(`<h2>🛡 Create admin account</h2><p class="muted small">The admin signs in with a username and password.</p>
+ <label>Username</label><input id="asU" value="admin" autocomplete="username"><label>Password (6+ characters)</label><input id="asP" type="password" autocomplete="new-password" autofocus>
+ <label>Confirm password</label><input id="asP2" type="password" autocomplete="new-password" onkeydown="if(event.key==='Enter')adminCreate()"><div id="asE" class="badc small" style="min-height:20px;margin-top:6px"></div>
+ <button class="btn" style="width:100%" onclick="adminCreate()">Create admin account</button>`)}
+async function adminCreate(){const u=$('asU').value.trim(),p=$('asP').value,e=$('asE');if(!u)return e.textContent='Enter a username';if(p.length<6)return e.textContent='Password must be at least 6 characters';if(p!==$('asP2').value)return e.textContent='Passwords do not match';
+ const salt=rndHex(16),code=newCode();D.settings.admin={user:u,salt,hash:await pwHash(p,salt),rhash:await sha('rc:'+normCode(code)),created:Date.now()};ADM_UNTIL=Date.now()+tmo();save();logEv('security','Admin account created ('+u+')');updWho();
+ openM(codeBox(code,'Admin account created. Write down or print this recovery code — you need it if you forget the password. It is shown only once.','closeM();render()'))}
+function adminPw(){openM(`<h2>Change admin password</h2><label>Current password</label><input id="apC" type="password" autocomplete="current-password" autofocus><label>New password (6+ characters)</label><input id="apN" type="password" autocomplete="new-password">
+ <label>Confirm new password</label><input id="apN2" type="password" autocomplete="new-password"><label>Username</label><input id="apU" value="${esc(D.settings.admin.user)}" autocomplete="username"><div id="apE" class="badc small" style="min-height:20px;margin-top:6px"></div><button class="btn" onclick="adminPwSave()">${t('save')}</button>`)}
+async function adminPwSave(){const A=D.settings.admin,e=$('apE'),n=$('apN').value,u=$('apU').value.trim();if((await pwHash($('apC').value,A.salt))!==A.hash)return e.textContent='Current password is not correct';
+ if(!u)return e.textContent='Enter a username';if(n.length<6)return e.textContent='Password must be at least 6 characters';if(n!==$('apN2').value)return e.textContent='Passwords do not match';
+ A.user=u;A.salt=rndHex(16);A.hash=await pwHash(n,A.salt);save();logEv('security','Admin password changed');closeM();toast('Password changed ✓');render()}
+async function adminNewCode(){if(!(await yes('New recovery code?','The old recovery code will stop working.','Make new code')))return;const c=newCode();D.settings.admin.rhash=await sha('rc:'+normCode(c));save();logEv('security','New recovery code made');openM(codeBox(c,'Your new recovery code. It is shown only once.','closeM();render()'))}
+function adminOut(){logEv('security','Admin signed out');ADM_UNTIL=0;updWho();go('menu')}
+async function adminRemove(){if(!(await yes('Remove admin login?','Settings and approvals go back to owner PINs (or no protection if there are no staff).','Remove',true)))return;logEv('security','Admin login removed');delete D.settings.admin;ADM_UNTIL=0;save();updWho();go('menu')}
+function vAdmin(){const A=D.settings.admin;
+ if(!adminOn())return `<h2>🛡 ${t('adminT')}</h2><div class="card"><h3 style="margin-top:0">Set up admin login</h3><p class="muted small">The admin signs in with a username and password to open Settings, Backup, Staff and the Activity log, and can approve refunds, deletes and big discounts. Staff keep using their PINs.</p><button class="btn" onclick="adminSetup()">Create admin account</button></div>${staffCard()}`;
+ const ev=(D.log||[]).filter(e=>LGF==='all'||e.type===LGF).slice(-500).reverse();
+ return `<h2>🛡 ${t('adminT')}</h2><div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div>Signed in as <b>${esc(A.user)}</b> <span class="badge ready">admin</span><div class="small muted">Signs out after ${D.settings.adminTimeout||15} min with no activity</div></div>
+ <div class="row"><button class="btn ghost sm" onclick="adminPw()">Change password</button><button class="btn ghost sm" onclick="adminNewCode()">New recovery code</button><button class="btn warn sm" onclick="adminOut()">Sign out admin</button></div></div>
+ <label class="check"><input type="checkbox" ${D.settings.lockOnOpen?'checked':''} onchange="D.settings.lockOnOpen=this.checked;logEv('security','Sign-in when app opens: '+(this.checked?'ON':'OFF'))"> Require sign-in every time the app opens</label>
+ <div class="g2"><div><label>Admin sign-out after (minutes)</label><input inputmode="numeric" value="${D.settings.adminTimeout||15}" onchange="D.settings.adminTimeout=Math.max(1,parseInt(this.value)||15);save()"></div></div>
+ <div class="row" style="margin-top:10px"><button class="btn ghost sm" onclick="go('menu','settings')">⚙️ ${t('settings')}</button><button class="btn ghost sm" onclick="go('menu','backup')">💾 ${t('backup')}</button><button class="btn ghost sm" onclick="go('menu','reports')">📊 ${t('reports')}</button>${typeof vCloud==='function'?`<button class="btn ghost sm" onclick="go('menu','cloud')">☁ Cloud</button>`:''}<button class="btn ghost sm" onclick="adminRemove()">Remove admin login</button></div></div>
+ ${staffCard()}
+ <div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">📜 Activity log</h3><button class="btn ghost sm" onclick="download('activity-log-'+new Date().toISOString().slice(0,10)+'.csv',logCSV(),'text/csv')">⬇ CSV</button></div>
+ <div class="chips">${[['all','All'],['money','Money'],['stock','Stock'],['security','Security'],['settings','Settings']].map(([k,l])=>`<button class="chip ${LGF===k?'on':''}" onclick="LGF='${k}';render()">${l}</button>`).join('')}</div>
+ <div style="overflow:auto;max-height:60vh"><table class="t"><tr><th>When</th><th>Who</th><th>What</th></tr>${ev.map(e=>`<tr><td class="small" style="white-space:nowrap">${fmtDT(e.ts)}</td><td>${esc(e.by||'—')}</td><td><span class="badge ${e.type==='security'?'repairing':e.type==='money'?'ready':''}">${e.type}</span> ${esc(e.text)}</td></tr>`).join('')||`<tr><td colspan="3" class="muted">${t('noItems')}</td></tr>`}</table></div></div>`}
+
+/* ================= BRANDING ================= */
+function brandHTML(){const S=D.settings;return (S.logo?`<img src="${S.logo}" alt="">`:'')+esc(S.name)}
+function setLogo(file){if(!file)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,400/im.width,160/im.height);const c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
+ const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);let u=c.toDataURL('image/png');if(u.length>90000)u=c.toDataURL('image/jpeg',.85);
+ D.settings.logo=u;save();render();toast('Logo saved ✓')};im.onerror=()=>toast('Could not read that image');im.src=rd.result};rd.readAsDataURL(file)}
+function receiptText(s){const S=D.settings;let x=`${S.name}\n${S.addr}${S.phone?' · '+S.phone:''}\n\n${{refund:'Refund',repair:'Repair payment',deposit:'Repair deposit'}[s.kind]||'Receipt'} #${s.no} — ${new Date(s.ts).toLocaleString()}\n\n`;
+ s.lines.forEach(l=>x+=`${l.name}${l.qty>1?' x'+l.qty:''}${l.imei?' (IMEI '+l.imei+')':''}: ${money(l.price*l.qty)}\n`);if(s.disc)x+=`Discount: -${money(s.disc)}\n`;if(s.trade)x+=`Trade-in: -${money(s.trade.price)}\n`;
+ if(s.taxMode==='added')x+=`\nSubtotal: ${money(s.net)}\nGST ${S.gst}%: ${money(s.gstFull??s.gst)}\n`;if(s.deposit)x+=`Deposit paid: -${money(s.deposit)}\n`;
+ x+=`TOTAL: ${money(s.total)}${s.taxMode==='added'?'':' (GST '+money(s.gst)+' incl.)'}\nPaid by: ${s.method==='etransfer'?'e-Transfer':String(s.method).toUpperCase()}\n${S.gstNo?'GST# '+S.gstNo+'\n':''}${S.footer?'\n'+S.footer+'\n':''}\nThank you! / Mahadsanid!`;return x}
+const mailLink=s=>{const c=C(s.cust)||{};return 'mailto:'+encodeURIComponent(c.email||'')+'?subject='+encodeURIComponent('Receipt #'+s.no+' — '+D.settings.name)+'&body='+encodeURIComponent(receiptText(s))};
+const smsReceipt=s=>{const c=C(s.cust)||{};return 'sms:'+(c.phone||'').replace(/[^\d+]/g,'')+'?&body='+encodeURIComponent(receiptText(s))};
+const A4CSS=`@page{size:A4;margin:14mm}body{margin:0;font:12.5px/1.45 Arial,Helvetica,sans-serif;color:#111}.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #14213d;padding-bottom:12px;margin-bottom:16px;gap:20px}.top img{max-height:70px;max-width:220px;display:block;margin-bottom:6px}.top h1{margin:0;font-size:21px}.doc{text-align:right}.doc h2{margin:0;font-size:26px;letter-spacing:3px;color:#14213d}.muted{color:#666}table{width:100%;border-collapse:collapse;margin-top:14px}th{background:#14213d;color:#fff;text-align:left;padding:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.r{text-align:right}th.r{text-align:right}.tot{width:320px;margin-left:auto;margin-top:10px}.tot td{border:0;padding:4px 8px}.tot .g td{font-size:16px;font-weight:700;border-top:2px solid #14213d}.foot{margin-top:34px;border-top:1px solid #ddd;padding-top:10px;font-size:11px;color:#555}.cols{display:flex;gap:50px}.sig{margin-top:40px;border-top:1px solid #111;width:260px;padding-top:4px}`;
+function invoiceHTML(s,o={}){const S=D.settings,c=C(s.cust)||{};const title=o.title||(s.kind==='refund'?'CREDIT NOTE':'INVOICE');const added=s.taxMode==='added';const grand=s.grand??(s.total+(s.deposit||0));
+ return `<div class="top"><div>${S.logo?`<img src="${S.logo}">`:''}<h1>${esc(S.name)}</h1><div class="muted">${esc(S.addr)}${S.phone?'<br>'+esc(S.phone):''}${S.web?'<br>'+esc(S.web):''}${S.gstNo?'<br>GST # '+esc(S.gstNo):''}</div></div>
+ <div class="doc"><h2>${title}</h2><div><b># ${esc(o.no||s.no)}</b><br>${fmtD(s.ts)}${s.by?'<br>Served by '+esc(s.by):''}</div></div></div>
+ <div class="cols"><div><b>Bill to</b><br>${c.name?esc(c.name):'Walk-in customer'}${c.phone?'<br>'+esc(c.phone):''}${c.email?'<br>'+esc(c.email):''}</div>${o.extra||''}</div>
+ <table><tr><th>Description</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th></tr>
+ ${s.lines.map(l=>`<tr><td>${esc(l.name)}${l.imei?'<br><span class="muted">IMEI '+esc(l.imei)+'</span>':''}</td><td class="r">${l.qty}</td><td class="r">${money(l.price)}</td><td class="r">${money(l.price*l.qty)}</td></tr>`).join('')}
+ ${s.disc?`<tr><td>Discount</td><td></td><td></td><td class="r">-${money(s.disc)}</td></tr>`:''}${s.trade?`<tr><td>Trade-in: ${esc(s.trade.device)}${s.trade.imei?' (IMEI '+esc(s.trade.imei)+')':''}</td><td></td><td></td><td class="r">-${money(s.trade.price)}</td></tr>`:''}</table>
+ <table class="tot">${added?`<tr><td>Subtotal</td><td class="r">${money(s.net)}</td></tr><tr><td>GST ${S.gst}%</td><td class="r">${money(s.gstFull??s.gst)}</td></tr><tr class="g"><td>Total</td><td class="r">${money(grand)}</td></tr>`
+ :`<tr class="g"><td>Total</td><td class="r">${money(grand)}</td></tr><tr><td>GST ${S.gst}% included</td><td class="r">${money(gstOf(grand))}</td></tr>`}
+ ${s.deposit?`<tr><td>Deposit paid</td><td class="r">-${money(s.deposit)}</td></tr><tr class="g"><td>${o.unpaid?'Balance due':'Balance paid'}</td><td class="r">${money(s.total)}</td></tr>`:''}
+ ${o.unpaid?'':`<tr><td>Paid by</td><td class="r">${s.method==='etransfer'?'e-Transfer':String(s.method||'').toUpperCase()}</td></tr>`}</table>
+ ${o.sign?'<div class="sig">Customer signature</div>':''}
+ <div class="foot">${o.note?esc(o.note)+'<br>':''}${s.kind==='sale'&&s.lines.some(l=>l.imei)?esc(S.warranty)+'-day warranty on devices. ':''}${s.kind==='repair'?esc(S.repairWarranty)+'-day warranty on repair parts &amp; labour. ':''}${esc(S.footer||'')}<br>Thank you for your business! / Mahadsanid!</div>`}
+function estimateHTML(r){const tot=repTotal(r);const s={no:'R'+r.no,ts:r.ts,cust:r.cust,by:r.by,kind:'estimate',lines:[{name:'Repair: '+r.device+' – '+r.issue,price:r.quote,qty:1}],taxMode:ADD()?'added':'included',net:r.quote,gstFull:r2(tot-r.quote),grand:tot,deposit:r.deposit||0,total:repBal(r),gst:gstOf(tot)};
+ return invoiceHTML(s,{title:'REPAIR ESTIMATE',no:'R'+r.no,unpaid:true,sign:true,extra:`<div><b>Device</b><br>${esc(r.device)}${r.imei?'<br>IMEI '+esc(r.imei):''}<br>Ready by: ${esc(r.due||'—')}</div>`,note:D.settings.terms})}
+
+/* ================= PRINTING ================= */
+function printHTML(body,kind='receipt'){
+ const css=kind==='a4'?A4CSS:kind==='label'?`@page{size:57mm 32mm;margin:0}body{margin:0;font:11px Arial}.lb{width:57mm;height:32mm;padding:2mm 3mm;box-sizing:border-box;page-break-after:always;overflow:hidden}.lb .n{font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden}.lb .p{font-size:15px;font-weight:900}.lb .c{font-size:9px;text-align:center;letter-spacing:1px}`
+ :`@page{size:72mm auto;margin:3mm}body{margin:0;font:12px/1.35 Arial;width:68mm;color:#000}.c{text-align:center}.r{text-align:right}.b{font-weight:700}table{width:100%;border-collapse:collapse}td{vertical-align:top;padding:1px 0}hr{border:0;border-top:1px dashed #000;margin:6px 0}h1{font-size:16px;margin:0}.sig{border-bottom:1px solid #000;height:28px;margin-top:10px}`;
+ const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+ const d=f.contentWindow.document;d.open();d.write(`<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body>${body}</body></html>`);d.close();
+ setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){}setTimeout(()=>f.remove(),1500)},250)}
+function storeHead(){const S=D.settings;return `<div class="c">${S.logo?`<img src="${S.logo}" style="max-width:56mm;max-height:20mm;display:block;margin:0 auto 4px">`:''}<h1>${esc(S.name)}</h1>${esc(S.addr)}${S.phone?'<br>'+esc(S.phone):''}${S.web?'<br>'+esc(S.web):''}${S.gstNo?'<br>GST# '+esc(S.gstNo):''}</div><hr>`}
+
+/* ================= NAV ================= */
+let V='sell',SUB=null;
+const PROT=['settings','backup','cloud','admin'];
+function go(v,sub=null){if(v==='menu'&&PROT.includes(sub)&&adminOn()&&!isAdmin())return ownerGo(sub);V=v;SUB=sub;render();window.scrollTo(0,0)}
+function render(){if(V==='menu'&&PROT.includes(SUB)&&adminOn()&&!isAdmin())SUB=null;
+ ['sell','repairs','menu'].forEach(v=>{$('t-'+v).textContent=t(v);$('t-'+v).classList.toggle('on',V===v)});
+ $('langBtn').textContent=D.settings.lang==='en'?'SO':'EN';$('brand').innerHTML=brandHTML();updWho();
+ const a=$('app');
+ if(V==='sell'){a.innerHTML=vSell();drawGrid();drawCart()}
+ else if(V==='repairs'){a.innerHTML=vRepairs();drawRepairs()}
+ else{const f={cloud:vCloud,admin:vAdmin,stock:vStock,phones:vPhones,buy:vBuy,customers:vCustomers,orders:vOrders,labels:vLabels,reports:vReports,sales:vSales,settings:vSettings,backup:vBackup}[SUB];
+  a.innerHTML=f?`<button class="btn ghost sm" onclick="go('menu')" style="margin-bottom:12px">← ${t('menu')}</button>`+f():vMenu();
+  if(SUB==='stock')drawStock();if(SUB==='phones')drawPhones();if(SUB==='customers')drawCustomers();if(SUB==='reports')drawReports();if(SUB==='cloud'&&CL.user&&!CL.cfg.storeId&&CL.stores===null)cLoadStores()}}
+
+/* ================= SELL ================= */
+let SQ='',SC='all',cart=[],cartCust=null,cartDisc=0,cartTrade=null;
+function needBackup(){return(D.sales.length||D.repairs.length)&&Date.now()-(D.lastBackup||0)>7*864e5}
+function vSell(){
+ return `${needBackup()?`<div class="banner" onclick="go('menu','backup')">${t('backupNow')}</div>`:''}
+ <div class="sell"><section>
+  <div class="row"><input class="grow" id="sq" placeholder="${t('search')}" value="${esc(SQ)}" oninput="SQ=this.value;drawGrid()" onkeydown="if(event.key==='Enter'){scanCode(this.value);}" autocomplete="off" style="flex:1;font-size:17px">
+  <button class="btn ghost" onclick="camScan(scanCode)">${t('scan')}</button></div>
+  <div class="chips">${['all','phone','accessory','part','service'].map(c=>`<button class="chip ${SC===c?'on':''}" onclick="SC='${c}';render()">${t(c)}</button>`).join('')}</div>
+  <div class="grid" id="grid"></div>
+ </section><aside class="card cart" id="cart"></aside></div>`}
+function drawGrid(){const q=SQ.trim().toLowerCase();
+ let ps=D.products.filter(p=>(SC==='all'?p.cat!=='part':p.cat===SC));
+ if(q){const um=D.units.filter(u=>u.status==='in'&&u.imei.includes(q)).map(u=>u.pid);ps=D.products.filter(p=>(p.name+' '+p.sku+' '+p.barcode).toLowerCase().includes(q)||um.includes(p.id))}
+ $('grid').innerHTML=ps.length?ps.map(p=>{const s=stockOf(p);return `<button class="tile ${p.cat} ${s<=0?'out':''}" onclick="addP('${p.id}')"><div class="n">${esc(p.name)}</div>
+  <div class="row" style="justify-content:space-between"><span class="p">${money(p.price)}</span><span class="small ${s<=p.min&&s!==Infinity?'warnc':'muted'}">${s===Infinity?'':s<=0?t('out'):s+' '+t('inStock')}</span></div></button>`}).join(''):`<p class="muted">${t('noItems')}</p>`}
+function scanCode(v){v=String(v||'').trim();if(!v)return;
+ const sm=v.match(/^S(\d+)$/i);if(sm){const s=D.sales.find(x=>x.no==+sm[1]);if(s){clearSearch();beep();return showReceipt(s.id)}}
+ const rm=v.match(/^R(\d+)$/i);if(rm){const r=D.repairs.find(x=>x.no==+rm[1]);if(r){clearSearch();beep();return ticketForm(r.id)}}
+ const u=D.units.find(u=>u.imei===v&&u.status==='in');if(u){addUnit(u.id);clearSearch();return}
+ const p=D.products.find(p=>p.barcode===v||(p.sku&&p.sku.toLowerCase()===v.toLowerCase()));if(p){addP(p.id);clearSearch();return}
+ const sold=D.units.find(u=>u.imei===v);if(sold){toast('IMEI '+v+' — '+sold.status);return}
+ const ps=D.products.filter(p=>p.name.toLowerCase().includes(v.toLowerCase())&&p.cat!=='part');if(ps.length===1){addP(ps[0].id);clearSearch();return}
+ if(!ps.length){beep(true);toast(t('unknown')+': '+v);productForm(null,v)}}
+function clearSearch(){SQ='';const e=$('sq');if(e){e.value='';e.focus()}drawGrid()}
+function inCart(pid){return cart.filter(l=>l.pid===pid).reduce((a,l)=>a+l.qty,0)}
+function addP(id){const p=P(id);if(!p)return;
+ if(p.serial){const us=D.units.filter(u=>u.pid===id&&u.status==='in'&&!cart.some(l=>l.uid===u.id));
+  if(!us.length)return toast(t('out'));if(us.length===1)return addUnit(us[0].id);
+  return openM(`<h2>${esc(p.name)}</h2><p class="muted">${t('chooseImei')}</p><div class="list">${us.map(u=>`<button class="tcard" style="text-align:left;cursor:pointer" onclick="addUnit('${u.id}');closeM()"><b>${esc(u.imei)}</b> <span class="badge">${esc(u.cond||'')}</span>${u.price?` <b style="color:var(--mango)">${money(u.price)}</b>`:''}<div class="muted small">${t('cost')} ${money(u.cost)} · ${fmtD(u.added)}</div></button>`).join('')}</div>`)}
+ const s=stockOf(p);if(s!==Infinity&&inCart(id)>=s)return toast(t('out'));
+ const l=cart.find(l=>l.pid===id&&!l.uid);if(l)l.qty++;else cart.push({pid:id,name:p.name,price:p.price,cost:p.cost,qty:1});drawCart();drawGrid()}
+function addUnit(uidv){const u=D.units.find(x=>x.id===uidv);if(!u||cart.some(l=>l.uid===uidv))return;const p=P(u.pid);
+ cart.push({pid:u.pid,uid:u.id,imei:u.imei,name:p.name+(u.cond&&u.cond!=='New'?' ('+u.cond.split(' ')[0]+')':''),price:u.price||p.price,cost:u.cost,qty:1});drawCart();drawGrid()}
+function cartSub(){return r2(cart.reduce((a,l)=>a+l.price*l.qty,0))}
+function cartNet(){return r2(cartSub()-cartDisc-(cartTrade?cartTrade.price:0))}
+function cartTax(){const n=cartNet();if(n<=0)return 0;return ADD()?r2(n*D.settings.gst/100):gstOf(n)}
+function cartTotal(){const n=cartNet();return ADD()&&n>0?r2(n+cartTax()):n}
+function drawCart(){const tot=cartTotal();
+ $('cart').innerHTML=`<div class="row" style="justify-content:space-between"><h2>${t('cart')}</h2>${cart.length||cartTrade?`<button class="btn ghost sm" onclick="clearCart()">${t('clear')}</button>`:''}</div>
+ <button class="btn ghost sm" style="width:100%;text-align:left" onclick="pickCustomer()">👤 ${cartCust?esc(custName(cartCust)):t('walkin')}</button>
+ <div>${cart.length?cart.map((l,i)=>`<div class="line"><div class="nm"><div class="b">${esc(l.name)}</div><div class="small muted">${l.imei?'IMEI '+esc(l.imei)+' · ':''}<a style="color:var(--mango);cursor:pointer" onclick="editPrice(${i})">${money(l.price)}</a></div></div>
+  ${l.uid?'':`<button class="qb" onclick="qty(${i},-1)">−</button><b style="min-width:20px;text-align:center">${l.qty}</b><button class="qb" onclick="qty(${i},1)">+</button>`}
+  <b style="min-width:72px" class="r">${money(l.price*l.qty)}</b><button class="qb" onclick="cart.splice(${i},1);drawCart();drawGrid()">×</button></div>`).join(''):`<p class="muted" style="padding:18px 0;text-align:center">${t('empty')}</p>`}</div>
+ <div class="row" style="margin-top:10px"><button class="btn ghost sm" onclick="setDisc()">🏷 ${t('discount')}</button><button class="btn ghost sm" onclick="buyForm(true)">🔁 ${t('trade')}</button></div>
+ <table class="t" style="margin-top:8px">${cartDisc||cartTrade?`<tr><td>${t('subtotal')}</td><td class="r">${money(cartSub())}</td></tr>`:''}
+ ${cartDisc?`<tr><td>${t('discount')} <a style="cursor:pointer" onclick="cartDisc=0;drawCart()">×</a></td><td class="r">-${money(cartDisc)}</td></tr>`:''}
+ ${cartTrade?`<tr><td>${t('trade')}: ${esc(cartTrade.device)} <a style="cursor:pointer" onclick="cartTrade=null;drawCart()">×</a></td><td class="r">-${money(cartTrade.price)}</td></tr>`:''}</table>
+ ${ADD()?`<table class="t"><tr><td>${t('beforeGst')}</td><td class="r">${money(cartNet())}</td></tr><tr><td>GST ${D.settings.gst}%</td><td class="r">+${money(cartTax())}</td></tr></table>`:''}
+ <div class="tot">${money(tot)}</div>${ADD()?`<div class="r muted small">${t('total')} incl. GST</div>`:`<div class="r muted small">${t('gstIncl')} ${money(cartTax())}</div>`}
+ <div class="pay"><button class="btn" onclick="pay('cash')" ${cart.length?'':'disabled'}>💵 ${t('cash')}</button><button class="btn" onclick="pay('card')" ${cart.length?'':'disabled'}>💳 ${t('card')}</button><button class="btn" onclick="pay('etransfer')" ${cart.length?'':'disabled'}>📲 ${t('etransfer')}</button></div>`}
+function qty(i,d){const l=cart[i];const p=P(l.pid);const s=stockOf(p);if(d>0&&s!==Infinity&&inCart(l.pid)>=s)return toast(t('out'));l.qty+=d;if(l.qty<=0)cart.splice(i,1);drawCart();drawGrid()}
+async function editPrice(i){const l=cart[i];const a=await ask({title:t('price')+' — '+l.name,input:String(l.price),numeric:true,ok:t('save')});if(!a)return;const v=r2(num(a.value));
+ if(v<l.cost){if(!(await needOwner('Price below cost ('+money(l.cost)+')')))return;logEv('money','Price below cost: '+l.name+' '+money(v)+' (cost '+money(l.cost)+')')}l.price=v;drawCart()}
+async function setDisc(){const a=await ask({title:t('discount'),input:cartDisc?String(cartDisc):'',numeric:true,ph:'10',choices:[{v:'$',l:'$ amount'},{v:'%',l:'% percent'}],pick:'$',ok:t('save')});if(!a)return;
+ const pct=a.pick==='%'||String(a.value).includes('%');const d=Math.min(pct?r2(cartSub()*num(a.value)/100):r2(num(a.value)),cartSub());const max=D.settings.maxDisc??15;
+ if(d>0&&cartSub()>0&&d/cartSub()*100>max+1e-9){if(!(await needOwner(t('discount')+' over '+max+'%')))return;logEv('money','Discount '+money(d)+' approved (over '+max+'%)')}cartDisc=d;drawCart()}
+function clearCart(){cart=[];cartCust=null;cartDisc=0;cartTrade=null;drawCart();drawGrid()}
+function pickCustomer(cb){window._pc=cb||(id=>{cartCust=id;drawCart()});
+ openM(`<h2>${t('cust')}</h2><input id="pcq" placeholder="Name, phone (any part), email, IMEI or receipt #" oninput="pcList()" autofocus autocomplete="off"><div id="pcl" class="list" style="margin:10px 0;max-height:40vh;overflow:auto"></div>
+ <h3>${t('newCustomer')}</h3><div class="g2"><div><label>${t('name')}</label><input id="pcn"></div><div><label>${t('phoneNo')}</label><input id="pcp" inputmode="tel"></div></div>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="const id=findOrMakeCustomer($('pcn').value,$('pcp').value);if(id){save();closeM();_pc(id)}">${t('save')}</button>
+ <button class="btn ghost" onclick="closeM();_pc(null)">${t('walkin')}</button></div>`);pcList()}
+function pcList(){const q=$('pcq').value||'';const ix=custIndex();const cs=(q.trim()?custSearch(q,ix):[...D.customers].sort((a,b)=>lastOf(ix,b)-lastOf(ix,a))).slice(0,30);
+ $('pcl').innerHTML=cs.map(c=>{const l=lastOf(ix,c);return `<button class="tcard" style="text-align:left;cursor:pointer" onclick="closeM();_pc('${c.id}')"><b>${esc(c.name)}</b> <span class="muted">${esc(fmtPhone(c.phone))}</span>${l?` <span class="small muted">· last visit ${fmtD(l)}</span>`:''}</button>`}).join('')||`<p class="muted">${q.trim()?'No customer found — add them below':t('noItems')}</p>`;
+ if(q.trim()&&!cs.length){const d=digits(q);if(d.length>=7)$('pcp').value=q;else $('pcn').value=q}}
+function pay(method){const tot=cartTotal();if(!cart.length)return;if(tot<0)return toast(t('tradeTooBig'));
+ if(method==='cash'){const quick=[...new Set([Math.ceil(tot/5)*5,Math.ceil(tot/10)*10,Math.ceil(tot/20)*20,Math.ceil(tot/50)*50,100].filter(v=>v>tot))].sort((a,b)=>a-b).slice(0,4);
+  openM(`<h2>💵 ${t('cash')} — ${money(tot)}</h2><label>${t('tendered')}</label><input id="tend" inputmode="decimal" autofocus oninput="chg(${tot})" onkeydown="if(event.key==='Enter')finishSale('cash')" style="font-size:24px">
+  <div class="chips"><button class="chip" onclick="$('tend').value='${tot}';chg(${tot})">${t('exact')}</button>${quick.map(q=>`<button class="chip" onclick="$('tend').value='${q}';chg(${tot})">$${q}</button>`).join('')}</div>
+  <div class="tot" id="chgv" style="color:#4ade80"></div><button class="btn" style="width:100%;min-height:60px;font-size:19px;margin-top:10px" onclick="finishSale('cash')">${t('complete')}</button>`)}
+ else openM(`<h2>${method==='card'?'💳 '+t('card'):'📲 '+t('etransfer')} — ${money(tot)}</h2><p class="muted">${method==='card'?'Run the card on the terminal first, then complete.':'Confirm the e-Transfer arrived, then complete.'}</p>
+  <button class="btn" style="width:100%;min-height:60px;font-size:19px" onclick="finishSale('${method}')">${t('complete')}</button>`)}
+function chg(tot){const v=num($('tend').value);$('chgv').textContent=v>=tot?t('change')+': '+money(v-tot):''}
+function finishSale(method){const tot=cartTotal();let tend=0;if(method==='cash'){tend=num($('tend').value)||tot;if(tend<tot)return toast('Not enough cash')}
+ const s={id:uid(),no:D.seq.sale++,ts:Date.now(),by:whoName(),kind:'sale',lines:cart.map(l=>({...l})),disc:cartDisc,total:tot,gst:cartTax(),net:cartNet(),taxMode:ADD()?'added':'included',method,tendered:tend,cust:cartCust,
+  cost:r2(cart.reduce((a,l)=>a+l.cost*l.qty,0))};
+ if(cartTrade){const b=commitBuy(cartTrade,'trade');b.saleId=s.id;s.trade={device:cartTrade.device,imei:cartTrade.imei,price:cartTrade.price}}
+ for(const l of cart){const p=P(l.pid);if(l.uid){const u=D.units.find(x=>x.id===l.uid);u.status='sold';u.saleId=s.id;u.soldTs=s.ts;u.cust=cartCust}else if(p&&p.cat!=='service'&&!p.serial)p.qty-=l.qty}
+ D.sales.push(s);save();clearCart();showReceipt(s.id,true)}
+function receiptHTML(s){const c=C(s.cust);
+ let h=storeHead()+`<div>${{refund:'REFUND',repair:'REPAIR PAYMENT',deposit:'REPAIR DEPOSIT'}[s.kind]||'RECEIPT'} #${s.no}<br>${new Date(s.ts).toLocaleString()}${c?'<br>Customer: '+esc(c.name):''}${s.by?'<br>Served by: '+esc(s.by):''}</div><hr><table>`;
+ for(const l of s.lines)h+=`<tr><td>${esc(l.name)}${l.qty>1?' x'+l.qty:''}${l.imei?'<br>IMEI '+esc(l.imei):''}</td><td class="r">${money(l.price*l.qty)}</td></tr>`;
+ if(s.disc)h+=`<tr><td>Discount</td><td class="r">-${money(s.disc)}</td></tr>`;
+ if(s.trade)h+=`<tr><td>Trade-in: ${esc(s.trade.device)}${s.trade.imei?'<br>IMEI '+esc(s.trade.imei):''}</td><td class="r">-${money(s.trade.price)}</td></tr>`;
+ if(s.deposit&&s.taxMode!=='added')h+=`<tr><td>Less deposit paid</td><td class="r">-${money(s.deposit)}</td></tr>`;
+ h+=`</table><hr><table>`+(s.taxMode==='added'?`<tr><td>Subtotal (before GST)</td><td class="r">${money(s.net)}</td></tr><tr><td>GST ${D.settings.gst}%</td><td class="r">${money(s.gstFull??s.gst)}</td></tr>${s.deposit?`<tr><td>Total</td><td class="r">${money(s.grand)}</td></tr><tr><td>Less deposit paid</td><td class="r">-${money(s.deposit)}</td></tr>`:''}<tr><td class="b">${s.deposit?'BALANCE PAID':'TOTAL'}</td><td class="r b">${money(s.total)}</td></tr>`:`<tr><td class="b">TOTAL</td><td class="r b">${money(s.total)}</td></tr><tr><td>GST ${D.settings.gst}% included</td><td class="r">${money(s.gst)}</td></tr>`)+`
+ <tr><td>Paid by</td><td class="r">${s.method==='etransfer'?'e-Transfer':String(s.method).toUpperCase()}</td></tr>${s.method==='cash'&&s.tendered>s.total?`<tr><td>Cash</td><td class="r">${money(s.tendered)}</td></tr><tr><td>Change</td><td class="r">${money(s.tendered-s.total)}</td></tr>`:''}</table><hr>`;
+ if(s.kind==='sale'&&s.lines.some(l=>l.imei))h+=`<div>${D.settings.warranty}-day warranty on devices. Keep this receipt.</div>`;
+ if(s.kind==='repair')h+=`<div>${D.settings.repairWarranty}-day warranty on repair parts &amp; labour. Water damage not covered.</div>`;
+ return h+`${D.settings.footer?`<div class="c" style="margin-top:6px;font-size:11px;white-space:pre-line">${esc(D.settings.footer)}</div>`:''}<div class="c" style="margin-top:6px">Thank you! / Mahadsanid!</div><div class="c" style="margin-top:6px">${barcodeSVG('S'+s.no,30)}</div>`}
+function showReceipt(id,fresh){const s=D.sales.find(x=>x.id===id);if(!s)return;
+ openM(`<h2>${fresh?'✓ '+t('sold'):'#'+s.no}</h2>${fresh&&s.method==='cash'&&s.tendered>s.total?`<div class="tot" style="text-align:left;color:#4ade80">${t('change')}: ${money(s.tendered-s.total)}</div>`:''}
+ <div style="background:#fff;color:#111;border-radius:12px;padding:12px;font:13px/1.4 ui-monospace,monospace;margin:10px 0;max-height:46vh;overflow:auto">${receiptHTML(s).replace(/<table>/g,'<table style="width:100%">').replace(/class="r/g,'style="text-align:right" class="r').replace(/class="c"/g,'style="text-align:center"').replace(/<hr>/g,'<hr style="border:0;border-top:1px dashed #999">')}</div>
+ <div class="row"><button class="btn ghost" onclick="printHTML(receiptHTML(D.sales.find(x=>x.id==='${id}')))">${t('print')}</button><button class="btn ghost" onclick="printHTML(invoiceHTML(D.sales.find(x=>x.id==='${id}')),'a4')">📄 Invoice</button>
+ ${(C(s.cust)||{}).email?`<a class="btn ghost" style="text-decoration:none;display:inline-flex;align-items:center" href="${mailLink(s)}">📧 Email</a>`:''}${(C(s.cust)||{}).phone?`<a class="btn ghost" style="text-decoration:none;display:inline-flex;align-items:center" href="${smsReceipt(s)}">💬 Text</a>`:''}
+ ${!fresh&&s.kind==='sale'&&!s.refunded?`<button class="btn bad" onclick="refund('${id}')">${t('refund')}</button>`:''}
+ ${fresh?`<button class="btn" onclick="closeM()">${t('newSale')}</button>`:''}</div>${s.refunded?`<p class="warnc">${t('refunded')}</p>`:''}`)}
+async function refund(id){const s=D.sales.find(x=>x.id===id);if(!s||s.refunded)return;
+ const ans=await ask({title:t('refund')+' #'+s.no+' — '+money(s.total),msg:s.lines.map(l=>l.name).join(', ').slice(0,140)+'\n\n'+t('methodQ'),choices:['cash','card','etransfer'].map(m=>({v:m,l:t(m)})),pick:s.method,ok:t('refund'),danger:true});if(!ans)return;
+ if(!(await needOwner(t('refund'))))return;const method=ans.pick||s.method;
+ for(const l of s.lines){const p=P(l.pid);if(l.uid){const u=D.units.find(x=>x.id===l.uid);if(u){u.status='in';delete u.saleId;delete u.soldTs;delete u.cust}}else if(p&&p.cat!=='service'&&!p.serial)p.qty+=l.qty}
+ const r={id:uid(),no:D.seq.sale++,ts:Date.now(),by:whoName(),kind:'refund',refOf:s.id,lines:s.lines.map(l=>({...l,price:-l.price})),total:-s.total,gst:-s.gst,net:-(s.net||0),taxMode:s.taxMode,cost:-s.cost,method,cust:s.cust,tendered:0};
+ s.refunded=r.id;D.sales.push(r);logEv('money','Refund #'+r.no+' of sale #'+s.no+' — '+money(-r.total)+' ('+method+')');save();closeM();toast(t('refunded'));showReceipt(r.id)}
+
+/* ================= CAMERA SCAN ================= */
+let camStream=null,camTimer=null,zx=null,camCb=null,camLast='',camLastT=0,camCont=false,AC=null;
+function beep(bad){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=bad?220:1250;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+(bad?.25:.08))}catch(e){}}
+function loadZX(){return new Promise((res,rej)=>{if(window.ZXing)return res();const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';sc.onload=res;sc.onerror=()=>rej(new Error('load'));document.head.appendChild(sc)})}
+function camHit(val){const n=Date.now();if(val===camLast&&n-camLastT<1500)return;camLast=val;camLastT=n;beep();if(camCont){const r=$('camres');if(r)r.textContent='✓ '+val;camCb(val)}else{stopCam();camCb(val)}}
+async function camScan(cb,cont=false){camCb=cb;camCont=cont;camLast='';const o=$('camov');
+ o.innerHTML=`<div class="modal" style="max-width:520px"><button class="x" onclick="stopCam()">×</button><h2>${t('scan')}</h2><video id="camv" playsinline muted></video><div id="camres" class="b ok" style="min-height:24px;margin-top:8px"></div><button class="btn ghost" style="width:100%;margin-top:8px" onclick="stopCam()">${cont?t('done'):t('cancel')}</button></div>`;o.classList.add('on');
+ const v=$('camv');
+ try{if('BarcodeDetector' in window){const det=new BarcodeDetector();camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});v.srcObject=camStream;await v.play();
+   camTimer=setInterval(async()=>{try{const r=await det.detect(v);if(r.length)camHit(r[0].rawValue)}catch(e){}},250)}
+  else{await loadZX();zx=new ZXing.BrowserMultiFormatReader();await zx.decodeFromConstraints({video:{facingMode:'environment'}},v,r=>{if(r)camHit(r.getText())})}}
+ catch(e){stopCam();toast('Camera not available here — use a USB / Bluetooth scanner')}}
+function stopCam(){clearInterval(camTimer);if(zx){try{zx.reset()}catch(e){}zx=null}if(camStream){camStream.getTracks().forEach(x=>x.stop());camStream=null}const o=$('camov');if(o&&o.classList.contains('on')){o.classList.remove('on');o.innerHTML=''}}
+
+/* ================= BUY USED PHONE / TRADE-IN ================= */
+const CONDS=['A – like new','B – good','C – worn','D – damaged','Parts only'];
+const IDS=["Driver's licence",'Alberta ID','Passport','PR card','Other'];
+function buyForm(trade=false){window._trade=trade;const phones=D.products.filter(p=>p.cat==='phone');
+ openM(`<h2>${trade?'🔁 '+t('trade'):'📥 '+t('buyPhone')}</h2>
+ <label>${t('device')}</label><input id="bdev" list="bdl" placeholder="iPhone 12 128GB" autofocus><datalist id="bdl">${phones.map(p=>`<option value="${esc(p.name)}">`).join('')}</datalist>
+ <div class="g2"><div><label>${t('imei')} <span class="muted">(*#06#)</span></label><input id="bim" inputmode="numeric" oninput="$('bimn').innerHTML=imeiNote(this.value.trim())+dupNote(this.value.trim())"><div id="bimn"></div></div>
+ <div><label>${t('cond')}</label><select id="bcond">${CONDS.map((c,i)=>`<option ${i===1?'selected':''}>${c}</option>`).join('')}</select></div></div>
+ <div class="g3"><div><label>Storage</label><input id="bsto" placeholder="128GB"></div><div><label>Battery %</label><input id="bbat" inputmode="numeric"></div><div><label>Colour</label><input id="bcol"></div></div>
+ <div class="g2"><div><label>${trade?'Trade-in credit':t('paid')}</label><input id="bpr" inputmode="decimal"></div><div><label>${t('resale')}</label><input id="brs" inputmode="decimal"></div></div>
+ <h3>${t('seller')}</h3><div class="g2"><div><label>${t('name')} *</label><input id="bsn" value="${trade&&cartCust?esc(custName(cartCust)):''}"></div><div><label>${t('phoneNo')}</label><input id="bsp" inputmode="tel" value="${trade&&cartCust?esc((C(cartCust)||{}).phone||''):''}"></div></div>
+ <div class="g2"><div><label>${t('idType')} *</label><select id="bidt">${IDS.map(i=>`<option>${i}</option>`).join('')}</select></div><div><label>${t('idNo')} *</label><input id="bidn"></div></div>
+ <h3>${t('verified')} *</h3>
+ <label class="check"><input type="checkbox" id="bc1"> Blacklist / stolen check is clean <button class="btn ghost sm" type="button" onclick="checkBL($('bim').value)">${t('blacklist')}</button></label>
+ <label class="check"><input type="checkbox" id="bc2"> iCloud / Google account signed out (Find My OFF)</label>
+ <label class="check"><input type="checkbox" id="bc3"> Seller ID matches the person in front of me</label>
+ <label class="check"><input type="checkbox" id="bc4"> Not carrier-locked / or noted below</label>
+ <label>${t('notes')}</label><input id="bnote">
+ ${trade?'':`<label>${t('methodQ')}</label><div class="chips" id="bm">${['cash','etransfer'].map((m,i)=>`<button class="chip ${i===0?'on':''}" data-m="${m}" onclick="[...this.parentNode.children].forEach(x=>x.classList.remove('on'));this.classList.add('on')">${t(m)}</button>`).join('')}</div>`}
+ <button class="btn" style="width:100%;margin-top:12px" onclick="saveBuy()">${trade?'Add trade-in to sale':t('save')+' & print'}</button>`)}
+function dupNote(im){if(!im)return'';const u=D.units.find(u=>u.imei===im);return u?`<div class="badc small">⚠ This IMEI is already in your records (${u.status})</div>`:''}
+function checkBL(im){im=String(im||'').trim();if(!im)return toast('Enter the IMEI first');try{navigator.clipboard.writeText(im)}catch(e){}window.open('https://www.imei.info/?imei='+encodeURIComponent(im),'_blank');toast('IMEI copied — paste it if needed')}
+function saveBuy(){const g=id=>$(id).value.trim();const b={device:g('bdev'),imei:g('bim'),cond:g('bcond'),storage:g('bsto'),battery:g('bbat'),colour:g('bcol'),price:r2(num(g('bpr'))),resale:r2(num(g('brs'))),
+ seller:{name:g('bsn'),phone:g('bsp'),idType:g('bidt'),idNo:g('bidn')},note:g('bnote')};
+ if(!b.device)return toast(t('device')+'?');if(!b.imei)return toast(t('imei')+'?');if(!b.seller.name||!b.seller.idNo)return toast('Seller name and ID are required');
+ if(!['bc1','bc2','bc3'].every(id=>$(id).checked))return toast('Complete the checks first');
+ if(D.units.some(u=>u.imei===b.imei&&u.status==='in'))return toast('This IMEI is already in stock');
+ if(window._trade){if(b.price<=0)return toast('Enter trade-in credit');cartTrade=b;closeM();drawCart();return}
+ const mb=$('bm').querySelector('.on');const rec=commitBuy(b,mb?mb.dataset.m:'cash');save();closeM();toast('Saved — phone added to stock');printHTML(buyReceipt(rec))}
+function commitBuy(b,method){let p=D.products.find(p=>p.cat==='phone'&&p.name.toLowerCase()===b.device.toLowerCase());
+ if(!p){p={id:uid(),name:b.device,cat:'phone',price:b.resale||r2(b.price*1.5),cost:b.price,qty:0,min:0,serial:true,sku:'',barcode:''};D.products.push(p)}
+ const sid=findOrMakeCustomer(b.seller.name,b.seller.phone);
+ const u={id:uid(),pid:p.id,imei:b.imei,cost:b.price,price:b.resale||0,cond:b.cond,status:'in',source:method==='trade'?'trade-in':'bought',added:Date.now(),note:[b.storage,b.colour,b.battery?'batt '+b.battery+'%':'',b.note].filter(Boolean).join(' · ')};
+ D.units.push(u);const rec={id:uid(),ts:Date.now(),by:whoName(),...b,method,uid:u.id,seller:{...b.seller,cust:sid}};D.buys.push(rec);logEv('money','Bought used phone '+b.device+' IMEI '+b.imei+' for '+money(b.price)+' ('+method+')');return rec}
+function buyReceipt(b){return storeHead()+`<div class="b">PURCHASE OF USED DEVICE</div><div>${new Date(b.ts).toLocaleString()}</div><hr>
+ <table><tr><td>Device</td><td class="r">${esc(b.device)}</td></tr><tr><td>IMEI</td><td class="r">${esc(b.imei)}</td></tr><tr><td>Condition</td><td class="r">${esc(b.cond)}</td></tr>
+ <tr><td class="b">Paid</td><td class="r b">${money(b.price)} (${b.method==='trade'?'trade credit':b.method})</td></tr></table><hr>
+ <div>Seller: ${esc(b.seller.name)} ${esc(b.seller.phone)}<br>ID: ${esc(b.seller.idType)} ${esc(b.seller.idNo)}</div><hr>
+ <div class="small">I confirm I am the legal owner of this device, it is not stolen, lost, financed or under contract, and I transfer ownership to ${esc(D.settings.name)}.</div>
+ <div class="sig"></div><div>Seller signature</div>`}
+
+/* ================= REPAIRS ================= */
+let RF='active',RQ='';
+const ISSUES=['Screen','Battery','Charging port','Back glass','Camera','Speaker / mic','Water damage','Software','Button','No power'];
+const CHECKS=['Powers on','Screen / touch','Face ID / Touch ID','Cameras','Speaker / mic','Charging','Wi-Fi / signal','Buttons'];
+const NEXT={received:'repairing',repairing:'ready'};
+function vRepairs(){return `<div class="row"><input class="grow" style="flex:1" placeholder="${t('search2')}" value="${esc(RQ)}" oninput="RQ=this.value;drawRepairs()"><button class="btn" onclick="ticketForm()">${t('newTicket')}</button></div>
+ <div class="chips">${['active','received','repairing','ready','picked','all'].map(f=>`<button class="chip ${RF===f?'on':''}" onclick="RF='${f}';render()">${t(f)} ${f==='all'?'':'('+D.repairs.filter(r=>f==='active'?r.status!=='picked':r.status===f).length+')'}</button>`).join('')}</div><div class="list" id="rlist"></div>`}
+function isOverdue(r){return r.status!=='picked'&&r.status!=='ready'&&r.due&&new Date(r.due+'T23:59').getTime()<Date.now()}
+function repTotal(r){return ADD()?r2(r.quote*(1+D.settings.gst/100)):r.quote}
+function repBal(r){return r2(repTotal(r)-(r.deposit||0))}
+function drawRepairs(){const q=RQ.toLowerCase();
+ const rs=D.repairs.filter(r=>(RF==='all'||(RF==='active'?r.status!=='picked':r.status===RF))&&(!q||(()=>{const h=(r.no+' '+custName(r.cust)+' '+((C(r.cust)||{}).phone||'')+' '+r.device+' '+r.imei+' '+r.issue).toLowerCase();const d=q.replace(/\D/g,'');return h.includes(q)||(d.length>=4&&h.replace(/\D/g,'').includes(d))})())).sort((a,b)=>b.ts-a.ts);
+ $('rlist').innerHTML=rs.length?rs.map(r=>{const c=C(r.cust)||{};const od=isOverdue(r);return `<div class="tcard ${od?'overdue':''}">
+  <div class="row" style="justify-content:space-between"><div><b>#${r.no}</b> · <b>${esc(c.name||'')}</b> <span class="muted">${esc(c.phone||'')}</span></div><div><span class="badge ${r.status}">${t(r.status)}</span> ${od?`<span class="badge" style="background:var(--bad)">${t('overdue')}</span>`:''}</div></div>
+  <div style="margin:6px 0"><b>${esc(r.device)}</b> — ${esc(r.issue)} ${r.parts.length?`<span class="muted small">· ${r.parts.length} part(s)</span>`:''}</div>
+  <div class="row small muted"><span>${t('quote')}: <b style="color:var(--ink)">${money(r.quote)}</b>${ADD()?' +GST':''}</span>${r.deposit?`<span>${t('deposit')}: ${money(r.deposit)}</span>`:''}${r.status!=='picked'?`<span>${t('balance')}: <b style="color:var(--mango)">${money(repBal(r))}</b></span>`:''}<span>${t('due')}: ${r.due||'—'}</span></div>
+  <div class="row" style="margin-top:10px">${NEXT[r.status]?`<button class="btn sm ${r.status==='repairing'?'':'blue'}" onclick="advance('${r.id}')">${r.status==='received'?t('start'):t('markReady')}</button>`:''}
+  ${r.status==='ready'?`<button class="btn sm" onclick="repairPay('${r.id}')">${t('pickup')}</button>`:''}
+  ${c.phone&&r.status!=='picked'?`<a class="btn ghost sm" style="text-decoration:none;display:inline-flex;align-items:center" href="${smsLink(r)}">${t('text')}</a>`:''}
+  <button class="btn ghost sm" onclick="ticketForm('${r.id}')">${t('open')}</button><button class="btn ghost sm" onclick="printHTML(claimTag(D.repairs.find(x=>x.id==='${r.id}')))">${t('claimTag')}</button></div></div>`}).join(''):`<p class="muted">${t('noItems')}</p>`}
+function smsLink(r){const c=C(r.cust)||{};const S=D.settings;const msg=r.status==='ready'?`Hi ${c.name||''}, your ${r.device} is ready for pickup at ${S.name}. Balance: ${money(repBal(r))}. Ticket #${r.no}. Thank you!`
+ :`Hi ${c.name||''}, update from ${S.name}: your ${r.device} (ticket #${r.no}) is ${r.status==='repairing'?'being repaired now':'checked in'}. We'll text you when it's ready.`;
+ return 'sms:'+(c.phone||'').replace(/[^\d+]/g,'')+'?&body='+encodeURIComponent(msg)}
+function advance(id){const r=D.repairs.find(x=>x.id===id);r.status=NEXT[r.status];r.log.push({ts:Date.now(),s:r.status});save();drawRepairs();
+ if(r.status==='ready'&&(C(r.cust)||{}).phone){yes('#'+r.no+' '+t('ready')+' ✓','Text the customer that it is ready?',t('text').replace('💬 ','')).then(ok=>{if(ok)location.href=smsLink(r)})}}
+function ticketForm(id,cid){const r=id?D.repairs.find(x=>x.id===id):null;const c=r?C(r.cust)||{}:cid?C(cid)||{}:{};window._tk=r?JSON.parse(JSON.stringify(r)):{checks:[],parts:[]};
+ const tm=new Date(Date.now()+864e5).toISOString().slice(0,10);
+ openM(`<h2>${r?'#'+r.no+' <span class="badge '+r.status+'">'+t(r.status)+'</span>':t('newTicket')}</h2>
+ <div class="g2"><div><label>${t('name')} *</label><input id="tn" value="${esc(c.name||'')}" ${r?'':'autofocus oninput="tkSuggest()"'}></div><div><label>${t('phoneNo')} *</label><input id="tp" inputmode="tel" value="${esc(c.phone||'')}" ${r?'':'oninput="tkSuggest()"'}></div></div><div id="tksug"></div>
+ <div class="g2"><div><label>${t('device')} *</label><input id="td" value="${esc(r?r.device:'')}" placeholder="iPhone 13"></div><div><label>${t('imei')}</label><input id="ti" value="${esc(r?r.imei:'')}"></div></div>
+ <label>${t('issue')} *</label><div class="chips">${ISSUES.map(i=>`<button class="chip" onclick="const e=$('tis');e.value=e.value?e.value+', '+'${i}':'${i}'">${i}</button>`).join('')}</div><input id="tis" value="${esc(r?r.issue:'')}">
+ <div class="g2"><div><label>${t('passcode')}</label><input id="tpc" value="${esc(r?r.pass:'')}"></div><div><label>${t('due')}</label><input id="tdu" type="date" value="${r?r.due:tm}"></div></div>
+ <label>${t('checks')}</label><div class="chips" id="tchk">${CHECKS.map(k=>`<button class="chip ${_tk.checks.includes(k)?'on':''}" onclick="this.classList.toggle('on')">${k}</button>`).join('')}</div>
+ <div class="g2"><div><label>${t('quote')} (${gstTag()})</label><input id="tq" inputmode="decimal" value="${r?r.quote:''}"></div><div><label>${t('deposit')}</label><input id="tdp" inputmode="decimal" value="${r?r.deposit||'':''}" ${r&&r.deposit?'disabled':''}></div></div>
+ ${r&&r.deposit?'':`<div class="chips" id="tdm">${['cash','card','etransfer'].map((m,i)=>`<button class="chip ${i===0?'on':''}" data-m="${m}" onclick="[...this.parentNode.children].forEach(x=>x.classList.remove('on'));this.classList.add('on')">${t(m)}</button>`).join('')}</div>`}
+ <label>${t('parts')}</label><div id="tparts"></div><button class="btn ghost sm" onclick="addPartPick()">${t('addPart')}</button>
+ <label>${t('notes')}</label><textarea id="tno" rows="2">${esc(r?r.notes:'')}</textarea>
+ ${r&&r.log?`<p class="small muted">${r.log.map(l=>t(l.s)+' '+fmtDT(l.ts)).join(' → ')}</p>`:''}
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="saveTicket('${id||''}')">${t('save')}${r?'':' & '+t('claimTag').replace('🏷 ','')}</button>${r?`<button class="btn ghost" onclick="printHTML(estimateHTML(D.repairs.find(x=>x.id==='${id}')),'a4')">📄 Estimate</button>`:''}
+ ${r&&r.status!=='picked'?`<button class="btn bad" onclick="delTicket('${id}')">${t('del')}</button>`:''}</div>`);drawParts()}
+function drawParts(){$('tparts').innerHTML=_tk.parts.map((p,i)=>`<div class="line"><div class="nm">${esc(p.name)}</div><span class="muted small">${t('cost')} ${money(p.cost)}</span>${_tk.parts[i].saved?'':`<button class="qb" onclick="_tk.parts.splice(${i},1);drawParts()">×</button>`}</div>`).join('')}
+function addPartPick(){const ps=D.products.filter(p=>p.cat==='part');const box=document.createElement('div');
+ box.innerHTML=`<select id="tpp" style="margin:6px 0"><option value="">— choose part —</option>${ps.map(p=>`<option value="${p.id}" ${stockOf(p)<=0?'disabled':''}>${esc(p.name)} (${stockOf(p)})</option>`).join('')}</select>`;
+ $('tparts').appendChild(box);$('tpp').onchange=e=>{const p=P(e.target.value);if(p){_tk.parts.push({pid:p.id,name:p.name,cost:p.cost});drawParts()}}}
+function saveTicket(id){const g=x=>$(x).value.trim();const name=g('tn'),phone=g('tp'),device=g('td'),issue=g('tis');
+ if(!name||!phone||!device||!issue)return toast('Name, phone, device and problem are required');
+ const checks=[...$('tchk').querySelectorAll('.on')].map(b=>b.textContent);
+ let r=id?D.repairs.find(x=>x.id===id):null;const isNew=!r;
+ if(!r){r={id:uid(),no:D.seq.repair++,ts:Date.now(),by:whoName(),status:'received',parts:[],deposit:0,log:[{ts:Date.now(),s:'received'}]};D.repairs.push(r)}
+ r.cust=findOrMakeCustomer(name,phone);Object.assign(r,{device,imei:g('ti'),issue,pass:g('tpc'),due:g('tdu'),checks,quote:r2(num(g('tq'))),notes:g('tno')});
+ // parts: deduct new ones from stock
+ const newParts=_tk.parts.filter(p=>!p.saved);const removed=r.parts.filter(p=>!_tk.parts.some(q=>q.key===p.key));
+ removed.forEach(p=>{const pp=P(p.pid);if(pp)pp.qty++});
+ newParts.forEach(p=>{const pp=P(p.pid);if(pp)pp.qty--;p.saved=true;p.key=uid()});r.parts=_tk.parts;
+ const dep=r2(num(g('tdp')));if(!r.deposit&&dep>0){const mb=$('tdm')&&$('tdm').querySelector('.on');const m=mb?mb.dataset.m:'cash';
+  const s={id:uid(),no:D.seq.sale++,ts:Date.now(),by:whoName(),kind:'deposit',lines:[{name:'Deposit – repair #'+r.no+' '+device,price:dep,cost:0,qty:1}],total:dep,gst:gstOf(dep),cost:0,method:m,tendered:dep,cust:r.cust,repair:r.id};
+  D.sales.push(s);r.deposit=dep;r.depSale=s.id}
+ save();closeM();if(V==='repairs')drawRepairs();toast(t('save')+' ✓');if(isNew)printHTML(claimTag(r))}
+async function delTicket(id){if(!(await yes(t('del')+'?','Delete this ticket? Parts go back to stock. The deposit is NOT refunded automatically.',t('del'),true)))return;if(!(await needOwner(t('del'))))return;const r=D.repairs.find(x=>x.id===id);logEv('stock','Deleted repair ticket #'+r.no+' ('+r.device+')');
+ r.parts.forEach(p=>{const pp=P(p.pid);if(pp)pp.qty++});D.repairs=D.repairs.filter(x=>x.id!==id);save();closeM();drawRepairs()}
+function claimTag(r){const c=C(r.cust)||{};return storeHead()+`<div class="c b" style="font-size:20px">REPAIR #${r.no}</div><div class="c">${barcodeSVG('R'+r.no,34)}</div>
+ <table><tr><td>Date</td><td class="r">${new Date(r.ts).toLocaleString()}</td></tr><tr><td>Customer</td><td class="r">${esc(c.name)}<br>${esc(c.phone)}</td></tr>
+ <tr><td>Device</td><td class="r">${esc(r.device)}</td></tr>${r.imei?`<tr><td>IMEI</td><td class="r">${esc(r.imei)}</td></tr>`:''}<tr><td>Problem</td><td class="r">${esc(r.issue)}</td></tr>
+ <tr><td>Working on arrival</td><td class="r">${esc(r.checks.join(', ')||'Not tested')}</td></tr><tr><td>Ready by</td><td class="r">${esc(r.due||'')}</td></tr></table><hr>
+ <table><tr><td>Quote</td><td class="r">${money(r.quote)}</td></tr>${ADD()?`<tr><td>GST ${D.settings.gst}%</td><td class="r">${money(repTotal(r)-r.quote)}</td></tr>`:''}<tr><td>Deposit</td><td class="r">${money(r.deposit)}</td></tr><tr><td class="b">Balance</td><td class="r b">${money(repBal(r))}</td></tr></table><hr>
+ <div style="font-size:10px">${esc(D.settings.terms)}</div><div class="sig"></div><div>Customer signature</div>`}
+function repairPay(id){const r=D.repairs.find(x=>x.id===id);const bal=repBal(r);
+ openM(`<h2>${t('pickup')} — #${r.no}</h2><p>${esc(r.device)} — ${esc(r.issue)}</p><table class="t"><tr><td>${t('quote')}</td><td class="r">${money(r.quote)}</td></tr>${ADD()?`<tr><td>GST ${D.settings.gst}%</td><td class="r">+${money(repTotal(r)-r.quote)}</td></tr>`:''}<tr><td>${t('deposit')}</td><td class="r">-${money(r.deposit)}</td></tr></table>
+ <div class="tot">${money(bal)}</div><label>${t('methodQ')}</label><div class="pay">${['cash','card','etransfer'].map(m=>`<button class="btn" onclick="finishRepair('${id}','${m}')">${t(m)}</button>`).join('')}</div>`)}
+function finishRepair(id,method){const r=D.repairs.find(x=>x.id===id);const bal=repBal(r);const pc=r2(r.parts.reduce((a,p)=>a+p.cost,0));
+ const s={id:uid(),no:D.seq.sale++,ts:Date.now(),by:whoName(),kind:'repair',lines:[{name:'Repair: '+r.device+' – '+r.issue,price:r.quote,cost:pc,qty:1,imei:''}],deposit:r.deposit,total:bal,gst:gstOf(bal),net:r.quote,gstFull:r2(repTotal(r)-r.quote),grand:repTotal(r),taxMode:ADD()?'added':'included',cost:pc,method,tendered:bal,cust:r.cust,repair:r.id};
+ D.sales.push(s);r.status='picked';r.saleId=s.id;r.log.push({ts:Date.now(),s:'picked'});save();closeM();drawRepairs();showReceipt(s.id,true)}
+
+/* ================= MENU ================= */
+function vMenu(){const low=D.products.filter(p=>p.cat!=='service'&&stockOf(p)<=p.min).length;
+ const items=[['stock','📦',t('stock'),low?`<span class="warnc">${low} ${t('lowStock').toLowerCase()}</span>`:D.products.length+' items'],['phones','📱',t('phones'),D.units.filter(u=>u.status==='in').length+' '+t('inStock')],
+ ['buy','📥',t('buyPhone'),'IMEI, seller ID, checks'],['customers','👥',t('customers'),D.customers.length+''],['orders','🚚',t('orders'),D.pos.filter(p=>p.status==='open').length+' '+t('open').toLowerCase()],
+ ['labels','🏷',t('labels'),'Code 128'],['sales','🧾',t('salesH'),'Reprint, refund'],['reports','📊',t('reports'),t('profit')+', GST, cash'],['cloud','☁',t('cloudT'),cloudOn()?'✓ '+esc(CL.cfg.storeName||''):'Not connected'],['admin','🛡',t('adminT'),adminOn()?(isAdmin()?'✓ Signed in':'🔒 Locked'):'Set up admin login'],['settings','⚙️',t('settings'),''],['backup','💾',t('backup'),t('lastBk')+': '+(D.lastBackup?fmtD(D.lastBackup):t('never'))]];
+ return dashHTML()+`<div class="menu">${items.map(([k,ic,tt,ds])=>`<button class="mi" onclick="${k==='buy'?'buyForm()':PROT.includes(k)?`ownerGo('${k}')`:`go('menu','${k}')`}"><div class="ic">${ic}</div><div class="tt">${tt}</div><div class="ds">${ds}</div></button>`).join('')}</div>`}
+function vBuy(){return ''}
+function dashHTML(){const f=dayStart();const ss=D.sales.filter(s=>s.ts>=f);const rev=r2(ss.reduce((a,s)=>a+s.total,0));const open=D.repairs.filter(r=>r.status!=='picked').length;
+ const ready=D.repairs.filter(r=>r.status==='ready').length;const od=D.repairs.filter(isOverdue).length;const low=D.products.filter(p=>p.cat!=='service'&&stockOf(p)<=p.min).length;
+ return `<div class="dash"><div class="kpi" onclick="RP='today';go('menu','reports')"><div class="v">${money(rev)}</div><div class="l">${t('today')} · ${ss.filter(s=>s.kind!=='refund').length} ${t('txns').toLowerCase()}</div></div>
+ <div class="kpi" onclick="RF='active';go('repairs')"><div class="v">${open}</div><div class="l">${t('repairs')} · ${t('active').toLowerCase()}${od?` · <span class="badc">${od} ${t('overdue').toLowerCase()}</span>`:''}</div></div>
+ <div class="kpi" onclick="RF='ready';go('repairs')"><div class="v ok">${ready}</div><div class="l">${t('ready')}</div></div>
+ <div class="kpi" onclick="STC='low';go('menu','stock')"><div class="v ${low?'warnc':''}">${low}</div><div class="l">${t('lowStock')}</div></div></div>`}
+
+/* ---------- STOCK ---------- */
+let STQ='',STC='all';
+function vStock(){return `<div class="row"><h2 style="margin:0">${t('stock')}</h2><span style="flex:1"></span>
+ ${SCN?`<button class="btn warn" onclick="drawScan()">▶ ${SCN.mode==='receive'?t('receiveScan'):t('countScan')} (${Object.keys(SCN.items).length})</button>`:''}
+ <button class="btn blue" onclick="scanSession('receive')">📥 ${t('receiveScan')}</button><button class="btn ghost" onclick="scanSession('count')">🔢 ${t('countScan')}</button><button class="btn" onclick="productForm()">${t('newProduct')}</button></div>
+ <div class="scanbox"><span style="font-size:22px">▮▯▮</span><input id="stsc" style="flex:1" placeholder="${t('scanHere')}" autocomplete="off" onkeydown="if(event.key==='Enter')stockScan(this.value)"><button class="btn ghost sm" onclick="camScan(stockScan)">${t('scan')}</button></div>
+ <div class="row" style="margin-top:10px"><input style="flex:1" placeholder="${t('search2')}" value="${esc(STQ)}" oninput="STQ=this.value;drawStock()"></div>
+ <div class="chips">${['all','phone','accessory','part','service','low'].map(c=>`<button class="chip ${STC===c?'on':''}" onclick="STC='${c}';drawStock();[...this.parentNode.children].forEach(x=>x.classList.remove('on'));this.classList.add('on')">${c==='low'?t('lowStock'):t(c)}</button>`).join('')}</div>
+ <div class="card" style="overflow:auto"><table class="t" id="stt"></table></div>`}
+function drawStock(){const q=STQ.toLowerCase();const ps=D.products.filter(p=>(STC==='all'||p.cat===STC||(STC==='low'&&p.cat!=='service'&&stockOf(p)<=p.min))&&(p.name+' '+p.sku+' '+p.barcode).toLowerCase().includes(q));
+ $('stt').innerHTML=`<tr><th>${t('name')}</th><th>${t('category')}</th><th>${t('sku')}</th><th class="r">${t('price')}</th><th class="r">${t('cost')}</th><th class="r">${t('qty')}</th></tr>`+
+ ps.map(p=>{const s=stockOf(p);return `<tr class="click" onclick="productForm('${p.id}')"><td><b>${esc(p.name)}</b>${p.serial?' <span class="badge">IMEI</span>':''}</td><td>${t(p.cat)}</td><td class="muted">${esc(p.sku)}</td><td class="r">${p.cat==='part'?'—':money(p.price)}</td><td class="r">${money(p.cost)}</td>
+ <td class="r b ${s!==Infinity&&s<=p.min?'warnc':''}">${s===Infinity?'—':s}</td></tr>`}).join('')}
+function productForm(id,code){const p=id?P(id):{name:'',cat:'accessory',sku:'',barcode:code||'',price:'',cost:'',qty:0,min:2,serial:false};
+ const units=id&&p.serial?D.units.filter(u=>u.pid===id&&u.status==='in'):[];
+ openM(`<h2>${id?t('edit'):t('newProduct')}</h2><label>${t('name')}</label><input id="pn" value="${esc(p.name)}" autofocus>
+ <div class="g2"><div><label>${t('category')}</label><select id="pc" onchange="$('pser').style.display=this.value==='phone'?'':'none'">${['phone','accessory','part','service'].map(c=>`<option value="${c}" ${p.cat===c?'selected':''}>${t(c)}</option>`).join('')}</select></div>
+ <div><label>${t('sku')}</label><input id="psku" value="${esc(p.sku)}"></div></div>
+ <div class="g2"><div><label>${t('price')} (${gstTag()})</label><input id="pp" inputmode="decimal" value="${p.price}"></div><div><label>${t('cost')}</label><input id="pco" inputmode="decimal" value="${p.cost}"></div></div>
+ <div class="g3"><div><label>${t('barcode')}</label><div class="row" style="flex-wrap:nowrap;gap:4px"><input id="pb" value="${esc(p.barcode)}" placeholder="scan" onkeydown="if(event.key==='Enter'){event.preventDefault();beep();$('pq').focus()}"><button class="qb" title="${t('scan')}" onclick="camScan(v=>{$('pb').value=v})">📷</button><button class="qb" title="${t('autoBc')}" onclick="$('pb').value=newBarcode()">＋</button></div></div><div><label>${t('qty')}</label><input id="pq" inputmode="numeric" value="${p.serial?units.length:p.qty}" ${p.serial?'disabled':''}></div><div><label>${t('min')}</label><input id="pm" inputmode="numeric" value="${p.min}"></div></div>
+ <label class="check" id="pser" style="${p.cat==='phone'?'':'display:none'}"><input type="checkbox" id="ps" ${p.serial?'checked':''} ${id&&p.serial&&units.length?'disabled':''}> ${t('serialQ')}</label>
+ ${p.serial||!id?`<div id="punits" ${p.serial||p.cat==='phone'?'':'style="display:none"'}><label>${t('addUnits')}</label><textarea id="pu" rows="3" placeholder="356789104523671"></textarea>
+  <div class="g2"><div><label>${t('cond')}</label><select id="puc"><option>New</option>${CONDS.map(c=>`<option>${c}</option>`).join('')}</select></div><div><label>${t('cost')} / unit</label><input id="puco" inputmode="decimal" value="${p.cost}"></div></div></div>`:''}
+ ${units.length?`<p class="muted small">${t('inStock')}: ${units.map(u=>esc(u.imei)).join(', ')}</p>`:''}
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="saveProduct('${id||''}')">${t('save')}</button>${SCN&&SCN.pending?`<button class="btn ghost" onclick="SCN.pending=null;drawScan()">← ${t('scanned')}</button>`:''}${id?`<button class="btn ghost" onclick="closeM();labelFor('${id}')">🏷 Label</button><button class="btn bad" onclick="delProduct('${id}')">${t('del')}</button>`:''}</div>`)}
+function saveProduct(id){const g=x=>$(x)?$(x).value.trim():'';const name=g('pn');if(!name)return toast(t('name')+'?');
+ const bc=g('pb');if(bc&&D.products.some(x=>x.barcode===bc&&x.id!==id))return toast(t('bcUsed'));
+ let p=id?P(id):null;if(!p){p={id:uid()};D.products.push(p)}
+ const cat=g('pc');const serial=cat==='phone'&&$('ps').checked;
+ Object.assign(p,{name,cat,sku:g('psku'),barcode:g('pb'),price:r2(num(g('pp'))),cost:r2(num(g('pco'))),min:parseInt(g('pm'))||0,serial});if(!serial)p.qty=parseInt(g('pq'))||0;
+ if(serial&&$('pu')){const ims=g('pu').split(/[\s,]+/).filter(Boolean);let added=0,dup=0;
+  ims.forEach(im=>{if(D.units.some(u=>u.imei===im&&u.status==='in')){dup++;return}D.units.push({id:uid(),pid:p.id,imei:im,cost:r2(num(g('puco'))||p.cost),cond:g('puc'),status:'in',source:'stock',added:Date.now()});added++});
+  if(added||dup)toast(added+' added'+(dup?', '+dup+' duplicate skipped':''))}
+ save();if(SCN&&SCN.pending){const c=SCN.pending;SCN.pending=null;SCN.unknown=SCN.unknown.filter(x=>x!==c);return drawScan()}closeM();render()}
+async function delProduct(id){if(D.units.some(u=>u.pid===id&&u.status==='in'))return toast('Sell or remove its phones first');if(!(await yes(t('del')+'?',(P(id)||{}).name,t('del'),true)))return;if(!(await needOwner(t('del'))))return;logEv('stock','Deleted product: '+(P(id)||{}).name);D.products=D.products.filter(p=>p.id!==id);save();closeM();render()}
+
+/* ---------- SCAN TO STOCK ---------- */
+let SCN=null;
+const findCode=v=>D.products.find(p=>p.barcode===v||(p.sku&&p.sku.toLowerCase()===v.toLowerCase()));
+function stockScan(v){v=String(v||'').trim();const e=$('stsc');if(e)e.value='';if(!v)return;
+ const u=D.units.find(u=>u.imei===v);if(u){beep();return unitView(u.id)}
+ const p=findCode(v);if(p){beep();return productForm(p.id)}
+ beep(true);toast(t('unknown')+': '+v);productForm(null,v)}
+function scanSession(mode){if(!SCN||SCN.mode!==mode)SCN={mode,items:{},unknown:[]};drawScan()}
+function scanAdd(v){v=String(v||'').trim();if(!v||!SCN)return;const p=findCode(v);
+ if(p&&!p.serial){SCN.items[p.id]=(SCN.items[p.id]||0)+1;beep()}
+ else if(p){beep(true);toast(esc(p.name)+': add phones by IMEI (open the product)')}
+ else{const u=D.units.find(u=>u.imei===v);if(u){beep();toast('IMEI '+v+' — '+u.status)}else{beep(true);if(!SCN.unknown.includes(v))SCN.unknown.push(v)}}
+ drawScan()}
+function scanNew(i){const c=SCN.unknown[i];SCN.pending=c;productForm(null,c)}
+function scanQty(id,d){SCN.items[id]=Math.max(0,(SCN.items[id]||0)+d);drawScan()}
+function drawScan(){const s=SCN,rc=s.mode==='receive';const ids=Object.keys(s.items);const tot=ids.reduce((a,id)=>a+s.items[id],0);
+ openM(`<h2>${rc?'📥 '+t('receiveScan'):'🔢 '+t('countScan')}</h2>
+ <p class="muted small">${rc?'Every scan adds 1. When the delivery is done, tap Apply.':'Scan every item on the shelf. Apply sets stock to what you counted — only for items you scanned.'}</p>
+ <div class="scanbox"><span style="font-size:22px">▮▯▮</span><input id="scin" style="flex:1" placeholder="${t('scanHere')}" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')scanAdd(this.value)"><button class="btn ghost sm" onclick="camScan(scanAdd,true)">${t('scan')}</button></div>
+ <table class="t" style="margin-top:10px"><tr><th>Item</th><th class="r">${rc?'+ '+t('qty'):t('counted')}</th><th class="r">${rc?'New stock':'Was'}</th></tr>
+ ${ids.map(id=>{const p=P(id);if(!p)return'';const n=s.items[id],df=n-p.qty;return `<tr><td>${esc(p.name)}</td><td class="r" style="white-space:nowrap"><button class="qb" onclick="scanQty('${id}',-1)">−</button> <b style="display:inline-block;min-width:26px;text-align:center">${n}</b> <button class="qb" onclick="scanQty('${id}',1)">+</button></td>
+ <td class="r">${rc?p.qty+n:p.qty+(df?` <span class="${df<0?'badc':'ok'}">(${df>0?'+':''}${df})</span>`:' ✓')}</td></tr>`}).join('')||`<tr><td colspan="3" class="muted">${t('noItems')}</td></tr>`}</table>
+ ${ids.length?`<p class="small muted">${tot} scanned · ${ids.length} products</p>`:''}
+ ${s.unknown.length?`<h3 class="warnc">${t('unknown')}</h3>${s.unknown.map((c,i)=>`<div class="line"><div class="nm"><b>${esc(c)}</b></div><button class="btn sm" onclick="scanNew(${i})">${t('newProduct')}</button><button class="qb" onclick="SCN.unknown.splice(${i},1);drawScan()">×</button></div>`).join('')}`:''}
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="applyScan()" ${ids.length?'':'disabled'}>✓ ${t('apply')}</button><button class="btn ghost" onclick="SCN=null;closeM();render()">${t('cancel')}</button></div>`)}
+function applyScan(){const s=SCN;let n=0;for(const[id,q]of Object.entries(s.items)){const p=P(id);if(!p||p.serial)continue;if(s.mode==='receive')p.qty+=q;else p.qty=q;n++}
+ logEv('stock',(s.mode==='receive'?'Received stock: ':'Stock count: ')+n+' products');(D.counts=D.counts||[]).push({ts:Date.now(),mode:s.mode,items:s.items});SCN=null;save();closeM();render();toast(n+' '+t('updated')+' ✓')}
+
+/* ---------- PHONES (IMEI) ---------- */
+let PHQ='',PHF='in';
+function vPhones(){return `<div class="row"><h2 style="margin:0">${t('phones')}</h2><span style="flex:1"></span><button class="btn" onclick="buyForm()">📥 ${t('buyPhone')}</button></div>
+ <div class="row" style="margin-top:10px"><input style="flex:1" placeholder="IMEI / model…" value="${esc(PHQ)}" oninput="PHQ=this.value;drawPhones()"><button class="btn ghost" onclick="camScan(v=>{PHQ=v;render()})">${t('scan')}</button></div>
+ <div class="chips">${[['in',t('inStock')],['sold','Sold'],['returned','Returned / removed'],['all',t('all')]].map(([k,l])=>`<button class="chip ${PHF===k?'on':''}" onclick="PHF='${k}';render()">${l}</button>`).join('')}</div>
+ <div class="card" style="overflow:auto"><table class="t" id="pht"></table></div>`}
+function drawPhones(){const q=PHQ.toLowerCase();const us=D.units.filter(u=>(PHF==='all'||u.status===PHF)&&(u.imei+' '+((P(u.pid)||{}).name||'')).toLowerCase().includes(q)).sort((a,b)=>b.added-a.added);
+ $('pht').innerHTML=`<tr><th>IMEI</th><th>Model</th><th>${t('cond')}</th><th class="r">${t('cost')}</th><th class="r">${t('price')}</th><th>${t('status')}</th><th>Days</th></tr>`+
+ us.map(u=>{const p=P(u.pid)||{};const days=Math.floor(((u.soldTs||Date.now())-u.added)/864e5);return `<tr class="click" onclick="unitView('${u.id}')"><td><b>${esc(u.imei)}</b></td><td>${esc(p.name)}</td><td>${esc(u.cond)}</td><td class="r">${money(u.cost)}</td><td class="r">${money(u.price||p.price)}</td>
+ <td><span class="badge ${u.status}">${u.status}</span> <span class="muted small">${esc(u.source||'')}</span></td><td class="${u.status==='in'&&days>60?'warnc':''}">${days}</td></tr>`}).join('')}
+function unitView(id){const u=D.units.find(x=>x.id===id);const p=P(u.pid)||{};const b=D.buys.find(x=>x.uid===id);const s=u.saleId?D.sales.find(x=>x.id===u.saleId):null;
+ openM(`<h2>${esc(p.name)}</h2><p><b style="font-size:20px">${esc(u.imei)}</b> ${imeiNote(u.imei)} <span class="badge ${u.status}">${u.status}</span></p>
+ <div class="g2"><div><label>${t('cond')}</label><select id="ucd">${['New',...CONDS].map(c=>`<option ${u.cond===c?'selected':''}>${c}</option>`).join('')}</select></div><div><label>${t('price')} (blank = ${money(p.price)})</label><input id="upr" inputmode="decimal" value="${u.price||''}"></div></div>
+ <label>${t('notes')}</label><input id="unt" value="${esc(u.note||'')}">
+ <h3>${t('history')}</h3><p class="small">Added ${fmtDT(u.added)} · ${t('cost')} ${money(u.cost)} · ${esc(u.source||'')}</p>
+ ${b?`<p class="small">${t('seller')}: <b>${esc(b.seller.name)}</b> ${esc(b.seller.phone)} · ${esc(b.seller.idType)} ${esc(b.seller.idNo)} · paid ${money(b.price)} (${b.method})</p>`:''}
+ ${s?`<p class="small">Sold ${fmtDT(s.ts)} · #${s.no} · ${money((s.lines.find(l=>l.uid===id)||{}).price)} ${s.cust?'to <b>'+esc(custName(s.cust))+'</b>':''} <a style="color:var(--mango);cursor:pointer" onclick="showReceipt('${s.id}')">receipt</a></p>`:''}
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="const u=D.units.find(x=>x.id==='${id}');u.cond=$('ucd').value;u.price=r2(num($('upr').value));u.note=$('unt').value;save();closeM();render()">${t('save')}</button>
+ <button class="btn ghost" onclick="checkBL('${esc(u.imei)}')">${t('blacklist')}</button><button class="btn ghost" onclick="labelUnit('${id}')">🏷 Label</button>
+ ${u.status==='in'?`<button class="btn warn" onclick="unitRemove('${id}')">Remove</button>`:''}
+ ${u.status==='returned'?`<button class="btn ghost" onclick="const u=D.units.find(x=>x.id==='${id}');u.status='in';delete u.soldTs;save();closeM();render()">Back to stock</button>`:''}</div>`)}
+
+/* ---------- CUSTOMERS ---------- */
+let CQ='',CSORT='recent',IMP=null;
+const digits=v=>String(v||'').replace(/\D/g,'');
+const ph10=v=>{const d=digits(v);return d.length===11&&d[0]==='1'?d.slice(1):d};
+function fmtPhone(p){const d=ph10(p);return d.length===10?`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`:String(p||'')}
+function custSpend(id){return r2(D.sales.filter(s=>s.cust===id).reduce((a,s)=>a+s.total,0))}
+function custIndex(){const m={};const g=id=>m[id]||(m[id]={last:0,days:new Set(),spent:0,imeis:new Set(),nos:new Set(),reps:0});const day=ts=>new Date(ts).toDateString();
+ for(const s of D.sales)if(s.cust){const x=g(s.cust);x.spent+=s.total;x.last=Math.max(x.last,s.ts);x.days.add(day(s.ts));x.nos.add(String(s.no));x.nos.add('S'+s.no);s.lines.forEach(l=>l.imei&&x.imeis.add(l.imei))}
+ for(const r of D.repairs)if(r.cust){const x=g(r.cust);x.reps++;x.last=Math.max(x.last,r.ts);x.days.add(day(r.ts));x.nos.add('R'+r.no);if(r.imei)x.imeis.add(r.imei)}
+ for(const b of D.buys){const id=b.seller&&b.seller.cust;if(!id)continue;const x=g(id);x.last=Math.max(x.last,b.ts);x.days.add(day(b.ts));if(b.imei)x.imeis.add(b.imei)}
+ for(const x of Object.values(m))x.spent=r2(x.spent);return m}
+const lastOf=(ix,c)=>Math.max((ix[c.id]||{}).last||0,c.since||0);
+function custSearch(q,ix){ix=ix||custIndex();const toks=String(q||'').toLowerCase().split(/\s+/).filter(Boolean);if(!toks.length)return [];const out=[];
+ for(const c of D.customers){const x=ix[c.id]||{};const nm=(c.name||'').toLowerCase(),words=nm.split(/[\s\-'.]+/),pd=ph10(c.phone),em=(c.email||'').toLowerCase(),ex=((c.notes||'')+' '+(c.addr||'')).toLowerCase();let sc=0,all=true;
+  for(const tk of toks){const d=digits(tk),tn=tk.replace(/^#/,'').toUpperCase();let v=0;
+   if(d.length>=3&&pd&&!/^[a-z#]/i.test(tk)){if(pd===ph10(d))v=50;else if(pd.includes(d))v=30}
+   if(words.some(w=>w.startsWith(tk)))v=Math.max(v,30);else if(tk.length>=2&&nm.includes(tk))v=Math.max(v,15);
+   if(tk.length>=2&&em.includes(tk))v=Math.max(v,20);
+   if(d.length>=6&&x.imeis&&[...x.imeis].some(i=>i.includes(d)))v=Math.max(v,40);
+   if(x.nos&&x.nos.has(tn))v=Math.max(v,45);
+   if(!v&&tk.length>=3&&ex.includes(tk))v=5;
+   if(!v){all=false;break}sc+=v}
+  if(all)out.push({c,sc,last:lastOf(ix,c)})}
+ return out.sort((a,b)=>b.sc-a.sc||b.last-a.last).map(o=>o.c)}
+function vCustomers(){return `<div class="row"><h2 style="margin:0">${t('customers')} <span class="muted small">(${D.customers.length})</span></h2><span style="flex:1"></span>
+ <button class="btn ghost" onclick="importCustForm()">📥 Import old customers</button><button class="btn ghost" onclick="dupCust()">🔀 Find duplicates</button><button class="btn" onclick="custForm()">${t('newCustomer')}</button></div>
+ <div class="scanbox"><span style="font-size:20px">🔍</span><input id="cuq" style="flex:1" placeholder="Name, phone (any part), email, IMEI or receipt / ticket #" value="${esc(CQ)}" oninput="CQ=this.value;drawCustomers()" autocomplete="off"></div>
+ <div class="chips">${[['recent','Recent'],['az','A–Z'],['top','Top spenders'],['old','Not seen in 6+ months']].map(([k,l])=>`<button class="chip ${CSORT===k?'on':''}" onclick="CSORT='${k}';render()">${l}</button>`).join('')}</div>
+ <div class="card" style="overflow:auto"><table class="t" id="cut"></table><div id="cumore" class="small muted" style="margin-top:8px"></div></div>`}
+function drawCustomers(){const ix=custIndex();let cs;const L=c=>lastOf(ix,c);
+ if(CQ.trim())cs=custSearch(CQ,ix);else{cs=[...D.customers];
+  if(CSORT==='az')cs.sort((a,b)=>(a.name||'').localeCompare(b.name||''));else if(CSORT==='top')cs.sort((a,b)=>((ix[b.id]||{}).spent||0)-((ix[a.id]||{}).spent||0));
+  else if(CSORT==='old'){const cut=Date.now()-182*864e5;cs=cs.filter(c=>L(c)&&L(c)<cut).sort((a,b)=>L(a)-L(b))}else cs.sort((a,b)=>L(b)-L(a)||(b.created||0)-(a.created||0))}
+ $('cut').innerHTML=`<tr><th>${t('name')}</th><th>${t('phoneNo')}</th><th>Last visit</th><th class="r">Visits</th><th class="r">${t('repairs')}</th><th class="r">Spent</th></tr>`+cs.slice(0,300).map(c=>{const x=ix[c.id]||{};const l=L(c);
+  return `<tr class="click" onclick="custForm('${c.id}')"><td><b>${esc(c.name)}</b>${c.email?`<div class="small muted">${esc(c.email)}</div>`:''}</td><td style="white-space:nowrap">${esc(fmtPhone(c.phone))}</td><td class="small">${l?fmtD(l):'—'}</td><td class="r">${x.days?x.days.size:0}</td><td class="r">${x.reps||0}</td><td class="r">${money(x.spent||0)}</td></tr>`}).join('')
+  ||`<tr><td colspan="6" class="muted">${CQ.trim()?'No customer found. Try fewer letters or the last 4 digits of the phone — or tap “+ New customer”.':t('noItems')}</td></tr>`;
+ $('cumore').textContent=cs.length>300?'Showing 300 of '+cs.length+' — search to narrow it down':''}
+function custForm(id){const c=id?C(id):{name:'',phone:'',email:'',notes:'',addr:''};if(!c)return;const x=id?(custIndex()[id]||{}):{};
+ const sales=id?D.sales.filter(s=>s.cust===id).sort((a,b)=>b.ts-a.ts):[];const reps=id?D.repairs.filter(r=>r.cust===id).sort((a,b)=>b.ts-a.ts):[];const sold=id?D.buys.filter(b=>b.seller&&b.seller.cust===id):[];
+ const devs=id?[...new Set([...D.units.filter(u=>u.cust===id).map(u=>((P(u.pid)||{}).name||'Phone')+' · IMEI '+u.imei),...reps.map(r=>r.device+(r.imei?' · IMEI '+r.imei:''))])]:[];const l=id?Math.max(x.last||0,c.since||0):0;
+ openM(`<h2>${id?'👤 '+esc(c.name):t('newCustomer')}</h2>
+ ${id?`<div class="kpis" style="margin-bottom:10px"><div class="kpi"><div class="v">${money(x.spent||0)}</div><div class="l">Spent</div></div><div class="kpi"><div class="v">${x.days?x.days.size:0}</div><div class="l">Visits</div></div><div class="kpi"><div class="v" style="font-size:17px">${l?fmtD(l):'—'}</div><div class="l">Last visit</div></div>${c.since?`<div class="kpi"><div class="v" style="font-size:17px">${fmtD(c.since)}</div><div class="l">Customer since</div></div>`:''}</div>
+ <div class="row"><button class="btn sm" onclick="closeM();cartCust='${id}';go('sell')">🛒 New sale</button><button class="btn sm blue" onclick="closeM();go('repairs');ticketForm(null,'${id}')">🔧 New repair</button>${c.phone?`<a class="btn ghost sm" style="text-decoration:none;display:inline-flex;align-items:center" href="tel:${digits(c.phone)}">📞 Call</a><a class="btn ghost sm" style="text-decoration:none;display:inline-flex;align-items:center" href="sms:${digits(c.phone)}">💬 Text</a>`:''}</div>`:''}
+ <div class="g2"><div><label>${t('name')}</label><input id="cn" value="${esc(c.name)}" ${id?'':'autofocus'}></div><div><label>${t('phoneNo')}</label><input id="cp" inputmode="tel" value="${esc(c.phone)}" oninput="custDupHint('${id||''}')"></div></div><div id="cdup"></div>
+ <div class="g2"><div><label>Email</label><input id="ce" type="email" value="${esc(c.email||'')}"></div><div><label>Address</label><input id="cad" value="${esc(c.addr||'')}"></div></div>
+ <div class="g2"><div><label>${t('notes')}</label><input id="cno" value="${esc(c.notes||'')}"></div><div><label>Customer since (for old customers)</label><input id="csi" type="date" value="${c.since?new Date(c.since).toISOString().slice(0,10):''}"></div></div>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="saveCust('${id||''}')">${t('save')}</button>${id?`<button class="btn ghost" onclick="custDelete('${id}')">${t('del')}</button>`:''}</div>
+ ${id?`<h3>📱 Devices</h3>${devs.map(d=>`<div class="small">${esc(d)}</div>`).join('')||'<p class="muted small">—</p>'}
+ <h3>${t('history')}</h3>${reps.map(r=>`<div class="small" style="cursor:pointer" onclick="ticketForm('${r.id}')">🔧 #${r.no} ${fmtD(r.ts)} — ${esc(r.device)}: ${esc(r.issue)} <span class="badge ${r.status}">${t(r.status)}</span></div>`).join('')}
+ ${sales.map(s=>`<div class="small" style="cursor:pointer" onclick="showReceipt('${s.id}')">🧾 #${s.no} ${fmtD(s.ts)} — ${s.kind} ${money(s.total)} — ${esc(s.lines.map(l=>l.name).join(', ').slice(0,60))}</div>`).join('')}
+ ${sold.map(b=>`<div class="small">📥 ${fmtD(b.ts)} — sold us ${esc(b.device)} (${esc(b.imei)}) for ${money(b.price)}</div>`).join('')}${!reps.length&&!sales.length&&!sold.length?'<p class="muted small">No visits recorded in this system yet.</p>':''}`:''}`)}
+function custDupHint(id){const pd=ph10($('cp').value);const d=pd.length>=7&&D.customers.find(x=>x.id!==id&&ph10(x.phone)===pd);$('cdup').innerHTML=d?`<div class="warnc small" style="margin-top:6px">⚠ Already a customer: <b>${esc(d.name)}</b> <a style="color:var(--mango);cursor:pointer;text-decoration:underline" onclick="custForm('${d.id}')">open</a></div>`:''}
+async function saveCust(id){const g=x=>$(x).value.trim();if(!g('cn'))return toast(t('name')+'?');const pd=ph10(g('cp'));
+ const dup=!id&&pd.length>=7&&D.customers.find(x=>ph10(x.phone)===pd);
+ if(dup){const a=await ask({title:'This customer already exists',msg:dup.name+' — '+fmtPhone(dup.phone),ok:'Open existing',cancel:'Save as new anyway'});if(a){closeM();return custForm(dup.id)}}
+ let c=id?C(id):null;if(!c){c={id:uid(),created:Date.now()};D.customers.push(c)}
+ Object.assign(c,{name:g('cn'),phone:g('cp'),email:g('ce'),notes:g('cno'),addr:g('cad')});const si=g('csi');if(si)c.since=new Date(si+'T12:00').getTime();else delete c.since;save();closeM();render()}
+async function custDelete(id){const has=D.sales.some(s=>s.cust===id)||D.repairs.some(r=>r.cust===id)||D.buys.some(b=>b.seller&&b.seller.cust===id);
+ if(has)return toast('This customer has history — use 🔀 Find duplicates to merge instead');const c=C(id);
+ if(!(await yes(t('del')+' '+c.name+'?','',t('del'),true)))return;if(!(await needOwner('Delete customer')))return;D.customers=D.customers.filter(x=>x.id!==id);logEv('settings','Deleted customer: '+c.name);closeM();render()}
+/* import */
+function importCustForm(){IMP=null;openM(`<h2>📥 Import old customers</h2>
+ <p class="muted small">From Excel, Google Sheets, your old POS, or phone contacts (.vcf). Columns like Name, Phone, Email, Address and Notes are found automatically. People already in the system (same phone or email) are not added twice.</p>
+ <label class="btn" style="margin:0;display:inline-flex;align-items:center">📂 Choose file (Excel, CSV or contacts)<input type="file" accept=".csv,.txt,.xlsx,.xls,.vcf" style="display:none" onchange="impFile(this.files[0])"></label>
+ <label style="margin-top:14px">…or select the rows in Excel / Google Sheets, copy, and paste here</label><textarea id="impPaste" rows="4" placeholder="Name    Phone    Email"></textarea>
+ <button class="btn ghost" style="margin-top:8px" onclick="impText($('impPaste').value)">Use pasted rows</button><div id="impPrev"></div>`)}
+function parseCSV(txt,dl){const rows=[];let row=[],f='',q=false;for(let i=0;i<txt.length;i++){const ch=txt[i];
+ if(q){if(ch==='"'){if(txt[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}
+ else if(ch==='"'&&f==='')q=true;else if(ch===dl){row.push(f);f=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&txt[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=ch}
+ if(f!==''||row.length){row.push(f);rows.push(row)}return rows}
+function parseVCF(txt){const rows=[['Name','Phone','Email','Notes']];for(const card of txt.split(/BEGIN:VCARD/i).slice(1)){const un=card.replace(/\r?\n[ \t]/g,'');const get=re=>{const m=un.match(re);return m?m[1].trim():''};
+ const fn=get(/^FN[^:]*:(.*)$/im)||get(/^N[^:]*:(.*)$/im).split(';').filter(Boolean).reverse().join(' ');const tel=get(/^TEL[^:]*:(.*)$/im),em=get(/^EMAIL[^:]*:(.*)$/im),org=get(/^ORG[^:]*:(.*)$/im);rows.push([fn,tel,em,org.replace(/;/g,' ')])}return rows}
+function impText(txt){txt=String(txt||'');if(!txt.trim())return toast('Nothing to import');const first=txt.split(/\r?\n/)[0];
+ const dl=first.includes('\t')?'\t':(first.split(';').length>first.split(',').length?';':',');impRows(parseCSV(txt,dl))}
+function loadXLSX(){return new Promise((res,rej)=>{if(window.XLSX)return res();const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';sc.onload=res;sc.onerror=()=>rej(new Error('x'));document.head.appendChild(sc)})}
+async function impFile(file){if(!file)return;const ext=(file.name.split('.').pop()||'').toLowerCase();
+ try{if(ext==='xlsx'||ext==='xls'){toast('Reading Excel file…');await loadXLSX();const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];impRows(XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''}))}
+  else{const txt=await file.text();ext==='vcf'||/BEGIN:VCARD/i.test(txt)?impRows(parseVCF(txt)):impText(txt)}}
+ catch(e){toast(ext.startsWith('xls')?'Could not read the Excel file here. In Excel use File → Save As → CSV, then import that.':'Could not read this file')}}
+const IMPF=[['','— skip —'],['name','Name'],['first','First name'],['last','Last name'],['phone','Phone'],['email','Email'],['addr','Address'],['notes','Notes'],['since','Customer since']];
+function guessField(h){h=String(h||'').toLowerCase().trim();if(!h)return'';if(/first|given/.test(h))return'first';if(/last|surname|family/.test(h))return'last';if(/e-?mail/.test(h))return'email';
+ if(/phone|mobile|cell|tel|contact|number|#/.test(h))return'phone';if(/address|street|city|postal|addr/.test(h))return'addr';if(/since|created|date|joined|first visit|added/.test(h))return'since';
+ if(/note|comment|memo|device|model|remark/.test(h))return'notes';if(/name|customer|client|full/.test(h))return'name';return''}
+function impRows(rows){rows=(rows||[]).map(r=>r.map(v=>String(v??'').trim())).filter(r=>r.some(v=>v));if(!rows.length)return toast('No rows found');
+ const n=Math.max(...rows.map(r=>r.length));rows=rows.map(r=>{while(r.length<n)r.push('');return r});
+ const isHead=rows[0].some(v=>guessField(v))&&!rows[0].some(v=>digits(v).length>=7||v.includes('@'));let map;
+ if(isHead)map=rows[0].map(guessField);else{map=Array(n).fill('');const sample=rows.slice(0,30);
+  for(let j=0;j<n;j++){const col=sample.map(r=>r[j]).filter(Boolean);if(!col.length)continue;if(!map.includes('email')&&col.filter(v=>v.includes('@')).length>col.length/2)map[j]='email';
+   else if(!map.includes('phone')&&col.filter(v=>digits(v).length>=7&&digits(v).length<=12).length>col.length/2)map[j]='phone';else if(!map.includes('name')&&col.filter(v=>/[a-z]/i.test(v)).length>col.length/2)map[j]='name'}}
+ // a second phone column becomes notes
+ let seenP=false;map=map.map(m=>{if(m==='phone'){if(seenP)return'notes';seenP=true}return m});
+ IMP={rows,head:isHead,map,dup:'skip'};drawImp()}
+function drawImp(){const I=IMP,body=I.head?I.rows.slice(1):I.rows,n=I.rows[0].length;
+ $('impPrev').innerHTML=`<h3>Check the columns</h3><p class="small muted">${body.length} rows found. Pick what each column is — anything set to “skip” is ignored.</p>
+ <label class="check"><input type="checkbox" ${I.head?'checked':''} onchange="IMP.head=this.checked;drawImp()"> First row is column titles</label>
+ <div style="overflow:auto;max-height:40vh"><table class="t"><tr>${Array.from({length:n},(_,j)=>`<th><select style="padding:6px;min-width:110px" onchange="IMP.map[${j}]=this.value">${IMPF.map(([v,l])=>`<option value="${v}" ${I.map[j]===v?'selected':''}>${l}</option>`).join('')}</select>${I.head?`<div class="small muted" style="margin-top:4px">${esc(I.rows[0][j])}</div>`:''}</th>`).join('')}</tr>
+ ${body.slice(0,8).map(r=>`<tr>${r.map(v=>`<td class="small">${esc(v)}</td>`).join('')}</tr>`).join('')}</table></div>
+ <label>If the customer is already in the system</label><div class="chips">${[['skip','Skip them'],['update','Fill in missing details']].map(([k,l])=>`<button class="chip ${I.dup===k?'on':''}" onclick="IMP.dup='${k}';drawImp()">${l}</button>`).join('')}</div>
+ <button class="btn" style="width:100%;margin-top:8px" onclick="doImport()">Import ${body.length} customers</button>`}
+function parseSince(v){if(!v)return null;const n=Number(v);if(n>20000&&n<80000)return Math.round((n-25569)*864e5);const t2=Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(v)?v+'T12:00':v);return isNaN(t2)?null:t2}
+async function doImport(){const I=IMP;if(!I.map.some(m=>['name','first','last','phone','email'].includes(m)))return toast('Pick at least a Name or Phone column');
+ if(!(await needOwner('Import customers')))return;const body=I.head?I.rows.slice(1):I.rows;
+ const byP={},byE={};D.customers.forEach(c=>{const p=ph10(c.phone);if(p.length>=7)byP[p]=c;if(c.email)byE[c.email.toLowerCase()]=c});let add=0,upd=0,skip=0,bad=0;
+ for(const r of body){const o={name:'',first:'',last:'',phone:'',email:'',addr:'',notes:'',since:''};I.map.forEach((m,j)=>{if(!m||!r[j])return;o[m]=o[m]?o[m]+(m==='notes'||m==='addr'?', ':' ')+r[j]:r[j]});
+  const name=(o.name||[o.first,o.last].filter(Boolean).join(' ')).trim()||o.phone||o.email;if(!name){bad++;continue}
+  const p=ph10(o.phone),e=o.email.toLowerCase();const ex=(p.length>=7&&byP[p])||(e&&byE[e]);const since=parseSince(o.since);
+  if(ex){if(I.dup==='update'){if(!ex.phone&&o.phone)ex.phone=o.phone;if(!ex.email&&o.email)ex.email=o.email;if(!ex.addr&&o.addr)ex.addr=o.addr;if(o.notes&&!(ex.notes||'').includes(o.notes))ex.notes=[ex.notes,o.notes].filter(Boolean).join(' · ');if(since&&(!ex.since||since<ex.since))ex.since=since;upd++}else skip++;continue}
+  const c={id:uid(),name,phone:o.phone,email:o.email,addr:o.addr,notes:o.notes,created:Date.now(),imported:true};if(since)c.since=since;D.customers.push(c);add++;if(p.length>=7)byP[p]=c;if(e)byE[e]=c}
+ logEv('settings','Imported customers: '+add+' added'+(upd?', '+upd+' updated':'')+(skip?', '+skip+' already existed':''));closeM();CQ='';CSORT='az';render();
+ ask({title:'✓ Import finished',msg:add+' new customers added'+(upd?'\n'+upd+' existing customers updated':'')+(skip?'\n'+skip+' were already in the system':'')+(bad?'\n'+bad+' empty rows skipped':''),ok:'OK',cancel:false})}
+/* duplicates */
+function dupGroups(){const by={};const add=(k,c)=>{(by[k]=by[k]||[]).push(c)};for(const c of D.customers){const p=ph10(c.phone);if(p.length>=7)add('p'+p,c);else if(c.email)add('e'+c.email.toLowerCase().trim(),c)}
+ return Object.values(by).filter(g=>g.length>1)}
+function dupCust(){const gs=dupGroups();const ix=custIndex();window._dg=gs;
+ openM(`<h2>🔀 Duplicate customers</h2>${gs.length?`<p class="muted small">These share the same phone number (or email). Merging keeps all their sales, repairs and phones under one customer.</p>
+ ${gs.map((g,i)=>`<div class="tcard" style="margin-bottom:8px">${g.map(c=>`<div class="small"><b>${esc(c.name)}</b> · ${esc(fmtPhone(c.phone))}${c.email?' · '+esc(c.email):''} · ${money((ix[c.id]||{}).spent||0)}</div>`).join('')}<button class="btn sm" style="margin-top:6px" onclick="mergeGroup(${i})">Merge these ${g.length}</button></div>`).join('')}
+ <button class="btn" onclick="mergeAll()">Merge all ${gs.length} groups</button>`:'<p class="ok">✓ No duplicate customers found.</p>'}`)}
+function doMerge(g){const ix=custIndex();const keep=[...g].sort((a,b)=>((ix[b.id]||{}).spent||0)-((ix[a.id]||{}).spent||0)||(a.created||0)-(b.created||0))[0];const ids=g.filter(c=>c!==keep).map(c=>c.id);
+ for(const c of g){if(c===keep)continue;['phone','email','addr'].forEach(k=>{if(!keep[k]&&c[k])keep[k]=c[k]});if(c.notes&&!(keep.notes||'').includes(c.notes))keep.notes=[keep.notes,c.notes].filter(Boolean).join(' · ');
+  const s1=c.since||c.created;if(s1&&(!keep.since||s1<keep.since))keep.since=c.since||keep.since}
+ D.sales.forEach(s=>{if(ids.includes(s.cust))s.cust=keep.id});D.repairs.forEach(r=>{if(ids.includes(r.cust))r.cust=keep.id});D.units.forEach(u=>{if(ids.includes(u.cust))u.cust=keep.id});D.buys.forEach(b=>{if(b.seller&&ids.includes(b.seller.cust))b.seller.cust=keep.id});if(ids.includes(cartCust))cartCust=keep.id;
+ D.customers=D.customers.filter(c=>!ids.includes(c.id));logEv('settings','Merged '+g.length+' customers into '+keep.name)}
+async function mergeGroup(i){const g=window._dg[i];if(!g||!(await needOwner('Merge customers')))return;doMerge(g);save();toast('Merged ✓');dupCust()}
+async function mergeAll(){if(!(await yes('Merge all duplicates?',window._dg.length+' groups will be merged.','Merge all')))return;if(!(await needOwner('Merge customers')))return;window._dg.forEach(doMerge);save();toast('Merged ✓');dupCust()}
+/* repair form: suggest existing customer */
+function tkSuggest(){const n=$('tn').value.trim(),p=digits($('tp').value);const q=[n.length>=2?n:'',p.length>=4?p:''].filter(Boolean).join(' ');if(!q){$('tksug').innerHTML='';return}
+ let cs=custSearch(q);if(!cs.length&&p.length>=4)cs=custSearch(p);if(!cs.length&&n.length>=2)cs=custSearch(n);window._tks=cs.slice(0,3);
+ $('tksug').innerHTML=_tks.length?`<div class="small muted" style="margin-top:6px">Existing customer?</div><div class="chips" style="margin-top:4px">${_tks.map((c,i)=>`<button class="chip" onclick="tkUse(${i})">👤 ${esc(c.name)} · ${esc(fmtPhone(c.phone))}</button>`).join('')}</div>`:''}
+function tkUse(i){const c=_tks[i];$('tn').value=c.name;$('tp').value=c.phone||'';$('tksug').innerHTML=`<div class="ok small" style="margin-top:6px">✓ Existing customer — history will be linked</div>`}
+
+/* ---------- PURCHASE ORDERS ---------- */
+function vOrders(){const ps=[...D.pos].sort((a,b)=>b.ts-a.ts);return `<div class="row"><h2 style="margin:0">${t('orders')}</h2><span style="flex:1"></span><button class="btn" onclick="poForm()">${t('newPO')}</button></div>
+ <div class="list" style="margin-top:12px">${ps.map(o=>`<div class="tcard"><div class="row" style="justify-content:space-between"><b>PO-${o.no} · ${esc(o.supplier)}</b><span class="badge ${o.status==='open'?'repairing':'ready'}">${o.status}</span></div>
+ <div class="small muted">${fmtD(o.ts)} · ${o.lines.length} line(s) · ${money(o.lines.reduce((a,l)=>a+l.qty*l.cost,0))}</div>
+ <div class="small">${o.lines.map(l=>esc((P(l.pid)||{}).name)+' ×'+l.qty).join(', ')}</div>
+ <div class="row" style="margin-top:8px">${o.status==='open'?`<button class="btn sm" onclick="poReceive('${o.id}')">${t('receive')}</button><button class="btn ghost sm" onclick="poDelete('${o.id}')">${t('del')}</button>`:''}
+ <button class="btn ghost sm" onclick="printHTML(poHTML(D.pos.find(x=>x.id==='${o.id}')))">${t('print')}</button></div></div>`).join('')||`<p class="muted">${t('noItems')}</p>`}
+ <h3>Suggested reorder (${t('lowStock').toLowerCase()})</h3><p class="small muted">${D.products.filter(p=>p.cat!=='service'&&stockOf(p)<=p.min).map(p=>esc(p.name)+' ('+stockOf(p)+')').join(', ')||'—'}</p></div>`}
+function poForm(){window._po=D.products.filter(p=>p.cat!=='service'&&stockOf(p)<=p.min).map(p=>({pid:p.id,qty:Math.max(p.min*2-stockOf(p),1),cost:p.cost}));
+ const sups=[...new Set(D.pos.map(o=>o.supplier))];
+ openM(`<h2>${t('newPO')}</h2><label>${t('supplier')}</label><input id="posup" list="supl" autofocus><datalist id="supl">${sups.map(s=>`<option value="${esc(s)}">`).join('')}</datalist>
+ <div id="pol" style="margin-top:10px"></div><select id="poadd" style="margin-top:8px" onchange="if(this.value){const p=P(this.value);_po.push({pid:p.id,qty:1,cost:p.cost});this.value='';drawPO()}"><option value="">${t('add')} …</option>${D.products.filter(p=>p.cat!=='service').map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="savePO()">${t('save')}</button></div>`);drawPO()}
+function drawPO(){$('pol').innerHTML=`<table class="t"><tr><th>Item</th><th>${t('qty')}</th><th>${t('cost')}</th><th></th></tr>${_po.map((l,i)=>`<tr><td>${esc((P(l.pid)||{}).name)}</td><td><input style="width:70px;padding:6px" value="${l.qty}" onchange="_po[${i}].qty=parseInt(this.value)||0"></td>
+ <td><input style="width:90px;padding:6px" value="${l.cost}" onchange="_po[${i}].cost=num(this.value)"></td><td><button class="qb" onclick="_po.splice(${i},1);drawPO()">×</button></td></tr>`).join('')}</table>`}
+function savePO(){const sup=$('posup').value.trim();if(!sup)return toast(t('supplier')+'?');const lines=_po.filter(l=>l.qty>0);if(!lines.length)return toast('Add items');
+ D.pos.push({id:uid(),no:D.seq.po++,ts:Date.now(),supplier:sup,lines,status:'open'});save();closeM();render()}
+function poReceive(id){const o=D.pos.find(x=>x.id===id);
+ openM(`<h2>${t('receive')} PO-${o.no}</h2>${o.lines.map((l,i)=>{const p=P(l.pid)||{};return `<div class="tcard" style="margin-bottom:8px"><b>${esc(p.name)}</b> — ordered ${l.qty} @ ${money(l.cost)}
+ ${p.serial?`<label>${t('addUnits')}</label><textarea id="rcv${i}" rows="3"></textarea>`:`<label>Received qty</label><input id="rcv${i}" inputmode="numeric" value="${l.qty}">`}</div>`}).join('')}
+ <button class="btn" onclick="doReceive('${id}')">${t('receive')}</button>`)}
+function doReceive(id){const o=D.pos.find(x=>x.id===id);o.lines.forEach((l,i)=>{const p=P(l.pid);if(!p)return;const v=$('rcv'+i).value.trim();
+ if(p.serial){const ims=v.split(/[\s,]+/).filter(Boolean);ims.forEach(im=>{if(!D.units.some(u=>u.imei===im&&u.status==='in'))D.units.push({id:uid(),pid:p.id,imei:im,cost:l.cost,cond:'New',status:'in',source:'PO-'+o.no,added:Date.now()})});l.recv=ims.length}
+ else{const q=parseInt(v)||0;p.qty+=q;l.recv=q}if(l.cost)p.cost=l.cost});o.status='received';o.recvTs=Date.now();save();closeM();render();toast('Stock updated')}
+function poHTML(o){return storeHead()+`<div class="b">PURCHASE ORDER PO-${o.no}</div><div>${fmtD(o.ts)}<br>Supplier: ${esc(o.supplier)}</div><hr><table>${o.lines.map(l=>`<tr><td>${esc((P(l.pid)||{}).name)} ×${l.qty}</td><td class="r">${money(l.qty*l.cost)}</td></tr>`).join('')}</table><hr><div class="r b">Total ${money(o.lines.reduce((a,l)=>a+l.qty*l.cost,0))}</div>`}
+
+/* ---------- LABELS ---------- */
+function vLabels(){const ps=D.products.filter(p=>p.cat==='accessory'||p.cat==='phone'&&!p.serial);
+ return `<h2>${t('labels')}</h2><p class="muted small">57 × 32 mm labels. Products without a barcode get one made from their SKU or a new number. For phones, print from ${t('phones')} (uses the IMEI).</p>
+ <div class="card"><table class="t"><tr><th>${t('name')}</th><th>${t('barcode')}</th><th class="r">${t('price')}</th><th>${t('copies')}</th></tr>${ps.map(p=>`<tr><td>${esc(p.name)}</td><td class="muted">${esc(p.barcode||p.sku||'(new)')}</td><td class="r">${money(p.price)}</td><td><input class="lbq" data-id="${p.id}" style="width:70px;padding:6px" inputmode="numeric" value="0"></td></tr>`).join('')}</table>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="printSelLabels()">${t('printLabels')}</button><button class="btn ghost" onclick="document.querySelectorAll('.lbq').forEach(i=>{const p=P(i.dataset.id);i.value=Math.max(stockOf(p),0)})">= ${t('qty')}</button></div></div>`}
+function newBarcode(){let c;do{c='2'+String(Date.now()).slice(-8)+Math.floor(100+Math.random()*900)}while(D.products.some(p=>p.barcode===c));return c}
+function ensureBarcode(p){if(!p.barcode){p.barcode=newBarcode();save()}return p.barcode}
+function labelFor(id){const p=P(id);printLabels([{name:p.name,price:p.price,code:ensureBarcode(p)}])}
+function labelUnit(id){const u=D.units.find(x=>x.id===id);const p=P(u.pid)||{};printLabels([{name:p.name,price:u.price||p.price,code:u.imei,sub:u.cond}])}
+function printSelLabels(){const out=[];document.querySelectorAll('.lbq').forEach(i=>{const n=parseInt(i.value)||0;const p=P(i.dataset.id);for(let k=0;k<n;k++)out.push({name:p.name,price:p.price,code:ensureBarcode(p)})});if(!out.length)return toast('Set copies first');printLabels(out)}
+function printLabels(arr){printHTML(arr.map(l=>`<div class="lb"><div class="n">${esc(l.name)}${l.sub?' · '+esc(l.sub):''}</div><div class="p">${money(l.price)}${ADD()?'<span style="font-size:9px"> +GST</span>':''}</div>${barcodeSVG(l.code,36)}<div class="c">${esc(l.code)}</div></div>`).join(''),'label')}
+
+/* ---------- SALES HISTORY ---------- */
+let SHQ='';
+function vSales(){const q=SHQ.trim().toLowerCase(),qd=q.replace(/\D/g,'');const ss=[...D.sales].filter(s=>{if(!q)return true;const c=C(s.cust)||{};const h=(s.no+' '+(c.name||'')+' '+(c.phone||'')+' '+s.lines.map(l=>l.name+' '+(l.imei||'')).join(' ')+' '+s.kind+' '+(s.by||'')).toLowerCase();return h.includes(q)||(qd.length>=4&&h.replace(/\D/g,'').includes(qd))}).sort((a,b)=>b.ts-a.ts).slice(0,300);return `<h2>${t('salesH')}</h2><input style="margin-bottom:10px" placeholder="Receipt #, customer, phone, item or IMEI" value="${esc(SHQ)}" onchange="SHQ=this.value;render()" onkeydown="if(event.key==='Enter'){SHQ=this.value;render()}"><div class="card" style="overflow:auto"><table class="t"><tr><th>#</th><th>Date</th><th>Type</th><th>${t('cust')}</th><th>Items</th><th>Paid</th><th class="r">${t('total')}</th></tr>
+ ${ss.map(s=>`<tr class="click" onclick="showReceipt('${s.id}')"><td>${s.no}</td><td>${fmtDT(s.ts)}</td><td>${s.kind}${s.refunded?' <span class="warnc">(refunded)</span>':''}</td><td>${esc(custName(s.cust))}</td><td class="small">${esc(s.lines.map(l=>l.name).join(', ').slice(0,50))}</td><td>${s.method}</td><td class="r b ${s.total<0?'badc':''}">${money(s.total)}</td></tr>`).join('')}</table></div>`}
+
+/* ---------- REPORTS ---------- */
+let RP='today';
+function periodStart(){const n=new Date();if(RP==='today')return dayStart();if(RP==='week')return dayStart()-6*864e5;if(RP==='month')return new Date(n.getFullYear(),n.getMonth(),1).getTime();return 0}
+function vReports(){return `<h2>${t('reports')}</h2><div class="chips">${['today','week','month','allTime'].map(p=>`<button class="chip ${RP===p?'on':''}" onclick="RP='${p}';render()">${t(p)}</button>`).join('')}</div><div id="rep"></div>`}
+function drawReports(){const f=periodStart();const ss=D.sales.filter(s=>s.ts>=f);const bs=D.buys.filter(b=>b.ts>=f);
+ const rev=r2(ss.reduce((a,s)=>a+s.total,0)),gst=r2(ss.reduce((a,s)=>a+s.gst,0)),cost=r2(ss.reduce((a,s)=>a+(s.cost||0),0));const profit=r2(rev-gst-cost);
+ const byM={};ss.forEach(s=>byM[s.method]=r2((byM[s.method]||0)+s.total));
+ const repRev=r2(ss.filter(s=>s.kind==='repair'||s.kind==='deposit').reduce((a,s)=>a+s.total,0));const buyOut=r2(bs.filter(b=>b.method!=='trade').reduce((a,b)=>a+b.price,0));
+ const top={};ss.filter(s=>s.kind==='sale'&&!s.refunded).forEach(s=>s.lines.forEach(l=>{const k=(P(l.pid)||{}).name||l.name;top[k]=top[k]||{q:0,v:0};top[k].q+=l.qty;top[k].v+=l.price*l.qty}));
+ const topA=Object.entries(top).sort((a,b)=>b[1].v-a[1].v).slice(0,8);
+ const inv=r2(D.products.filter(p=>!p.serial&&p.cat!=='service').reduce((a,p)=>a+p.qty*p.cost,0)+D.units.filter(u=>u.status==='in').reduce((a,u)=>a+u.cost,0));
+ const low=D.products.filter(p=>p.cat!=='service'&&stockOf(p)<=p.min);const aged=D.units.filter(u=>u.status==='in'&&Date.now()-u.added>60*864e5);
+ $('rep').innerHTML=`<div class="kpis"><div class="kpi"><div class="v">${money(rev)}</div><div class="l">${t('revenue')}</div></div><div class="kpi"><div class="v ok">${money(profit)}</div><div class="l">${t('profit')} (before GST, after cost)</div></div>
+ <div class="kpi"><div class="v">${money(gst)}</div><div class="l">${t('gst')}</div></div><div class="kpi"><div class="v">${ss.filter(s=>s.kind!=='refund').length}</div><div class="l">${t('txns')}</div></div>
+ <div class="kpi"><div class="v">${money(repRev)}</div><div class="l">${t('repairs')}</div></div><div class="kpi"><div class="v">${money(buyOut)}</div><div class="l">${t('buyOut')}</div></div>
+ <div class="kpi"><div class="v">${money(inv)}</div><div class="l">${t('invValue')}</div></div><div class="kpi"><div class="v">${D.units.filter(u=>u.status==='in').length}</div><div class="l">${t('phones')}</div></div></div>
+ <div class="g2" style="margin-top:12px;gap:12px"><div class="card"><h3 style="margin-top:0">${t('payMethods')}</h3><table class="t">${Object.entries(byM).map(([m,v])=>`<tr><td>${t(m)}</td><td class="r">${money(v)}</td></tr>`).join('')||'<tr><td class="muted">—</td></tr>'}</table></div>
+ <div class="card"><h3 style="margin-top:0">${t('topSellers')}</h3><table class="t">${topA.map(([n,o])=>`<tr><td>${esc(n)}</td><td class="r">${o.q}</td><td class="r">${money(o.v)}</td></tr>`).join('')||'<tr><td class="muted">—</td></tr>'}</table></div>
+ <div class="card"><h3 style="margin-top:0">${t('lowStock')}</h3>${low.map(p=>`<div class="small">${esc(p.name)} — <b class="warnc">${stockOf(p)}</b></div>`).join('')||'<p class="muted">—</p>'}</div>
+ <div class="card"><h3 style="margin-top:0">Phones in stock 60+ days</h3>${aged.map(u=>`<div class="small">${esc((P(u.pid)||{}).name)} · ${esc(u.imei)} · ${money(u.cost)}</div>`).join('')||'<p class="muted">—</p>'}</div></div>
+ <div class="card" style="margin-top:12px"><h3 style="margin-top:0">🔒 ${t('closeDay')} — ${fmtD(Date.now())}</h3>${closeBox()}</div>
+ <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="download('sales.csv',salesCSV(),'text/csv')">${t('csvSales')}</button><button class="btn ghost" onclick="download('stock.csv',stockCSV(),'text/csv')">${t('csvStock')}</button></div>`}
+function todayCash(){const f=dayStart();const cs=D.sales.filter(s=>s.ts>=f&&s.method==='cash');const cashIn=r2(cs.filter(s=>s.total>0).reduce((a,s)=>a+s.total,0));const cashRef=r2(-cs.filter(s=>s.total<0).reduce((a,s)=>a+s.total,0));
+ const buyOut=r2(D.buys.filter(b=>b.ts>=f&&b.method==='cash').reduce((a,b)=>a+b.price,0));return{cashIn,cashRef,buyOut,expected:r2(D.settings.float+cashIn-cashRef-buyOut)}}
+function closeBox(){const c=todayCash();return `<table class="t"><tr><td>${t('float')}</td><td class="r"><input style="width:110px;padding:6px;text-align:right" value="${D.settings.float}" onchange="D.settings.float=num(this.value);save();drawReports()"></td></tr>
+ <tr><td>+ ${t('cash')} sales & deposits</td><td class="r">${money(c.cashIn)}</td></tr><tr><td>− ${t('refunds')} (cash)</td><td class="r">${money(c.cashRef)}</td></tr><tr><td>− ${t('buyOut')} (cash)</td><td class="r">${money(c.buyOut)}</td></tr>
+ <tr><td class="b">${t('expected')}</td><td class="r b">${money(c.expected)}</td></tr><tr><td>${t('counted')}</td><td class="r"><input id="cnt" style="width:110px;padding:6px;text-align:right" inputmode="decimal" oninput="const d=r2(num(this.value)-${c.expected});$('ovs').textContent=money(d);$('ovs').className='r b '+(d<0?'badc':'ok')"></td></tr>
+ <tr><td>${t('overShort')}</td><td id="ovs" class="r b"></td></tr></table><button class="btn" style="margin-top:10px" onclick="closeDayPrint()">${t('print')} ${t('closeDay')}</button>`}
+function closeDayPrint(){const f=dayStart();const ss=D.sales.filter(s=>s.ts>=f);const c=todayCash();const counted=num($('cnt').value);const byM={};ss.forEach(s=>byM[s.method]=r2((byM[s.method]||0)+s.total));
+ D.closes.push({id:uid(),ts:Date.now(),expected:c.expected,counted});logEv('money','End of day — expected '+money(c.expected)+', counted '+money(counted)+', over/short '+money(counted-c.expected));save();
+ printHTML(storeHead()+`<div class="b">END OF DAY — ${fmtD(Date.now())}</div><hr><table><tr><td>Transactions</td><td class="r">${ss.length}</td></tr><tr><td>Total sales</td><td class="r">${money(ss.reduce((a,s)=>a+s.total,0))}</td></tr><tr><td>GST</td><td class="r">${money(ss.reduce((a,s)=>a+s.gst,0))}</td></tr>
+ ${Object.entries(byM).map(([m,v])=>`<tr><td>${m}</td><td class="r">${money(v)}</td></tr>`).join('')}</table><hr><table><tr><td>Float</td><td class="r">${money(D.settings.float)}</td></tr><tr><td>Cash in</td><td class="r">${money(c.cashIn)}</td></tr><tr><td>Cash refunds</td><td class="r">-${money(c.cashRef)}</td></tr><tr><td>Phones bought (cash)</td><td class="r">-${money(c.buyOut)}</td></tr>
+ <tr><td class="b">Expected</td><td class="r b">${money(c.expected)}</td></tr><tr><td>Counted</td><td class="r">${money(counted)}</td></tr><tr><td class="b">Over/short</td><td class="r b">${money(counted-c.expected)}</td></tr></table><div class="sig"></div><div>Signed</div>`)}
+const csvE=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+function salesCSV(){return['no,date,type,customer,items,method,total,gst,cost'].concat(D.sales.map(s=>[s.no,new Date(s.ts).toISOString(),s.kind,custName(s.cust),s.lines.map(l=>l.name+(l.imei?' ['+l.imei+']':'')+' x'+l.qty).join('; '),s.method,s.total,s.gst,s.cost].map(csvE).join(','))).join('\n')}
+function stockCSV(){return['name,category,sku,barcode,price,cost,qty'].concat(D.products.map(p=>[p.name,p.cat,p.sku,p.barcode,p.price,p.cost,stockOf(p)===Infinity?'':stockOf(p)].map(csvE).join(',')),['','imei,model,condition,cost,status,source,added'],D.units.map(u=>[u.imei,(P(u.pid)||{}).name,u.cond,u.cost,u.status,u.source,new Date(u.added).toISOString()].map(csvE).join(','))).join('\n')}
+
+/* ---------- SETTINGS ---------- */
+function vSettings(){const S=D.settings;const f=(k,l,type='text')=>`<div><label>${l}</label><input id="s_${k}" value="${esc(S[k])}" ${type==='num'?'inputmode="decimal"':''}></div>`;
+ return `<h2>${t('settings')}</h2><div class="card">${f('name',t('storeName'))}<div class="g2">${f('addr',t('address'))}${f('phone',t('phoneNo'))}</div>
+ <div class="g2">${f('web','Website / email (on receipts)')}<div><label>Logo (on receipts &amp; invoices)</label><div class="row">${S.logo?`<img src="${S.logo}" style="height:44px;background:#fff;border-radius:8px;padding:3px">`:''}<label class="btn ghost sm" style="margin:0;display:inline-flex;align-items:center;color:var(--ink)">${S.logo?'Change':'Upload'}<input type="file" accept="image/*" style="display:none" onchange="setLogo(this.files[0])"></label>${S.logo?`<button class="btn ghost sm" onclick="D.settings.logo='';save();render()">Remove</button>`:''}</div></div></div>
+ <div class="g3">${f('gstNo',t('gstNo'))}${f('gst',t('gstPct'),'num')}${f('float',t('float'),'num')}</div><label>${t('priceMode')}</label><select id="s_taxMode"><option value="added" ${S.taxMode!=='included'?'selected':''}>${t('pmAdded')}</option><option value="included" ${S.taxMode==='included'?'selected':''}>${t('pmIncl')}</option></select>
+ <div class="g2">${f('warranty','Device '+t('warrantyDays'),'num')}${f('repairWarranty','Repair '+t('warrantyDays'),'num')}</div>
+ <label>${t('terms')}</label><textarea id="s_terms" rows="3">${esc(S.terms)}</textarea>
+ <label>Receipt message / return policy</label><textarea id="s_footer" rows="2" placeholder="e.g. Exchanges within 14 days with receipt">${esc(S.footer||'')}</textarea>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="saveSettings()">${t('save')}</button></div></div><div class="card" style="margin-top:12px">👥 Staff, PINs, admin login and the activity log are in <a style="color:var(--mango);cursor:pointer;font-weight:700" onclick="ownerGo('admin')">Menu → 🛡 Admin</a></div>
+ ${D.sample?`<div class="card" style="margin-top:12px"><b>Sample data</b><p class="small muted">The app started with example products and phones. Remove them when you add your real stock.</p><button class="btn bad" onclick="clearSample()">Remove sample products</button></div>`:''}`}
+function saveSettings(){const S=D.settings;['name','addr','phone','gstNo','terms','taxMode','web','footer'].forEach(k=>S[k]=$('s_'+k).value.trim());['gst','float','warranty','repairWarranty'].forEach(k=>S[k]=num($('s_'+k).value));logEv('settings','Store settings changed');toast(t('save')+' ✓');render()}
+async function unitRemove(id){if(!(await yes('Remove from stock?','Returned to supplier, lost, or used for parts.','Remove',true)))return;if(!(await needOwner('Remove phone')))return;const u=D.units.find(x=>x.id===id);logEv('stock','Removed phone IMEI '+u.imei+' from stock');u.status='returned';u.soldTs=Date.now();save();closeM();render()}
+async function poDelete(id){if(!(await yes(t('del')+'?','Delete this purchase order?',t('del'),true)))return;logEv('stock','Deleted purchase order');D.pos=D.pos.filter(x=>x.id!==id);save();render()}
+async function clearSample(){if(!(await yes('Remove sample products?','Removes the example products and phones. Only do this before you have real sales on them.','Remove',true)))return;const ids=['IP13-128','SA15-128','CHG20','TG-IP','CASE-CL','PT-IP13-SCR','PT-IP12-BAT','SV-INST'];
+ const rm=D.products.filter(p=>ids.includes(p.sku)).map(p=>p.id);D.products=D.products.filter(p=>!rm.includes(p.id));D.units=D.units.filter(u=>!rm.includes(u.pid)||u.status!=='in');delete D.sample;save();render()}
+
+/* ---------- BACKUP ---------- */
+function vBackup(){return `<h2>${t('backup')}</h2><div class="card"><p>${t('lastBk')}: <b>${D.lastBackup?fmtDT(D.lastBackup):t('never')}</b></p>
+ <p class="small muted">Everything is saved inside this browser on this computer. Clearing browser data deletes it. Download a backup at least once a week and keep it on a USB stick or Google Drive.</p>
+ <div class="row">${cloudOn()?`<button class="btn blue" onclick="cBackup()">☁ Download cloud backup (all devices)</button>`:''}<button class="btn" onclick="doBackup()">💾 ${t('export')}</button><label class="btn ghost" style="margin:0;display:inline-flex;align-items:center;color:var(--ink)">📂 ${t('import')}<input type="file" accept=".json,application/json" style="display:none" onchange="restore(this.files[0])"></label></div>
+ <p class="small muted" style="margin-top:12px">Restore also accepts backups from your older NS Cellphone Store versions (products, customers and repair tickets are brought over).</p></div>`}
+async function doBackup(){const ok=await download('ns-store-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(D));if(ok){D.lastBackup=Date.now();logEv('settings','Backup downloaded');render()}}
+function restore(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{try{const o=JSON.parse(rd.result);
+ if(o.units&&o.seq&&o.settings){if(!(await yes(t('import'),'Replace ALL current data with this backup?','Replace',true)))return;D=Object.assign(blank(),o);D.settings=Object.assign(blank().settings,o.settings)}
+ else{if(!(await yes(t('import'),'This looks like a backup from an older version. Import its products, customers and repairs?','Import')))return;importOld(o)}
+ logEv('settings','Data restored from backup file');toast('Restored ✓');go('sell')}catch(e){ask({title:'Could not read this file',msg:e.message,ok:'OK',cancel:false})}};rd.readAsText(file)}
+function importOld(o){const src=o.data||o;const arr=k=>Array.isArray(src[k])?src[k]:[];const idmap={};
+ (arr('customers')).forEach(c=>{const id=uid();idmap[c.id]=id;D.customers.push({id,name:c.name||'',phone:c.phone||'',email:c.email||'',notes:c.notes||'',created:c.created||Date.now()})});
+ (arr('products').concat(arr('inventory'))).forEach(p=>{const cat=(p.cat||p.category||'accessory').toLowerCase();const c=['phone','accessory','part','service'].find(x=>cat.startsWith(x))||'accessory';
+  const np={id:uid(),name:p.name||'Item',cat:c,sku:p.sku||'',barcode:p.barcode||'',price:num(p.price),cost:num(p.cost),qty:parseInt(p.qty??p.stock??0)||0,min:parseInt(p.min??p.low??2)||0,serial:false};
+  const ims=Array.isArray(p.imeis)?p.imeis:(p.units||[]);if(c==='phone'&&ims.length){np.serial=true;ims.forEach(u=>{const im=typeof u==='string'?u:u.imei;if(im)D.units.push({id:uid(),pid:np.id,imei:im,cost:num(u.cost||np.cost),cond:u.cond||'New',status:'in',source:'import',added:Date.now()})})}
+  D.products.push(np)});
+ (arr('repairs').concat(arr('tickets'))).forEach(r=>{const st=String(r.status||'received').toLowerCase();const status=st.includes('pick')?'picked':st.includes('ready')?'ready':st.includes('prog')||st.includes('repair')?'repairing':'received';
+  const cid=idmap[r.cust||r.customerId]||findOrMakeCustomer(r.name||r.customer||'',r.phone||'');
+  D.repairs.push({id:uid(),no:D.seq.repair++,ts:r.ts||r.created||Date.now(),status,cust:cid,device:r.device||'',imei:r.imei||'',issue:r.issue||r.problem||'',pass:r.pass||r.passcode||'',due:r.due||'',checks:[],quote:num(r.quote||r.price),deposit:num(r.deposit),parts:[],notes:r.notes||'',log:[{ts:Date.now(),s:status}]})})}
+
+/* ================= BIIXIPAY CLOUD SYNC (Supabase) ================= */
+const CKEY='ns_cloud_v1',HKEY='ns_cloud_hash_v1';
+const SB_CDN='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+const COLS=['products','units','customers','sales','repairs','buys','pos','closes','counts','log'];
+let CL={cfg:{},sb:null,user:null,status:'off',msg:'',hash:{},since:null,timer:null,busy:false,again:false,stores:null};
+try{CL.cfg=JSON.parse(localStorage.getItem(CKEY)||'{}')}catch(e){}
+try{const h=JSON.parse(localStorage.getItem(HKEY)||'{}');CL.hash=h.hash||{};CL.since=h.since||null}catch(e){}
+function cSave(){try{localStorage.setItem(CKEY,JSON.stringify(CL.cfg));localStorage.setItem(HKEY,JSON.stringify({hash:CL.hash,since:CL.since}))}catch(e){}}
+function hsh(str){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}
+ h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(h2>>>0).toString(36)+(h1>>>0).toString(36)}
+const CST={off:'Not set up',sync:'Syncing…',ok:'✓ Synced',offline:'✗ Offline — will sync when back online',error:'⚠ Sync problem',login:'Sign in needed'};
+function cloudInfoHTML(){return `<div class="card"><b>Status:</b> <span class="${CL.status==='ok'?'ok':CL.status==='sync'||CL.status==='off'?'muted':'warnc'}">${CST[CL.status]||CL.status}</span> <span class="muted small">${esc(CL.msg)}</span></div>`}
+function setCloud(st,msg=''){CL.status=st;CL.msg=msg;const e=$('cloudSt');
+ if(e){e.textContent={sync:'☁ …',ok:'☁ ✓',offline:'☁ ✗',error:'☁ !',login:'☁ ?'}[st]||'';e.title=(CST[st]||'')+' '+msg;e.style.display=st==='off'?'none':'';e.style.color=st==='ok'?'#4ade80':st==='sync'?'#9fb0d6':'#f59e0b'}
+ const ci=$('cloudInfo');if(ci)ci.innerHTML=cloudInfoHTML()}
+function loadSB(){return new Promise((res,rej)=>{if(window.supabase&&window.supabase.createClient)return res();const sc=document.createElement('script');sc.src=SB_CDN;sc.onload=res;sc.onerror=()=>rej(new Error('Could not load Supabase (no internet?)'));document.head.appendChild(sc)})}
+async function cEnsure(){if(CL.sb)return;if(!CL.cfg.url||!CL.cfg.key)throw new Error('Save the Supabase URL and key first');await loadSB();
+ CL.sb=window.supabase.createClient(CL.cfg.url,CL.cfg.key,{auth:{persistSession:true,storageKey:'ns_sb_auth'}});
+ CL.sb.auth.onAuthStateChange((ev,ses)=>{CL.user=ses?ses.user:null})}
+async function cInit(){if(!CL.cfg.url||!CL.cfg.key){setCloud('off');return}
+ try{await cEnsure();const {data}=await CL.sb.auth.getSession();CL.user=data&&data.session?data.session.user:null;
+  if(!CL.user)return setCloud('login','Sign in to BiixiPay Cloud');if(CL.cfg.storeId)cStart();else setCloud('login','Choose a store')}
+ catch(e){setCloud('offline',e.message||String(e))}}
+function cloudOn(){return !!(CL.sb&&CL.user&&CL.cfg.storeId)}
+function cStart(){clearInterval(CL.timer);CL.timer=setInterval(()=>{if(!document.hidden)cSync()},20000);cSync()}
+let cDeb=null;function cDirty(){if(!cloudOn())return;clearTimeout(cDeb);cDeb=setTimeout(cSync,1500)}
+function metaRec(){const{lang,...st}=D.settings;return{settings:st,seq:D.seq,sample:!!D.sample}}
+function localRecs(){const out={};let fixed=false;
+ for(const k of COLS){(D[k]=D[k]||[]).forEach(r=>{if(!r.id){r.id=uid();fixed=true}out[k+':'+r.id]={kind:k,id:r.id,data:r}})}
+ out['meta:main']={kind:'meta',id:'main',data:metaRec()};if(fixed)saveLocal();return out}
+async function cPush(){const sid=CL.cfg.storeId;const cur=localRecs();const rows=[],newH={};
+ for(const[key,r]of Object.entries(cur)){const h=hsh(JSON.stringify(r.data));if(CL.hash[key]!==h){rows.push({store_id:sid,kind:r.kind,id:r.id,data:r.data,deleted:false});newH[key]=h}}
+ for(const key of Object.keys(CL.hash))if(!cur[key]){const i=key.indexOf(':');rows.push({store_id:sid,kind:key.slice(0,i),id:key.slice(i+1),data:{},deleted:true});newH[key]=null}
+ for(let i=0;i<rows.length;i+=400){const part=rows.slice(i,i+400);const {error}=await CL.sb.from('pos_records').upsert(part,{onConflict:'store_id,kind,id'});if(error)throw error;
+  part.forEach(r=>{const key=r.kind+':'+r.id;if(newH[key]===null)delete CL.hash[key];else CL.hash[key]=newH[key]})}
+ cSave();return rows.length}
+function applyRow(row){const key=row.kind+':'+row.id;
+ if(row.kind==='meta'){const m=row.data||{};const dirty=CL.hash[key]&&CL.hash[key]!==hsh(JSON.stringify(metaRec()));
+  if(!dirty&&m.settings)D.settings=Object.assign(blank().settings,m.settings,{lang:D.settings.lang});
+  const seq=Object.assign({},D.seq);for(const k in(m.seq||{}))seq[k]=Math.max(seq[k]||0,m.seq[k]);D.seq=seq;if(!m.sample)delete D.sample;
+  CL.hash[key]=hsh(JSON.stringify(m));return true}
+ const arr=D[row.kind];if(!Array.isArray(arr))return false;const i=arr.findIndex(x=>x.id===row.id);
+ if(i>=0&&CL.hash[key]&&hsh(JSON.stringify(arr[i]))!==CL.hash[key])return false; // local edit not uploaded yet — keep it
+ if(row.deleted){delete CL.hash[key];if(i>=0){arr.splice(i,1);return true}return false}
+ const h=hsh(JSON.stringify(row.data));CL.hash[key]=h;if(i>=0&&hsh(JSON.stringify(arr[i]))===h)return false;
+ if(i>=0)arr[i]=row.data;else arr.push(row.data);return true}
+async function cPull(){const sid=CL.cfg.storeId;const since=CL.since?new Date(new Date(CL.since).getTime()-15000).toISOString():'1970-01-01T00:00:00.000Z';
+ let off=0,maxTs=CL.since,changed=0;
+ while(true){const {data,error}=await CL.sb.from('pos_records').select('kind,id,data,deleted,updated_at').eq('store_id',sid).gt('updated_at',since).order('updated_at',{ascending:true}).range(off,off+999);
+  if(error)throw error;for(const row of data){if(!maxTs||new Date(row.updated_at)>new Date(maxTs))maxTs=row.updated_at;if(applyRow(row))changed++}
+  if(data.length<1000)break;off+=1000}
+ CL.since=maxTs;cSave();if(changed){saveLocal();if(!$('ov').classList.contains('on')&&!(V==='menu'&&SUB==='cloud'))render()}return changed}
+async function cSync(){if(!cloudOn())return;if(CL.busy){CL.again=true;return}CL.busy=true;setCloud('sync');
+ try{if(!navigator.onLine)throw new Error('offline');if(CL.cfg.pullFirst){await cPull();CL.cfg.pullFirst=false;cSave()}await cPush();await cPull();setCloud('ok','Last sync '+new Date().toLocaleTimeString())}
+ catch(e){const m=(e&&e.message)||String(e);if(/jwt|auth|not signed/i.test(m))setCloud('login','Sign in again');else{const off=!navigator.onLine||/fetch|network|offline|load/i.test(m);setCloud(off?'offline':'error',off?'':m)}}
+ CL.busy=false;if(CL.again){CL.again=false;setTimeout(cSync,300)}}
+window.addEventListener('online',()=>cSync());window.addEventListener('focus',()=>cSync());
+async function cSaveConn(){const u=$('curl').value.trim().replace(/\/+$/,''),k=$('ckey').value.trim();if(!/^https:\/\//.test(u)||!k)return toast('Enter the project URL (https://…) and the anon key');
+ CL.cfg={url:u,key:k};CL.sb=null;CL.user=null;CL.hash={};CL.since=null;CL.stores=null;cSave();toast(t('save')+' ✓');await cInit();render()}
+async function cSignIn(up){const em=$('cem').value.trim(),pw=$('cpw').value;if(!em||!pw)return toast('Enter email and password');
+ try{await cEnsure();const r=up?await CL.sb.auth.signUp({email:em,password:pw}):await CL.sb.auth.signInWithPassword({email:em,password:pw});if(r.error)throw r.error;
+  CL.user=r.data&&r.data.session?r.data.user:null;if(!CL.user)return toast('Check your email to confirm the account, then sign in');
+  toast('Signed in ✓');CL.stores=null;setCloud('login','Choose a store');render()}catch(e){toast(e.message||String(e))}}
+async function cSignOut(){try{await CL.sb.auth.signOut()}catch(e){}CL.user=null;clearInterval(CL.timer);Object.assign(CL.cfg,{storeId:null,storeName:null,role:null});CL.hash={};CL.since=null;CL.stores=null;cSave();setCloud('login','Signed out');render()}
+async function cLoadStores(){try{const {data,error}=await CL.sb.from('pos_members').select('role,store_id,pos_stores(name)').eq('user_id',CL.user.id);if(error)throw error;CL.stores=data||[]}catch(e){CL.stores=[];toast(e.message||String(e))}render()}
+async function cCreateStore(){const name=$('csn').value.trim()||D.settings.name;try{const {data,error}=await CL.sb.rpc('pos_create_store',{p_name:name});if(error)throw error;await cUseStore(data,name,'owner',true)}catch(e){toast(e.message||String(e))}}
+function cUseIdx(i){const m=CL.stores[i];cUseStore(m.store_id,(m.pos_stores||{}).name||'Store',m.role,false)}
+async function cUseStore(id,name,role,isNew){let count=0;
+ if(!isNew){const {count:c,error}=await CL.sb.from('pos_records').select('id',{count:'exact',head:true}).eq('store_id',id);if(error)return toast(error.message);count=c||0}
+ if(count>0){if(!(await yes('Load cloud data?','"'+name+'" already has data in the cloud. Load it onto this device?\n\nThis device\'s current data will be replaced. A backup file of it is downloaded first.','Load cloud data')))return;
+  if(D.sales.length||D.repairs.length||D.customers.length)await download('ns-store-before-cloud-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(D));
+  const lang=D.settings.lang;D=blank();D.settings.lang=lang;CL.cfg.pullFirst=true}
+ CL.hash={};CL.since=null;Object.assign(CL.cfg,{storeId:id,storeName:name,role});cSave();saveLocal();toast('Connected to '+name+' ✓');cStart();render()}
+async function cBackup(){if(!cloudOn())return toast('Connect to BiixiPay Cloud first');toast('Downloading from cloud…');
+ try{if(CL.busy)await new Promise(r=>setTimeout(r,1500));await cPush();const out=blank();delete out.sample;const sid=CL.cfg.storeId;let off=0,n=0;
+  while(true){const {data,error}=await CL.sb.from('pos_records').select('kind,id,data,deleted').eq('store_id',sid).order('kind').order('id').range(off,off+999);if(error)throw error;
+   for(const r of data){if(r.deleted)continue;n++;if(r.kind==='meta'){Object.assign(out.settings,r.data.settings||{});Object.assign(out.seq,r.data.seq||{});if(r.data.sample)out.sample=true}else if(Array.isArray(out[r.kind]))out[r.kind].push(r.data)}
+   if(data.length<1000)break;off+=1000}
+  out.settings.lang=D.settings.lang;out.cloudBackup={store:CL.cfg.storeName,ts:Date.now(),records:n};
+  const ok=await download('biixipay-cloud-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(out));
+  if(ok){D.lastBackup=Date.now();logEv('settings','Cloud backup downloaded');CL.cfg.lastCloudBackup=Date.now();cSave();toast('Cloud backup saved — '+n+' records ✓');render()}}
+ catch(e){toast('Backup failed: '+(e.message||e))}}
+async function cAddStaff(){const em=$('cst').value.trim();if(!em)return;try{const {error}=await CL.sb.rpc('pos_add_member',{p_store:CL.cfg.storeId,p_email:em});if(error)throw error;toast(em+' added ✓');$('cst').value=''}catch(e){toast(e.message||String(e))}}
+async function cDisconnect(){if(!(await yes('Disconnect?','Disconnect this device from the cloud store? The data stays on this device.','Disconnect',true)))return;clearInterval(CL.timer);Object.assign(CL.cfg,{storeId:null,storeName:null,role:null});CL.hash={};CL.since=null;CL.stores=null;cSave();setCloud('login','Choose a store');render()}
+function vCloud(){const c=CL.cfg;return `<h2>☁ BiixiPay Cloud</h2>
+ <p class="muted small">Every sale, repair and stock change is saved online and all your devices stay in sync. The app still works without internet — changes upload when the connection is back.</p>
+ <div id="cloudInfo">${cloudInfoHTML()}</div>
+ <div class="card" style="margin-top:12px"><h3 style="margin-top:0">1. Connection</h3>
+ <label>Supabase project URL</label><input id="curl" value="${esc(c.url||'')}" placeholder="https://xxxxxxxx.supabase.co" autocomplete="off">
+ <label>Supabase anon (public) key</label><input id="ckey" value="${esc(c.key||'')}" placeholder="eyJhbGciOi…" autocomplete="off">
+ <div class="row" style="margin-top:10px"><button class="btn" onclick="cSaveConn()">${t('save')}</button></div></div>
+ ${c.url&&c.key?`<div class="card" style="margin-top:12px"><h3 style="margin-top:0">2. Account</h3>${CL.user?`<p>Signed in as <b>${esc(CL.user.email||'')}</b></p><button class="btn ghost" onclick="cSignOut()">Sign out</button>`
+ :`<div class="g2"><div><label>Email</label><input id="cem" type="email" autocomplete="username"></div><div><label>Password</label><input id="cpw" type="password" autocomplete="current-password"></div></div>
+ <div class="row" style="margin-top:10px"><button class="btn" onclick="cSignIn(false)">Sign in</button><button class="btn ghost" onclick="cSignIn(true)">Create account</button></div>`}</div>`:''}
+ ${CL.user?`<div class="card" style="margin-top:12px"><h3 style="margin-top:0">3. Store</h3>${c.storeId?`<p>Connected to <b>${esc(c.storeName||'')}</b> <span class="badge">${esc(c.role||'')}</span></p>
+ <div class="row"><button class="btn" onclick="cSync()">Sync now</button><button class="btn blue" onclick="cBackup()">💾 Download cloud backup</button><button class="btn ghost" onclick="cDisconnect()">Disconnect</button></div>
+ <p class="small muted">Last cloud backup: ${c.lastCloudBackup?fmtDT(c.lastCloudBackup):t('never')}. Save the file to Google Drive or a USB stick each week. Restore it from Menu → Backup.</p>
+ ${c.role==='owner'?`<label>Add staff by email (they create an account first)</label><div class="row"><input id="cst" type="email" style="flex:1" placeholder="staff@email.com"><button class="btn" onclick="cAddStaff()">${t('add')}</button></div>`:''}`
+ :`${CL.stores===null?'<p class="muted">Loading stores…</p>':CL.stores.length?CL.stores.map((m,i)=>`<div class="line"><div class="nm"><b>${esc((m.pos_stores||{}).name||'Store')}</b> <span class="muted small">${esc(m.role)}</span></div><button class="btn sm" onclick="cUseIdx(${i})">Use this store</button></div>`).join(''):'<p class="muted">No stores yet — create one below.</p>'}
+ <label>New store name</label><div class="row"><input id="csn" style="flex:1" value="${esc(D.settings.name)}"><button class="btn" onclick="cCreateStore()">Create & upload this device's data</button></div>`}</div>`:''}`}
+
+/* ================= START ================= */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(window._pp)return;if($('dlg').classList.contains('on'))return _dlgRes(null);stopCam();closeM()}});
+setTimeout(cInit,0);
+/* USB / Bluetooth scanners type fast and press Enter. Catch scans even when no box is selected. */
+let WB='',WT=0;
+document.addEventListener('keydown',e=>{const tg=e.target;if(tg&&tg.matches&&tg.matches('input,textarea,select'))return;if(e.ctrlKey||e.metaKey||e.altKey)return;
+ const n=Date.now();if(n-WT>80)WB='';WT=n;
+ if(e.key==='Enter'){if(WB.length>=4){e.preventDefault();routeScan(WB)}WB='';return}
+ if(e.key.length===1)WB+=e.key});
+function routeScan(v){if($('dlg').classList.contains('on')||$('lock').classList.contains('on'))return;const ov=$('ov').classList.contains('on');if(SCN&&ov&&$('scin'))return scanAdd(v);if(ov)return;
+ if(V==='sell')return scanCode(v);if(V==='menu'&&SUB==='phones'){PHQ=v;return render()}
+ if(V==='repairs'){RQ=v.replace(/^R/,'');return render()}
+ if(!(V==='menu'&&SUB==='stock'))go('menu','stock');stockScan(v)}
+render();
+if((staffList().length&&(!who()||D.settings.lockOnOpen))||(!staffList().length&&adminOn()&&D.settings.lockOnOpen))lockNow();
+</script>
+</body>
+</html>

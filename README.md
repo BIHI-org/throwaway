@@ -80,3 +80,20 @@ admin PIN instead (Settings). To turn the owner login back on, see the comment i
 - Orders made in the old claude.ai version do not carry over; that data lives in claude.ai.
 - Receipts: on tablets, Print opens the share sheet (choose Print); on computers it downloads a PDF.
 - To run several restaurants from one Firebase project, give each site its own `MRCHEF_SHOP` in `firebase-config.js`.
+
+## NS Cellphone Store POS
+
+A second app in the same site, at `https://<owner>.github.io/<repo>/ns/`. It has its own icon, install
+name ("NS Store") and offline cache, and does not share data with the Bismillah POS.
+
+```
+src/NS_Cellphone_Store.html   the POS as exported from claude.ai
+scripts/build_ns.py           turns it into web/ns/index.html
+web/ns/                       the NS site (manifest, sw.js, icons)
+```
+
+To update it: save the new export over `src/NS_Cellphone_Store.html`, run `python3 scripts/build_ns.py`, push.
+
+Data is saved in each browser. To share it across devices, set up **Menu → BiixiPay Cloud** (Supabase).
+Moving from an old copy: in the old copy use **Menu → Backup → Download backup**, then on the website
+use **Restore from backup**.

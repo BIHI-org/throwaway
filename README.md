@@ -71,10 +71,8 @@ That regenerates `web/index.html`. Push to `main` and the site updates.
 
 ## Owner login
 
-On claude.ai only the artifact's owner sees the Owner button. A website can't tell who the owner is,
-so every device shows it and the **owner password** alone protects it. It needs Firebase
-(it is hidden in "This device only" mode). Set the owner password as soon as Firebase is connected:
-until then, whoever opens the POS first could set it.
+Turned off on the website: there is no Owner button and no owner password. Protect settings with an
+admin PIN instead (Settings). To turn the owner login back on, see the comment in `web/platform.js`.
 
 ## Notes
 

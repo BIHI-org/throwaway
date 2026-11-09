@@ -55,6 +55,10 @@ renames the app from "Mr Chef" to Bismillah. The live menu is in the database: e
 Market-price dishes: give a dish a price of 0 and the POS asks the waiter for the price when it is added
 (Federation Mix works this way).
 
+Test sales: open the sale from **Sales → All bills** and tap **Delete sale (test or mistake)** twice.
+Unlike Refund, which keeps the bill on record, this removes it from every total. Once an admin PIN is
+set, only the admin can delete sales.
+
 ## Updating the app
 
 Save the new export from claude.ai over `src/Mr_Chef_POS.html`, then run:

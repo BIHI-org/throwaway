@@ -73,5 +73,19 @@ patch("const ex=o.lines.find(l=>l.mid===m.id&&!l.sent", "const ex=o.lines.find(l
 patch('<span class="p num">${fmt(m.price)}</span>', '<span class="p num">${m.price>0?fmt(m.price):\'Market price\'}</span>',
       'show "Market price" on the button')
 
+# 5. Delete a sale entirely (for test orders). Refund keeps the sale on record; this removes it from
+#    every total. Two taps to confirm; needs the admin PIN once one is set.
+patch("    ${s.refunded?`<div class=\"warnbox\">Refunded",
+      "    <button class=\"btn sec\" style=\"color:var(--danger)\" data-delsale=\"${s.id}\">${confirmKey==='delsale'+s.id?'Tap again to delete this sale for good':'Delete sale (test or mistake)'}</button>\n"
+      "    ${s.refunded?`<div class=\"warnbox\">Refunded",
+      'delete-sale button on the receipt')
+patch("  if(d.closeday!==undefined)",
+      "  if(d.delsale){const s=S.sales.find(x=>x.id===d.delsale);if(!s)return;\n"
+      "    if(confirmKey!=='delsale'+s.id){confirmKey='delsale'+s.id;return openReceipt(s,false)}\n"
+      "    confirmKey=null;return needAdmin('delete a sale',()=>{S.sales=S.sales.filter(x=>x.id!==s.id);put('sales/'+s.id,null);"
+      "closeLayer();render();toast('Sale '+(s.no?'#'+s.no+' ':'')+'deleted')})}\n"
+      "  if(d.closeday!==undefined)",
+      'delete-sale action')
+
 (ROOT / 'web' / 'index.html').write_text(out, encoding='utf8')
 print('built web/index.html from', src)

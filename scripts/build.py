@@ -87,5 +87,9 @@ patch("  if(d.closeday!==undefined)",
       "  if(d.closeday!==undefined)",
       'delete-sale action')
 
+# 6. No owner-password login on the website: the ★ Owner button never shows.
+patch("isOwnerAcct=await u.isOwner();if(!isOwnerAcct)return;", "isOwnerAcct=false;return;",
+      'turn off the owner-password login')
+
 (ROOT / 'web' / 'index.html').write_text(out, encoding='utf8')
 print('built web/index.html from', src)

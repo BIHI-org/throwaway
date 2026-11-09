@@ -835,7 +835,7 @@ function needAdmin(what,cb){
 async function sha(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return pinHash(t)}}
 async function setupOwner(){
   try{const u=window.claude&&window.claude.use?await window.claude.use('user'):null;if(!u)return;
-    isOwnerAcct=await u.isOwner();if(!isOwnerAcct)return;
+    isOwnerAcct=false;return;
     const id=await u.id();if(!id)return;ownerPath='data/users/'+id+'/owner';
     db.doc(ownerPath).onSnapshot(d=>{ownerSecret=d.exists?clone(d.data()):null;if(locked)drawLock();softRender()},()=>{});
     if(locked)drawLock();softRender();

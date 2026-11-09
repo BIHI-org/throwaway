@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mr Chef POS</title>
+<title>Bismillah POS</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#18203A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mr Chef">
+<meta name="apple-mobile-web-app-title" content="Bismillah">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -329,7 +329,7 @@ button.li:hover{outline:1px solid var(--accent)}
 <div class="top">
   <div class="brand">
     <span class="hat"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-3.5 0-5.5-2.6-5.5-5.3C3.5 10.6 6 8.5 9 8.7 10 6 12.8 4 16 4s6 2 7 4.7c3-.2 5.5 1.9 5.5 5 0 2.7-2 5.3-5.5 5.3v8H9z"/><path d="M9 23h14"/></svg></span>
-    <span id="bname">Mr Chef</span>
+    <span id="bname">Bismillah</span>
   </div>
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-v="tables"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="lbl">Tables</span></button>
@@ -362,16 +362,10 @@ const lsGet=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return n
 const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 
 /* Starter menu — used only when this device runs without the shared store */
-const STARTER={settings:{name:'Mr Chef',tax:5,tables:12},waiters:['Waiter 1','Waiter 2'],menu:[
-  ['Starters','Lentil Soup',6.5],['Starters','Sambusa (3)',5],['Starters','Hummus & Bread',7],['Starters','Garden Salad',8],
-  ['Mains','Chicken Suqaar',17],['Mains','Beef Suqaar',18],['Mains','Goat & Rice',22],['Mains','Fish & Rice',19],['Mains','Chicken Shawarma Plate',16],['Mains','Pasta Bolognese',15],
-  ['Side dish','Basmati Rice',4],['Side dish','Fries',4.5],['Side dish','Chapati',2.5],['Side dish','Banana',1],['Side dish','Side Salad',4],['Side dish','Canjeero',3],
-  ['Casariya','Sambusa',2],['Casariya','Somali Tea',3],['Casariya','Coffee',3],['Casariya','Mango Shake',6],
-  ['Drinks','Mango Juice',4.5],['Drinks','Pop',2.5],['Drinks','Water',2],
-  ['Dessert','Halwa',5],['Dessert','Cake Slice',6]].map(([cat,name,price],i)=>({id:'m'+i,cat,name,price,out:false,side:cat==='Mains'}))};
+const STARTER={settings:{"name": "Bismillah Restaurant", "tax": 5, "tables": 12},waiters:['Waiter 1','Waiter 2'],cats:["Breakfast", "Main Dishes", "Rice & Pasta", "Hot Drinks", "Juices & Drinks", "Shakes & Desserts"],menu:[["Breakfast", "Anjero/Liver", 18],["Breakfast", "Porridge", 2],["Breakfast", "Malawah", 3],["Breakfast", "Beef Cubes", 10],["Breakfast", "Goat Liver with Anjero", 18],["Breakfast", "Lamb Liver with Malawah", 18],["Breakfast", "Malawah with Honey", 2.15],["Breakfast", "Egg Fry", 5],["Breakfast", "Spanish Omelette", 8],["Breakfast", "Traditional Breakfast Mix", 15],["Main Dishes", "Pasta Saldato", 16],["Main Dishes", "Jabati Saldato", 15],["Main Dishes", "Pasta", 14],["Main Dishes", "Lamb Shoulder", 24],["Main Dishes", "Salad", 8],["Main Dishes", "Steak", 22],["Main Dishes", "Chicken Fried", 18],["Main Dishes", "Chicken or Beef KK", 21],["Main Dishes", "Goat Meat", 22],["Main Dishes", "Chicken Steak", 20],["Main Dishes", "Lamb Shank", 24],["Rice & Pasta", "Ugali Fish", 12],["Rice & Pasta", "Fish Curry", 14],["Rice & Pasta", "Ugali Veg", 8],["Rice & Pasta", "Sarren", 10],["Rice & Pasta", "Cambulo Somali", 12],["Rice & Pasta", "Chicken Curry", 16],["Rice & Pasta", "Alfredo Spaghetti with Goat Meat", 21],["Rice & Pasta", "Sport Rice with Meat", 41],["Rice & Pasta", "Federation Mix", 0],["Hot Drinks", "Latte", 3.5],["Hot Drinks", "Macchiato", 3.5],["Hot Drinks", "Cappuccino", 3.5],["Hot Drinks", "Ice Latte", 4.5],["Hot Drinks", "Americano", 3],["Hot Drinks", "Black Coffee", 2.5],["Hot Drinks", "Black Tea", 2.5],["Hot Drinks", "Green Tea", 2.5],["Hot Drinks", "Traditional Tea", 2.5],["Hot Drinks", "Hot Chocolate", 3.5],["Hot Drinks", "Turkish Coffee", 4],["Juices & Drinks", "Mango Juice", 4.5],["Juices & Drinks", "Avocado Juice", 4.5],["Juices & Drinks", "Watermelon Juice", 4.5],["Juices & Drinks", "Orange Juice", 4.5],["Juices & Drinks", "Pawpaw Juice", 4.5],["Juices & Drinks", "Pineapple Juice", 4.5],["Juices & Drinks", "Beetroot Juice", 5],["Juices & Drinks", "Mixed Fruit Juice", 5],["Juices & Drinks", "Banana Smoothie", 4.5],["Juices & Drinks", "Passion Fruit Juice", 5],["Juices & Drinks", "Fresh Lemonade", 3.5],["Juices & Drinks", "Coke", 2.5],["Juices & Drinks", "Fanta", 2.5],["Shakes & Desserts", "Milkshake", 6.5],["Shakes & Desserts", "Strawberry Smoothie", 7.5],["Shakes & Desserts", "Chocolate Shake", 6.5],["Shakes & Desserts", "Banana Split Shake", 7],["Shakes & Desserts", "Mango Lassi", 5.5],["Shakes & Desserts", "Pistachio Shake", 7.5],["Shakes & Desserts", "Date Shake", 6.5],["Shakes & Desserts", "Mixed Berry Smoothie", 7.5],["Shakes & Desserts", "Fruit Salad with Ice Cream", 8],["Shakes & Desserts", "Tropical Fruit Salad", 7.5]].map(([cat,name,price],i)=>({id:'m'+i,cat,name,price,out:false,side:cat==='Mains'}))};
 
 /* State: config (menu, staff, settings), open orders, kitchen tickets, today's sales */
-let S={staff:[],log:[],close:null,closes:{},settings:{name:'Mr Chef',tax:5,tables:12},waiters:[],menu:[],orders:{},tickets:[],sales:[]};
+let S={staff:[],log:[],close:null,closes:{},settings:{name:'Bismillah Restaurant',tax:5,tables:12},waiters:[],menu:[],orders:{},tickets:[],sales:[]};
 let mode='connecting', db=null, dl=null, cfgLoaded=false;
 let view='tables',cur=null,draft=null,curCat=null,confirmKey=null,pay={tip:0,disc:0,method:'Card',split:1};
 let myWaiter=lsGet('mrchef-waiter')||'';
@@ -458,7 +452,7 @@ async function connect(){
   const ok=snap=>{if(!snap.metadata.fromCache){clearTimeout(timer);if(mode!=='live')setMode('live')}};
   db.doc('pos/config').onSnapshot(s=>{
     if(s.exists){const c=clone(s.data());S.settings=c.settings||S.settings;S.staff=staffFrom(c);S.waiters=S.staff.map(x=>x.name);S.menu=c.menu||[];S.cats=c.cats||[]}
-    cfgLoaded=true;ok(s);if(!s.exists&&!s.metadata.fromCache&&!S.menu.length){const c=clone(STARTER);S.settings=c.settings;S.staff=staffFrom(c);S.menu=c.menu;S.cats=[];saveCfg()} /* brand-new database: seed the starter menu once */softRender();afterCfg()},onErr);
+    cfgLoaded=true;ok(s);if(!s.exists&&!s.metadata.fromCache&&!S.menu.length){const c=clone(STARTER);S.settings=c.settings;S.staff=staffFrom(c);S.menu=c.menu;S.cats=c.cats||[];saveCfg()} /* brand-new database: seed the starter menu once */softRender();afterCfg()},onErr);
   db.collection('orders').onSnapshot(q=>{
     const o={};q.docs.forEach(x=>o[x.id]=clone(x.data()));
     for(const p in queue){if(p.startsWith('orders/')){const k=p.slice(7);if(queue[p]===null)delete o[k];else o[k]=clone(queue[p])}}
@@ -551,7 +545,7 @@ function tile(k){
 }
 function vTables(){
   const tos=Object.keys(S.orders).filter(isTO).sort((a,b)=>a.slice(1)-b.slice(1));
-  let h=`${hasAdmin()?'':`<div class="adminbar"><span>Protect Mr Chef with an admin login. Only the admin can open settings and change staff.</span><button class="btn pri" style="padding:10px 16px;font-size:14px" data-setupadmin>Set up admin login</button></div>`}<div class="head"><h2>Dine in</h2><div class="legend">
+  let h=`${hasAdmin()?'':`<div class="adminbar"><span>Protect Bismillah with an admin login. Only the admin can open settings and change staff.</span><button class="btn pri" style="padding:10px 16px;font-size:14px" data-setupadmin>Set up admin login</button></div>`}<div class="head"><h2>Dine in</h2><div class="legend">
     <span><i class="dot" style="background:var(--line)"></i>Free</span>
     <span><i class="dot" style="background:var(--open)"></i>Ordering</span>
     <span><i class="dot" style="background:var(--cook)"></i>In kitchen</span>
@@ -566,7 +560,7 @@ function itemsHTML(){
   const ql=q.trim().toLowerCase();
   const items=ql?S.menu.filter(m=>m.name.toLowerCase().includes(ql)):S.menu.filter(m=>m.cat===curCat);
   return items.map(m=>`<button class="item" style="--cc:${catColor(m.cat)}" data-add="${m.id}" ${m.out?'disabled':''}>${m.out?'<span class="so">SOLD OUT</span>':''}
-    ${ql?`<span class="ic">${esc(m.cat)}</span>`:''}<b>${esc(m.name)}</b>${m.side&&sideItems().length?'<span class="sd">+ choose side</span>':''}<span class="p num">${fmt(m.price)}</span></button>`).join('')
+    ${ql?`<span class="ic">${esc(m.cat)}</span>`:''}<b>${esc(m.name)}</b>${m.side&&sideItems().length?'<span class="sd">+ choose side</span>':''}<span class="p num">${m.price>0?fmt(m.price):'Market price'}</span></button>`).join('')
     ||`<div class="empty">${ql?'No dish matches “'+esc(q)+'”':'No menu yet. Add dishes in the Menu tab.'}</div>`;
 }
 function vOrder(){
@@ -689,7 +683,7 @@ function vSettings(){
       <button class="btn pri" data-saverc>Save receipt details</button>
     </div>
     ${isOwnerAcct?`<div class="card"><h3>Owner</h3>
-      <div class="sub" style="font-size:13px">You own this Mr Chef. The Owner login works only on your own Claude account, with your owner password. As Owner you can reset any PIN, including the admin's.</div>
+      <div class="sub" style="font-size:13px">You own this Bismillah. The Owner login works only on your own Claude account, with your owner password. As Owner you can reset any PIN, including the admin's.</div>
       ${ownerMode?`<div class="okbox"><b>Signed in as Owner</b></div><button class="btn sec" data-owchange>Change owner password</button>`:`<button class="btn pri" data-owner>Sign in as Owner</button>`}
     </div>`:''}
     <div class="card"><h3>Staff</h3>
@@ -778,7 +772,7 @@ function openSide(m){
   <button class="btn sec" data-close>Cancel</button></div></div>`;
 }
 function addItem(m,side){const o=getO();side=side||'';
-  const ex=o.lines.find(l=>l.mid===m.id&&!l.sent&&!l.note&&(l.side||'')===side);
+  const ex=o.lines.find(l=>l.mid===m.id&&l.price===m.price&&!l.sent&&!l.note&&(l.side||'')===side);
   if(ex)ex.qty++;else o.lines.push({id:uid(),mid:m.id,name:m.name,price:m.price,qty:1,sent:false,note:'',side});
   commit();render();
 }
@@ -1090,7 +1084,7 @@ document.addEventListener('click',e=>{
   if(d.cat){curCat=d.cat;q='';return render()}
   if(d.close!==undefined) return closeLayer();
   const o=view==='order'?getO():null;
-  if(d.add){const m=S.menu.find(x=>x.id===d.add);if(!m||m.out)return;
+  if(d.add){let m=S.menu.find(x=>x.id===d.add);if(!m||m.out)return;if(!(m.price>0)){const v=prompt(m.name+' is market price. Enter the price:','');const p=Math.round(parseFloat(String(v||'').replace(/[^0-9.]/g,''))*100)/100;if(!(p>0))return;m={...m,price:p,side:false};return addItem(m)}
     if(m.side&&sideItems().length)return openSide(m);
     return addItem(m)}
   if(d.pickside!==undefined){const m=S.menu.find(x=>x.id===d.for);layer().innerHTML='';if(m)addItem(m,d.pickside);return}
@@ -1172,7 +1166,7 @@ document.addEventListener('click',e=>{
   if(d.askside){const m=S.menu.find(x=>x.id===d.askside);if(!m)return;m.side=!m.side;saveCfg();
     if(m.side&&!sideCat())toast('Add a "Side dish" column so waiters have sides to pick');return render()}
   if(d.csv!==undefined)return exportCSV();
-  if(d.savesettings!==undefined){S.settings={...S.settings,name:document.getElementById('sName').value.trim()||'Mr Chef',
+  if(d.savesettings!==undefined){S.settings={...S.settings,name:document.getElementById('sName').value.trim()||'Bismillah Restaurant',
     tables:Math.max(1,Math.min(60,parseInt(document.getElementById('sTables').value)||12)),
     tax:Math.max(0,parseFloat(document.getElementById('sTax').value)||0)};saveCfg();toast('Saved');return render()}
   if(d.addm!==undefined){const n=document.getElementById('nmName').value.trim(),p=parseFloat(document.getElementById('nmPrice').value),c=document.getElementById('nmCat').value.trim()||'Other';
@@ -1270,12 +1264,12 @@ const TR=[
 ['Remove PIN','Ka saar PIN','احذف الرمز'],['Approve with owner password','Ku oggolow furaha milkiilaha','الموافقة بكلمة مرور المالك'],['Wrong password','Furaha waa khalad','كلمة مرور خاطئة'],['Use at least 6 characters','Isticmaal ugu yaraan 6 xaraf','استخدم 6 أحرف على الأقل'],
 ['The two passwords are different','Labada fure way kala duwan yihiin','كلمتا المرور مختلفتان'],['Too many tries. Wait 30 seconds.','Isku day badan. Sug 30 ilbiriqsi.','محاولات كثيرة. انتظر 30 ثانية.'],['Owner password saved','Furaha milkiilaha waa la kaydiyay','تم حفظ كلمة مرور المالك'],
 ["At least 6 characters. It works only on your own Claude account, so staff can't use it even on a shared tablet.",'Ugu yaraan 6 xaraf. Waxay ku shaqaysaa koontadaada Claude oo keliya, shaqaaluhuna ma isticmaali karaan xataa tablet la wadaago.','6 أحرف على الأقل. تعمل فقط على حساب Claude الخاص بك، فلا يستطيع الموظفون استخدامها حتى على جهاز مشترك.'],
-["You own this Mr Chef. The Owner login works only on your own Claude account, with your owner password. As Owner you can reset any PIN, including the admin's.",'Adiga ayaa leh Mr Chef-kan. Gelitaanka milkiilaha wuxuu ku shaqeeyaa koontadaada Claude oo keliya, iyo furahaaga. Milkiile ahaan waad dib u dejin kartaa PIN kasta, oo ay ku jirto ta maamulaha.','أنت مالك Mr Chef. يعمل دخول المالك فقط على حساب Claude الخاص بك وبكلمة مرورك. كمالك يمكنك إعادة تعيين أي رمز، بما فيه رمز المسؤول.'],["Who's working?",'Yaa shaqaynaya?','من يعمل الآن؟'],['Tap your name, then enter your PIN.','Riix magacaaga, kadibna geli PIN-kaaga.','اضغط على اسمك ثم أدخل رمزك.'],
+["You own this Bismillah. The Owner login works only on your own Claude account, with your owner password. As Owner you can reset any PIN, including the admin's.",'Adiga ayaa leh Bismillah-kan. Gelitaanka milkiilaha wuxuu ku shaqeeyaa koontadaada Claude oo keliya, iyo furahaaga. Milkiile ahaan waad dib u dejin kartaa PIN kasta, oo ay ku jirto ta maamulaha.','أنت مالك Bismillah. يعمل دخول المالك فقط على حساب Claude الخاص بك وبكلمة مرورك. كمالك يمكنك إعادة تعيين أي رمز، بما فيه رمز المسؤول.'],["Who's working?",'Yaa shaqaynaya?','من يعمل الآن؟'],['Tap your name, then enter your PIN.','Riix magacaaga, kadibna geli PIN-kaaga.','اضغط على اسمك ثم أدخل رمزك.'],
 ['Admin','Maamulaha guud','المسؤول'],['Admin login','Gelitaanka maamulaha','دخول المسؤول'],['Set up admin login','Samee gelitaanka maamulaha','إعداد دخول المسؤول'],['Your name','Magacaaga','اسمك'],
 ['Next: choose PIN','Xiga: dooro PIN','التالي: اختر الرمز'],['Choose 4 digits','Dooro 4 lambar','اختر 4 أرقام'],['Lock screen after','Xir shaashadda kadib','قفل الشاشة بعد'],['With no use. The kitchen screen stays open.','Haddii aan la isticmaalin. Shaashadda jikadu way furnaanaysaa.','عند عدم الاستخدام. تبقى شاشة المطبخ مفتوحة.'],
 ['Never','Weligeed','أبدًا'],['no PIN','PIN ma leh','بدون رمز'],['No staff yet','Weli shaqaale ma jiro','لا يوجد موظفون بعد'],['Switch user','Beddel isticmaalaha','تبديل المستخدم'],['Lock screen','Xir shaashadda','قفل الشاشة'],
 ['The admin is the owner. Only the admin can open settings, add staff and set PINs.','Maamulaha guud waa milkiilaha. Isaga keliya ayaa furi kara dejinta, ku dari kara shaqaale oo dhigi kara PIN.','المسؤول هو المالك. وحده يستطيع فتح الإعدادات وإضافة الموظفين وتعيين الرموز.'],
-['Protect Mr Chef with an admin login. Only the admin can open settings and change staff.','Ku ilaali Mr Chef gelitaan maamule. Maamulaha keliya ayaa furi kara dejinta oo beddeli kara shaqaalaha.','احمِ Mr Chef بدخول المسؤول. وحده المسؤول يفتح الإعدادات ويغيّر الموظفين.'],
+['Protect Bismillah with an admin login. Only the admin can open settings and change staff.','Ku ilaali Bismillah gelitaan maamule. Maamulaha keliya ayaa furi kara dejinta oo beddeli kara shaqaalaha.','احمِ Bismillah بدخول المسؤول. وحده المسؤول يفتح الإعدادات ويغيّر الموظفين.'],
 ['No admin login yet, so anyone can open settings.','Weli gelitaan maamule ma jiro, qof kastaa wuu furi karaa dejinta.','لا يوجد دخول مسؤول بعد، لذا يمكن لأي شخص فتح الإعدادات.'],['Auto-lock off','Xiritaanka tooska ah waa dansan yahay','القفل التلقائي متوقف'],
 ['The admin (owner) controls settings and staff. Managers approve voids, discounts, refunds, menu changes and closing the day. Staff with a PIN sign in with it.','Maamulaha guud (milkiilaha) ayaa maamula dejinta iyo shaqaalaha. Maamulayaashu waxay oggolaadaan tirtirista, qiimo dhimista, lacag celinta, beddelka menu-ga iyo xiritaanka maalinta. Shaqaalaha PIN leh way ku galaan.','المسؤول (المالك) يتحكم في الإعدادات والموظفين. يوافق المديرون على الإلغاء والخصم والاسترجاع وتعديل القائمة وإغلاق اليوم. يدخل الموظف برمزه.'],['Manager approval','Oggolaanshaha maamulaha','موافقة المدير'],['Enter your PIN','Geli PIN-kaaga','أدخل رمزك'],['Wrong PIN','PIN khaldan','رمز خاطئ'],
 ['Enter 4 digits','Geli 4 lambar','أدخل 4 أرقام'],['Pay for','Bixi','ادفع مقابل'],['Whole bill','Biilka oo dhan','الفاتورة كاملة'],['Choose items','Dooro waxyaabaha','اختر الأصناف'],

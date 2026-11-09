@@ -1,7 +1,7 @@
 {
-  "name": "Mr Chef POS",
-  "short_name": "Mr Chef",
-  "description": "Point of sale for Mr Chef: tables, takeout, kitchen screen and daily sales.",
+  "name": "Bismillah POS",
+  "short_name": "Bismillah",
+  "description": "Point of sale for Bismillah Restaurant: tables, takeout, kitchen screen and daily sales.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

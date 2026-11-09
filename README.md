@@ -1,6 +1,6 @@
-# Mr Chef POS
+# Bismillah POS
 
-Point of sale for Mr Chef: tables, takeout, kitchen screen, menu editor and daily sales.
+Point of sale for Bismillah Restaurant (Edmonton): tables, takeout, kitchen screen, menu editor and daily sales.
 It runs as a website, and phones, tablets and computers can install it as an app.
 
 ```
@@ -45,6 +45,15 @@ The Firebase web keys are not secret; the rules and the sign-in protect the data
 
 It opens full screen, without the browser bar, and still opens with no internet.
 With Firebase on, orders taken offline sync when the connection comes back.
+
+## Bismillah Restaurant setup
+
+`data/bismillah-menu.json` holds the restaurant name, tax (5% Alberta GST) and menu, taken from
+https://bismillahrest.netlify.app/menu. `scripts/build.py` uses it for the built-in starter menu and
+renames the app from "Mr Chef" to Bismillah. The live menu is in the database: edit it in the Menu tab.
+
+Market-price dishes: give a dish a price of 0 and the POS asks the waiter for the price when it is added
+(Federation Mix works this way).
 
 ## Updating the app
 

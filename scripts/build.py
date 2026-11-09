@@ -16,7 +16,7 @@ HEAD = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mr Chef">
+<meta name="apple-mobile-web-app-title" content="Bismillah">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -41,6 +41,37 @@ anchor = 'cfgLoaded=true;ok(s);'
 if out.count(anchor) != 1:
     sys.exit('build: could not find the config-loaded line; check the seed patch')
 out = out.replace(anchor, anchor + SEED, 1)
+
+def patch(old, new, what):
+    global out
+    if out.count(old) != 1:
+        sys.exit(f'build: could not apply "{what}" (found {out.count(old)} matches); check the patch')
+    out = out.replace(old, new, 1)
+
+# 3. Bismillah Restaurant: their name and menu (data/bismillah-menu.json).
+import json
+shop = json.loads((ROOT / 'data' / 'bismillah-menu.json').read_text(encoding='utf8'))
+name = shop['settings']['name']
+out = out.replace('<title>Mr Chef POS</title>', '<title>Bismillah POS</title>', 1)
+out = out.replace("'Mr Chef'", json.dumps(name).replace('"', "'"))   # defaults and fallbacks in code
+out = out.replace('Mr Chef', 'Bismillah')                           # on-screen text, in every language
+a = out.index('const STARTER={')
+b = out.index('.map(([cat,name,price],i)=>', a)
+starter = ("const STARTER={settings:" + json.dumps(shop['settings']) + ",waiters:['Waiter 1','Waiter 2'],cats:"
+           + json.dumps(shop['cats']) + ",menu:[" + ','.join(json.dumps(x) for x in shop['menu']) + "]")
+out = out[:a] + starter + out[b:]
+patch("S.menu=c.menu;S.cats=[];saveCfg()}", "S.menu=c.menu;S.cats=c.cats||[];saveCfg()}", 'seed with categories in menu order')
+
+# 4. Market-price dishes: a dish priced 0 asks for the price when it is added.
+patch("if(d.add){const m=S.menu.find(x=>x.id===d.add);if(!m||m.out)return;",
+      "if(d.add){let m=S.menu.find(x=>x.id===d.add);if(!m||m.out)return;"
+      "if(!(m.price>0)){const v=prompt(m.name+' is market price. Enter the price:','');const p=Math.round(parseFloat(String(v||'').replace(/[^0-9.]/g,''))*100)/100;"
+      "if(!(p>0))return;m={...m,price:p,side:false};return addItem(m)}",
+      'ask the price for market-price dishes')
+patch("const ex=o.lines.find(l=>l.mid===m.id&&!l.sent", "const ex=o.lines.find(l=>l.mid===m.id&&l.price===m.price&&!l.sent",
+      'keep market-price lines with different prices apart')
+patch('<span class="p num">${fmt(m.price)}</span>', '<span class="p num">${m.price>0?fmt(m.price):\'Market price\'}</span>',
+      'show "Market price" on the button')
 
 (ROOT / 'web' / 'index.html').write_text(out, encoding='utf8')
 print('built web/index.html from', src)

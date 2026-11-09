@@ -93,6 +93,9 @@ scripts/build_ns.py           turns it into web/ns/index.html
 web/ns/                       the NS site (manifest, sw.js, icons)
 ```
 
+Its own address, **https://nsphonerepair.ca**, comes from a Cloudflare Worker (`cloudflare/nsphonerepair-worker.js`)
+that serves `web/ns/` from GitHub Pages. Pushing to `main` updates both addresses.
+
 To update it: save the new export over `src/NS_Cellphone_Store.html`, run `python3 scripts/build_ns.py`, push.
 
 Data is saved in each browser. **BiixiPay Cloud** shares it across devices through the same Firebase project

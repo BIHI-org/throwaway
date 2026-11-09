@@ -74,18 +74,20 @@ patch('<span class="p num">${fmt(m.price)}</span>', '<span class="p num">${m.pri
       'show "Market price" on the button')
 
 # 5. Delete a sale entirely (for test orders). Refund keeps the sale on record; this removes it from
-#    every total. Two taps to confirm; needs the admin PIN once one is set.
+#    every total. Admin only: two taps, then an admin's PIN every time. With no admin PIN set, it is refused.
 patch("    ${s.refunded?`<div class=\"warnbox\">Refunded",
-      "    <button class=\"btn sec\" style=\"color:var(--danger)\" data-delsale=\"${s.id}\">${confirmKey==='delsale'+s.id?'Tap again to delete this sale for good':'Delete sale (test or mistake)'}</button>\n"
+      "    <button class=\"btn sec\" style=\"color:var(--danger)\" data-delsale=\"${s.id}\">${confirmKey==='delsale'+s.id?'Tap again, then enter an admin PIN':'Delete sale (admin PIN)'}</button>\n"
       "    ${s.refunded?`<div class=\"warnbox\">Refunded",
       'delete-sale button on the receipt')
 patch("  if(d.closeday!==undefined)",
       "  if(d.delsale){const s=S.sales.find(x=>x.id===d.delsale);if(!s)return;\n"
       "    if(confirmKey!=='delsale'+s.id){confirmKey='delsale'+s.id;return openReceipt(s,false)}\n"
-      "    confirmKey=null;return needAdmin('delete a sale',()=>{S.sales=S.sales.filter(x=>x.id!==s.id);put('sales/'+s.id,null);"
+      "    confirmKey=null;const ad=S.staff.filter(x=>x.role==='admin'&&x.pin);openReceipt(s,false);\n"
+      "    if(!ad.length)return toast('Only an admin can delete sales. Give an admin a PIN in Settings first.');\n"
+      "    return openPin({approval:true,title:'Admin PIN',sub:'Admin PIN to delete sale'+(s.no?' #'+s.no:''),pool:ad,onOk:()=>{S.sales=S.sales.filter(x=>x.id!==s.id);put('sales/'+s.id,null);"
       "if(s.no){const rx='Receipt #'+s.no,mine=e=>e.type==='refund'&&e.detail===rx;"
       "S.log.filter(mine).forEach(e=>{if(mode==='live')put('log/'+e.id,null)});S.log=S.log.filter(e=>!mine(e));if(mode!=='live')saveLocal()}"
-      "closeLayer();render();toast('Sale '+(s.no?'#'+s.no+' ':'')+'deleted')})}\n"
+      "closeLayer();render();toast('Sale '+(s.no?'#'+s.no+' ':'')+'deleted')}})}\n"
       "  if(d.closeday!==undefined)",
       'delete-sale action')
 

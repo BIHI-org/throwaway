@@ -55,9 +55,10 @@ renames the app from "Mr Chef" to Bismillah. The live menu is in the database: e
 Market-price dishes: give a dish a price of 0 and the POS asks the waiter for the price when it is added
 (Federation Mix works this way).
 
-Test sales: open the sale from **Sales → All bills** and tap **Delete sale (test or mistake)** twice.
-Unlike Refund, which keeps the bill on record, this removes it from every total. Once an admin PIN is
-set, only the admin can delete sales.
+Test sales: open the sale from **Sales → All bills**, tap **Delete sale (admin PIN)** twice, then enter an
+admin's PIN. It asks for the PIN every time, even when an admin is signed in, and refuses if no admin has
+a PIN. Unlike Refund, which keeps the bill on record, this removes the bill and its refund record from
+every total.
 
 ## Updating the app
 

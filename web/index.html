@@ -294,6 +294,25 @@ button.li:hover{outline:1px solid var(--accent)}
 .ev small{display:block;color:var(--muted);font-size:12px}
 .kd .vd{color:var(--danger);font-weight:800}
 .kd.voided{opacity:.45;text-decoration:line-through}
+.userbtn{display:flex;align-items:center;gap:8px;background:var(--bar-soft);color:var(--bar-ink);border-radius:999px;padding:5px 14px 5px 5px;text-align:start}
+.userbtn .un{display:grid;line-height:1.1}
+.userbtn small{font-size:11px;color:var(--bar-muted);font-weight:600}
+.av{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-family:var(--display)}
+#lock{position:fixed;inset:0;z-index:22;background:var(--bar);color:var(--bar-ink);overflow:auto;padding-block:max(24px,env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lockcard{width:min(760px,100%);margin:6vh auto 0;display:grid;gap:20px;text-align:center}
+.lockcard .brand{justify-content:center;margin:0;font-size:28px}
+.lockcard h2{color:var(--bar-ink)}
+.lockcard p{margin:0;color:var(--bar-muted)}
+.who{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.who button{background:var(--bar-soft);color:var(--bar-ink);border-radius:18px;padding:20px 12px;display:grid;justify-items:center;gap:8px;border:2px solid transparent}
+.who button:hover,.who button:focus-visible{border-color:var(--accent)}
+.who .av{width:56px;height:56px;font-size:24px}
+.who small{color:var(--bar-muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.who button[data-r="admin"] .av{background:var(--ink);box-shadow:0 0 0 2px var(--accent)}
+.adminbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.adminbar span{flex:1;min-width:200px}
+.tag.a{background:var(--ink);color:var(--bg)}
+@media (max-width:640px){.userbtn .un{display:none}.userbtn{padding:5px}}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;z-index:30;white-space:nowrap}
 
 @media (max-width:820px){
@@ -320,12 +339,14 @@ button.li:hover{outline:1px solid var(--accent)}
   </div>
   <span class="live" id="live" title="Connection"><i></i><span id="liveTxt">Connecting</span></span>
   <label class="lang"><select id="langSel" aria-label="Language"><option value="en">English</option><option value="so">Soomaali</option><option value="ar">العربية</option></select></label>
-  <label class="waiter"><span>Waiter</span><select id="waiterSel" aria-label="Waiter"></select></label>
+  <button class="userbtn" id="userBtn" aria-label="Switch user"><span class="av" id="userAv"></span><span class="un"><b id="userName"></b><small id="userRole"></small></span></button>
+  <button class="gear" id="lockBtn" aria-label="Lock screen" title="Lock screen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button>
   <button class="gear" id="gear" aria-label="Menu and staff settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
 </div>
 <main id="main"></main>
 <div id="layer"></div>
 <div id="layer2"></div>
+<div id="lock" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
@@ -356,8 +377,13 @@ let view='tables',cur=null,draft=null,curCat=null,confirmKey=null,pay={tip:0,dis
 let myWaiter=lsGet('mrchef-waiter')||'';
 const pinHash=p=>{let x=2166136261;for(const ch of 'mrchef:'+p){x^=ch.charCodeAt(0);x=Math.imul(x,16777619)}return 'h'+(x>>>0).toString(36)};
 const staffFrom=c=>Array.isArray(c.staff)&&c.staff.length?c.staff:(c.waiters||[]).map((n,i)=>({id:'s'+i+uid(),name:n,role:'waiter',pin:''}));
-const hasMgr=()=>S.staff.some(x=>x.role==='manager'&&x.pin);
-const meStaff=()=>S.staff.find(x=>x.name===waiterNow());
+const isMgrRole=r=>r==='manager'||r==='admin'||r==='owner';
+let ownerMode=false,isOwnerAcct=false,ownerSecret=null,ownerPath=null,ownerCb=null,owFails=0,owBlockUntil=0;
+const ROLE={waiter:'Waiter',manager:'Manager',admin:'Admin',owner:'Owner'};
+const hasMgr=()=>S.staff.some(x=>isMgrRole(x.role)&&x.pin);
+const hasAdmin=()=>S.staff.some(x=>x.role==='admin'&&x.pin);
+const lockOn=()=>S.staff.some(x=>x.pin);
+const meStaff=()=>ownerMode?{id:'owner',name:'Owner',role:'owner',pin:'x'}:S.staff.find(x=>x.name===waiterNow());
 let q='',followToday=true,soundOn=lsGet('mrchef-sound')!==false,actx=null,seenT=null;
 const catColor=c=>{const i=catList().indexOf(c);return 'var(--c'+((i<0?7:i)%8)+')'};
 const sideCat=()=>catList().find(c=>/side/i.test(c));
@@ -407,7 +433,7 @@ function startLocal(){
   const L=lsGet(LOCAL)||clone(STARTER);
   S={staff:staffFrom(L.staff?L:{waiters:L.waiters||STARTER.waiters}),log:(L.log||[]).filter(e=>e.day===dayKey()),closes:L.closes||{},settings:L.settings||STARTER.settings,waiters:L.waiters||STARTER.waiters,menu:L.menu||clone(STARTER.menu),cats:L.cats||[],orders:L.orders||{},tickets:L.tickets||[],sales:(L.sales||[]).filter(s=>s.day===dayKey())};
   S.waiters=S.staff.map(x=>x.name);S.close=S.closes[dayKey()]||null;salesDay=dayKey();
-  cfgLoaded=true;setMode('local');softRender();
+  cfgLoaded=true;setMode('local');softRender();afterCfg();
 }
 let salesUnsub=null,salesDay=null;
 function subscribeSales(day){
@@ -427,13 +453,12 @@ async function connect(){
   try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){dl=null}
   if(!d) return startLocal();
   db=d;
+  setupOwner();
   const timer=setTimeout(()=>{if(mode==='connecting')setMode('slow')},10000);
   const ok=snap=>{if(!snap.metadata.fromCache){clearTimeout(timer);if(mode!=='live')setMode('live')}};
   db.doc('pos/config').onSnapshot(s=>{
     if(s.exists){const c=clone(s.data());S.settings=c.settings||S.settings;S.staff=staffFrom(c);S.waiters=S.staff.map(x=>x.name);S.menu=c.menu||[];S.cats=c.cats||[]}
-    cfgLoaded=true;ok(s);
-    if(!s.exists&&!s.metadata.fromCache&&!S.menu.length){const c=clone(STARTER);S.settings=c.settings;S.staff=staffFrom(c);S.menu=c.menu;S.cats=[];saveCfg()} /* brand-new database: seed the starter menu once */
-    softRender()},onErr);
+    cfgLoaded=true;ok(s);if(!s.exists&&!s.metadata.fromCache&&!S.menu.length){const c=clone(STARTER);S.settings=c.settings;S.staff=staffFrom(c);S.menu=c.menu;S.cats=[];saveCfg()} /* brand-new database: seed the starter menu once */softRender();afterCfg()},onErr);
   db.collection('orders').onSnapshot(q=>{
     const o={};q.docs.forEach(x=>o[x.id]=clone(x.data()));
     for(const p in queue){if(p.startsWith('orders/')){const k=p.slice(7);if(queue[p]===null)delete o[k];else o[k]=clone(queue[p])}}
@@ -473,7 +498,7 @@ function watchTickets(list){
 
 /* ---------- helpers ---------- */
 function toast(msg){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
-function waiterNow(){return S.waiters.includes(myWaiter)?myWaiter:(S.waiters[0]||'Staff')}
+function waiterNow(){if(ownerMode)return 'Owner';return S.waiters.includes(myWaiter)?myWaiter:(S.waiters[0]||'Staff')}
 function getO(){
   if(S.orders[cur])return S.orders[cur];
   if(!draft||draft.key!==cur)draft={key:cur,o:{waiter:waiterNow(),opened:Date.now(),lines:[],name:''}};
@@ -504,8 +529,10 @@ function renderTop(){
   const active=view==='order'?'tables':view;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.v===active)));
   document.getElementById('gear').setAttribute('aria-current',String(view==='settings'));
-  const sel=document.getElementById('waiterSel'),w=waiterNow();
-  sel.innerHTML=(S.waiters.length?S.waiters:['Staff']).map(x=>`<option ${x===w?'selected':''}>${esc(x)}</option>`).join('');
+  const w=waiterNow(),me=meStaff();
+  document.getElementById('userName').textContent=w;document.getElementById('userAv').textContent=(w||'?').slice(0,1).toUpperCase();
+  document.getElementById('userRole').textContent=me?(ROLE[me.role]||'Waiter'):'';
+  document.getElementById('lockBtn').hidden=!lockOn();
   const k=S.tickets.filter(t=>t.status==='new').length;
   const b=document.getElementById('kcount');b.textContent=k;b.hidden=!k;
 }
@@ -524,7 +551,7 @@ function tile(k){
 }
 function vTables(){
   const tos=Object.keys(S.orders).filter(isTO).sort((a,b)=>a.slice(1)-b.slice(1));
-  let h=`<div class="head"><h2>Dine in</h2><div class="legend">
+  let h=`${hasAdmin()?'':`<div class="adminbar"><span>Protect Mr Chef with an admin login. Only the admin can open settings and change staff.</span><button class="btn pri" style="padding:10px 16px;font-size:14px" data-setupadmin>Set up admin login</button></div>`}<div class="head"><h2>Dine in</h2><div class="legend">
     <span><i class="dot" style="background:var(--line)"></i>Free</span>
     <span><i class="dot" style="background:var(--open)"></i>Ordering</span>
     <span><i class="dot" style="background:var(--cook)"></i>In kitchen</span>
@@ -556,7 +583,7 @@ function vOrder(){
   </section>
   <aside class="ticket">
     <header><button class="back" data-go="tables" aria-label="Back to tables">←</button><span class="t">${lab(cur)}${isTO(cur)?' <span class="togo">TO GO</span>':''}</span>
-      ${isTO(cur)?`<button class="small" data-name>${o.name?esc(o.name):'Add name'}</button>`:`<button class="small" data-move ${o.lines.length?'':'disabled'}>Move</button>`}
+      ${isTO(cur)?`<button class="small" data-name>${o.name?esc(o.name):'Add name'}</button>`:`<button class="small" data-move ${o.lines.length?'':'disabled'}>Move</button>`}${dl&&o.lines.length?'<button class="small" data-printbill>Print bill</button>':''}
       <span class="sub">${esc(o.waiter)}</span></header>
     ${isTO(cur)?'':`<div class="guests"><span class="sub">Guests</span><button data-guest="-1" aria-label="Fewer guests">−</button><b class="num">${o.guests||0}</b><button data-guest="1" aria-label="More guests">+</button><span class="spacer"></span><span class="sub num">${mins(o.opened)} min</span></div>`}
     <div class="lines">${o.lines.length?o.lines.map(l=>`<div class="line">
@@ -658,16 +685,24 @@ function vSettings(){
       <div class="row"><label class="fld">Phone<input id="rPhone" value="${esc(S.settings.phone||'')}" placeholder="780-000-0000"></label>
       <label class="fld">GST number<input id="rGst" value="${esc(S.settings.gst||'')}" placeholder="123456789 RT0001"></label></div>
       <label class="fld">Message at the bottom<input id="rMsg" value="${esc(S.settings.footer||'')}" placeholder="Thank you! Come again"></label>
+      <label style="display:flex;gap:10px;align-items:center;font-weight:600"><input type="checkbox" id="rAuto" ${S.settings.autoPrint?'checked':''} style="width:20px;height:20px">Print receipt after every payment</label>
       <button class="btn pri" data-saverc>Save receipt details</button>
     </div>
+    ${isOwnerAcct?`<div class="card"><h3>Owner</h3>
+      <div class="sub" style="font-size:13px">You own this Mr Chef. The Owner login works only on your own Claude account, with your owner password. As Owner you can reset any PIN, including the admin's.</div>
+      ${ownerMode?`<div class="okbox"><b>Signed in as Owner</b></div><button class="btn sec" data-owchange>Change owner password</button>`:`<button class="btn pri" data-owner>Sign in as Owner</button>`}
+    </div>`:''}
     <div class="card"><h3>Staff</h3>
-      <div class="sub" style="font-size:13px">Managers approve voids, discounts, refunds, menu changes and closing the day. Staff with a PIN enter it when they switch to their name.</div>
+      <div class="sub" style="font-size:13px">The admin (owner) controls settings and staff. Managers approve voids, discounts, refunds, menu changes and closing the day. Staff with a PIN sign in with it.</div>
+      ${hasAdmin()?'':'<div class="warnbox">No admin login yet, so anyone can open settings. <button class="small" data-setupadmin>Set up admin login</button></div>'}
       ${hasMgr()?'':'<div class="warnbox">No manager PIN yet, so anyone can void, discount and refund. Make someone a Manager and set their PIN.</div>'}
-      <div class="list">${S.staff.map(x=>`<div class="li"><span>${esc(x.name)}${x.pin?' <span class="tag g">PIN</span>':''}</span>
-        <select data-role="${x.id}" aria-label="Role for ${esc(x.name)}"><option value="waiter" ${x.role!=='manager'?'selected':''}>Waiter</option><option value="manager" ${x.role==='manager'?'selected':''}>Manager</option></select>
-        <button class="small" data-setpin="${x.id}">${x.pin?'Change PIN':'Set PIN'}</button>
+      <label class="fld">Lock screen after<select id="autoLockSel">${[0,5,10,15,30,60].map(m=>`<option value="${m}" ${autoLockMin()===m?'selected':''}>${m?m+' minutes':'Never'}</option>`).join('')}</select></label>
+      <div class="sub" style="font-size:12px;margin-top:-6px">With no use. The kitchen screen stays open.</div>
+      <div class="list">${S.staff.map(x=>`<div class="li"><span>${esc(x.name)}${x.role==='admin'?' <span class="tag a">Admin</span>':''}${x.pin?' <span class="tag g">PIN</span>':''}</span>
+        <select data-role="${x.id}" aria-label="Role for ${esc(x.name)}"><option value="waiter" ${!isMgrRole(x.role)?'selected':''}>Waiter</option><option value="manager" ${x.role==='manager'?'selected':''}>Manager</option><option value="admin" ${x.role==='admin'?'selected':''}>Admin</option></select>
+        <button class="small" data-setpin="${x.id}">${x.pin?'Change PIN':'Set PIN'}</button>${ownerMode&&x.pin?`<button class="small" data-clearpin="${x.id}">Remove PIN</button>`:''}
         <button class="x" data-delst="${x.id}" aria-label="Remove ${esc(x.name)}">✕</button></div>`).join('')||'<div class="sub">No staff yet</div>'}</div>
-      <div class="row"><input id="newW" placeholder="Staff name"><select id="newRole" aria-label="Role" style="flex:0 0 auto"><option value="waiter">Waiter</option><option value="manager">Manager</option></select><button class="btn sec" data-addst style="flex:0 0 auto">Add</button></div>
+      <div class="row"><input id="newW" placeholder="Staff name"><select id="newRole" aria-label="Role" style="flex:0 0 auto"><option value="waiter">Waiter</option><option value="manager">Manager</option><option value="admin">Admin</option></select><button class="btn sec" data-addst style="flex:0 0 auto">Add</button></div>
     </div>
     <div class="card"><h3>How screens connect</h3>
       <p class="sub" style="margin:0">${mode==='live'?'Live: every tablet and kitchen screen with this page open sees new orders within seconds. Each device picks its own waiter at the top.':'This device is not connected, so orders stay here only. Open the page signed in to share orders between screens.'}</p></div>
@@ -774,12 +809,14 @@ function drawPin(bad){
     <div class="dots ${bad?'bad':''}">${[0,1,2,3].map(i=>`<i class="${i<p.entered.length?'on':''}"></i>`).join('')}</div>
     <div class="pinmsg ${bad?'bad':''}">${bad?'Wrong PIN':''}</div>
     <div class="pinpad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-pk="${n}">${n}</button>`).join('')}<button class="k2" data-pk="x">Cancel</button><button data-pk="0">0</button><button class="k2" data-pk="b" aria-label="Delete">⌫</button></div>
+    ${p.approval&&isOwnerAcct?'<button class="btn sec" data-pk="o">Approve with owner password</button>':''}
   </div></div>`;
 }
 function pinKey(k){
   const p=pinSt;if(!p)return;
   if(k==='x'){pinSt=null;layer2().innerHTML='';if(p.onCancel)p.onCancel();return}
   if(k==='b'){p.entered=p.entered.slice(0,-1);return drawPin()}
+  if(k==='o'){const cb=p.onOk;pinSt=null;layer2().innerHTML='';return openOwnerLogin(()=>cb({name:'Owner'}))}
   if(p.entered.length>=4)return;
   p.entered+=k;drawPin();
   if(p.entered.length===4){
@@ -792,8 +829,84 @@ function pinKey(k){
 }
 function approve(what,cb){
   if(!hasMgr())return cb(waiterNow());
-  const me=meStaff();if(me&&me.role==='manager')return cb(me.name);
-  openPin({title:'Manager approval',sub:'Manager PIN to '+what,pool:S.staff.filter(x=>x.role==='manager'&&x.pin),onOk:m=>cb(m.name)});
+  const me=meStaff();if(me&&isMgrRole(me.role))return cb(me.name);
+  openPin({approval:true,title:'Manager approval',sub:'Manager PIN to '+what,pool:S.staff.filter(x=>isMgrRole(x.role)&&x.pin),onOk:m=>cb(m.name)});
+}
+function needAdmin(what,cb){
+  if(!hasAdmin())return cb(waiterNow());
+  const me=meStaff();if(me&&(me.role==='admin'||me.role==='owner'))return cb(me.name);
+  openPin({approval:true,title:'Admin login',sub:'Admin PIN to '+what,pool:S.staff.filter(x=>x.role==='admin'&&x.pin),onOk:a=>cb(a.name)});
+}
+/* ---------- owner login (artifact owner's own account + owner password) ---------- */
+async function sha(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return pinHash(t)}}
+async function setupOwner(){
+  try{const u=window.claude&&window.claude.use?await window.claude.use('user'):null;if(!u)return;
+    isOwnerAcct=await u.isOwner();if(!isOwnerAcct)return;
+    const id=await u.id();if(!id)return;ownerPath='data/users/'+id+'/owner';
+    db.doc(ownerPath).onSnapshot(d=>{ownerSecret=d.exists?clone(d.data()):null;if(locked)drawLock();softRender()},()=>{});
+    if(locked)drawLock();softRender();
+  }catch(e){}
+}
+function openOwnerLogin(onOk,forceCreate){
+  const create=forceCreate||!ownerSecret;ownerCb=onOk;
+  layer2().innerHTML=`<div class="scrim"><div class="modal" role="dialog" aria-label="Owner login" style="width:min(400px,100%)">
+    <h3>${create?(forceCreate&&ownerSecret?'New owner password':'Create owner password'):'Owner login'}</h3>
+    <div class="sub">${create?'At least 6 characters. It works only on your own Claude account, so staff can\'t use it even on a shared tablet.':'Enter your owner password.'}</div>
+    <input id="owPw" type="password" autocomplete="${create?'new-password':'current-password'}" placeholder="Owner password" aria-label="Owner password">
+    ${create?'<input id="owPw2" type="password" autocomplete="new-password" placeholder="Type it again" aria-label="Type it again">':''}
+    <div class="pinmsg bad" id="owMsg"></div>
+    <div class="acts" style="padding:0"><button class="btn sec" data-owcancel>Cancel</button><button class="btn pri" data-owok="${create?'create':'check'}">${create?'Save password':'Sign in'}</button></div></div></div>`;
+  setTimeout(()=>{const i=document.getElementById('owPw');if(i)i.focus()},50);
+}
+async function owSubmit(kind){
+  const msg=t=>{const m=document.getElementById('owMsg');if(m)m.textContent=t};
+  const pw=(document.getElementById('owPw')||{}).value||'';
+  if(kind==='create'){const pw2=(document.getElementById('owPw2')||{}).value||'';
+    if(pw.length<6)return msg('Use at least 6 characters');if(pw!==pw2)return msg('The two passwords are different');
+    const salt=uid(),h=await sha(salt+pw);ownerSecret={salt,h};
+    if(mode==='live'&&ownerPath){try{await db.doc(ownerPath).set(ownerSecret)}catch(e){return msg('Could not save. Check the connection.')}}
+    toast('Owner password saved');
+  }else{
+    if(Date.now()<owBlockUntil)return msg('Too many tries. Wait 30 seconds.');
+    if(!ownerSecret||await sha(ownerSecret.salt+pw)!==ownerSecret.h){if(++owFails>=5){owFails=0;owBlockUntil=Date.now()+30000}return msg('Wrong password')}
+    owFails=0;
+  }
+  layer2().innerHTML='';const cb=ownerCb;ownerCb=null;if(cb)cb();
+}
+function enterOwner(){ownerMode=true;locked=false;touchAct();drawLock();render();toast('Signed in as Owner')}
+document.addEventListener('keydown',e=>{if((e.target.id==='owPw'||e.target.id==='owPw2')&&e.key==='Enter'){const b=document.querySelector('[data-owok]');if(b)b.click()}});
+
+/* ---------- sign-in screen ---------- */
+let locked=false,bootChecked=false,lastAct=+(lsGet('mrchef-act')||0);
+const autoLockMin=()=>S.settings.autoLock==null?15:+S.settings.autoLock;
+function touchAct(){lastAct=Date.now();lsSet('mrchef-act',lastAct)}
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(!locked)touchAct()},true));
+function lockNow(){locked=true;document.getElementById('layer').innerHTML='';drawLock()}
+function drawLock(){
+  const el=document.getElementById('lock');
+  if(!locked){el.hidden=true;el.innerHTML='';return}
+  el.hidden=false;
+  const list=[...S.staff].sort((a,b)=>({admin:0,manager:1,waiter:2}[a.role]??2)-({admin:0,manager:1,waiter:2}[b.role]??2));
+  el.innerHTML=`<div class="lockcard">
+    <div class="brand"><span class="hat"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-3.5 0-5.5-2.6-5.5-5.3C3.5 10.6 6 8.5 9 8.7 10 6 12.8 4 16 4s6 2 7 4.7c3-.2 5.5 1.9 5.5 5 0 2.7-2 5.3-5.5 5.3v8H9z"/><path d="M9 23h14"/></svg></span><span>${esc(S.settings.name)}</span></div>
+    <h2>Who's working?</h2><p>Tap your name, then enter your PIN.</p>
+    <div class="who">${isOwnerAcct?`<button data-owner data-r="admin"><span class="av">★</span><b>Owner</b><small>Owner password</small></button>`:''}${list.map(x=>`<button data-who="${x.id}" data-r="${x.role}"><span class="av">${esc((x.name||'?').slice(0,1).toUpperCase())}</span><b>${esc(x.name)}</b><small>${ROLE[x.role]||'Waiter'}${x.pin?'':' · no PIN'}</small></button>`).join('')||'<p>No staff yet</p>'}</div>
+  </div>`;
+}
+function signIn(x){ownerMode=false;myWaiter=x.name;lsSet('mrchef-waiter',myWaiter);locked=false;touchAct();drawLock();render();toast('Signed in as '+x.name)}
+function afterCfg(){
+  if(!bootChecked){bootChecked=true;const al=autoLockMin();
+    if(!ownerMode&&lockOn()&&(!S.staff.some(x=>x.name===myWaiter)||(al>0&&Date.now()-lastAct>al*60000)))lockNow();}
+  else if(locked)drawLock();
+  else if(!ownerMode&&lockOn()&&!S.staff.some(x=>x.name===myWaiter))lockNow();
+}
+setInterval(()=>{const al=autoLockMin();if(!locked&&lockOn()&&al>0&&view!=='kitchen'&&Date.now()-lastAct>al*60000)lockNow()},15000);
+function openAdminSetup(){
+  const me=meStaff();
+  layer().innerHTML=`<div class="scrim" data-close><div class="modal"><h3>Set up admin login</h3>
+    <div class="sub">The admin is the owner. Only the admin can open settings, add staff and set PINs.</div>
+    <label class="fld">Your name<input id="adName" value="${esc(me&&me.role!=='waiter'?me.name:'Owner')}" autocomplete="off"></label>
+    <div class="acts" style="padding:0"><button class="btn sec" data-close>Cancel</button><button class="btn pri" data-adcreate>Next: choose PIN</button></div></div></div>`;
 }
 function logEv(type,o){
   const ev={id:uid(),day:dayKey(),time:Date.now(),type,by:waiterNow(),...o};
@@ -861,7 +974,7 @@ function rLines(s){
   if(st.address)L.push({c:st.address,m:1});
   if(st.phone)L.push({c:st.phone,m:1});
   L.push({hr:1});
-  L.push({l:'Receipt #'+(s.no||'—'),r:when});
+  L.push({l:s.bill?'BILL':'Receipt #'+(s.no||'—'),r:when});
   L.push({l:lab(s.table)+(s.customer?' · '+s.customer:''),r:'Server: '+s.waiter});
   L.push({hr:1});
   (s.items||[]).forEach(i=>L.push({l:i.qty+' x '+i.name+(i.side?' + '+i.side:''),r:fmt(i.total)}));
@@ -873,6 +986,9 @@ function rLines(s){
   if(s.rounding)L.push({l:'Cash rounding',r:(s.rounding>0?'+':'-')+fmt(Math.abs(s.rounding))});
   L.push({l:'TOTAL',r:fmt(s.paid),b:1});
   L.push({hr:1});
+  if(s.bill){const base=s.sub-(s.disc||0);
+    [5,10].forEach(p=>L.push({l:'With '+p+'% tip',r:fmt(s.paid+base*p/100)}));
+    L.push({hr:1});L.push({c:'This is your bill, not a receipt'});L.push({c:st.footer||'Thank you!'});return L}
   L.push({l:'Paid by',r:s.method});
   if(s.cash!=null){L.push({l:'Cash received',r:fmt(s.cash)});L.push({l:'Change',r:fmt(s.change)})}
   if(s.split>1){L.push({l:'Split '+s.split+' ways',r:fmt(s.paid/s.split)+' each'})}
@@ -918,13 +1034,15 @@ function receiptPDF(s){
     if(o.c!=null)d.text(o.c,W/2,o.y,{align:'center'});
     else{d.text(o.l,M,o.y);if(o.r)d.text(o.r,W-M,o.y,{align:'right'})}
   }
-  d.setProperties({title:'Receipt '+(s.no||'')});
+  d.setProperties({title:(s.bill?'Bill ':'Receipt ')+(s.no||'')});
+  try{d.autoPrint({variant:'javascript'})}catch(e){}
   return d.output('blob');
 }
 async function printReceipt(s){
   const blob=receiptPDF(s);
   if(!blob){toast('Printing is still loading. Try again in a moment.');return}
-  try{await dl.save({filename:`receipt-${s.no||s.id}.pdf`,data:blob});toast('Receipt saved. Open it and print, or use Share → Print.')}
+  const nm=s.bill?`bill-${String(s.table).replace(/\W/g,'')}-${Date.now().toString().slice(-5)}.pdf`:`receipt-${s.no||s.id}.pdf`;
+  try{await dl.save({filename:nm,data:blob});toast((s.bill?'Bill':'Receipt')+' saved. Open it and the print window opens.')}
   catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited')return toast('One moment, then try again');toast('Printing is not available here. Use Copy receipt.')}
 }
 async function saveReceipt(s){
@@ -951,8 +1069,21 @@ document.addEventListener('click',e=>{
   const d=b.dataset;
   const go=v=>{view=v;confirmKey=null;draft=null;render()};
   if(d.pk!==undefined)return pinKey(d.pk);
-  if(d.v){q='';if(d.v==='menu'&&view!=='menu')return approve('edit the menu',()=>go('menu'));return go(d.v)}
-  if(b.id==='gear') return approve('open settings',()=>go('settings'));
+  if(d.v){q='';if(d.v==='menu'&&view!=='menu')return approve('edit the menu',()=>go('menu'));if(d.v==='report'&&view!=='report')return approve('see sales',()=>go('report'));return go(d.v)}
+  if(b.id==='gear') return needAdmin('open settings',()=>go('settings'));
+  if(b.id==='userBtn'||b.id==='lockBtn')return lockNow();
+  if(d.who){const x=S.staff.find(y=>y.id===d.who);if(!x)return;if(x.pin)return openPin({title:x.name,sub:'Enter your PIN',pool:[x],onOk:()=>signIn(x)});return signIn(x)}
+  if(d.setupadmin!==undefined)return openAdminSetup();
+  if(d.owner!==undefined)return openOwnerLogin(enterOwner);
+  if(d.owcancel!==undefined){layer2().innerHTML='';ownerCb=null;return}
+  if(d.owok){owSubmit(d.owok);return}
+  if(d.owchange!==undefined){if(!ownerMode)return;return openOwnerLogin(()=>render(),true)}
+  if(d.clearpin){if(!ownerMode)return;const x=S.staff.find(y=>y.id===d.clearpin);if(x){x.pin='';saveCfg();toast('PIN removed for '+x.name)}return render()}
+  if(d.adcreate!==undefined){const n=document.getElementById('adName').value.trim();if(!n)return toast('Type your name');
+    return openPin({title:'Admin PIN for '+n,sub:'Choose 4 digits',set:true,onOk:pin=>{const h=pinHash(pin);
+      if(S.staff.some(y=>y.name!==n&&y.pin===h))return toast('That PIN is taken. Pick another.');
+      let x=S.staff.find(y=>y.name===n);if(!x){x={id:uid(),name:n,role:'admin',pin:''};S.staff.push(x)}
+      x.role='admin';x.pin=h;saveCfg();myWaiter=n;lsSet('mrchef-waiter',n);touchAct();closeLayer();toast('Admin login created for '+n);render()}})}
   if(d.go){q='';return go(d.go)}
   if(d.t){cur=d.t;view='order';confirmKey=null;return render()}
   if(d.newto!==undefined){let n=1;while(S.orders['T'+n]||S.tickets.some(t=>t.table==='T'+n))n++;cur='T'+n;view='order';draft=null;return render()}
@@ -1007,9 +1138,9 @@ document.addEventListener('click',e=>{
     S.sales.push(s);saveSale(s);
     if(t.d)logEv('discount',{table:cur,detail:pay.disc+'% off · receipt #'+s.no,amount:t.d,approvedBy:pay.discBy||null});
     const rest=o.lines.map(l=>({...l,qty:l.qty-(pay.mode==='items'?(pay.sel[l.id]||0):l.qty)})).filter(l=>l.qty>0);
-    if(rest.length){o.lines=rest;commit();view='order';confirmKey=null;render();openReceipt(s,true);toast('Still to pay: '+fmt(totals(o).total));return}
+    if(rest.length){o.lines=rest;commit();view='order';confirmKey=null;render();openReceipt(s,true);if(S.settings.autoPrint&&dl)printReceipt(s);toast('Still to pay: '+fmt(totals(o).total));return}
     S.tickets.filter(x=>x.table==cur).forEach(x=>dropTicket(x.id));dropOrder(cur);
-    view='tables';confirmKey=null;draft=null;render();openReceipt(s,true);return}
+    view='tables';confirmKey=null;draft=null;render();openReceipt(s,true);if(S.settings.autoPrint&&dl)printReceipt(s);return}
   if(d.refund){const s=S.sales.find(x=>x.id===d.refund);if(!s)return;
     if(confirmKey!=='refund'+s.id){confirmKey='refund'+s.id;return openReceipt(s,false)}
     confirmKey=null;return approve('refund '+fmt(s.paid),by=>{s.refunded=true;s.refundBy=by;s.refundAt=Date.now();saveSale(s);
@@ -1021,15 +1152,18 @@ document.addEventListener('click',e=>{
   if(d.addst!==undefined){const v=document.getElementById('newW').value.trim(),r=document.getElementById('newRole').value;if(!v)return toast('Type a name');
     if(S.staff.some(x=>x.name===v))return toast('That name is already on the staff list');S.staff.push({id:uid(),name:v,role:r,pin:''});saveCfg();return render()}
   if(d.delst){const x=S.staff.find(y=>y.id===d.delst);if(!x)return;
-    if(x.role==='manager'&&x.pin&&S.staff.filter(y=>y.role==='manager'&&y.pin).length===1&&S.staff.length>1)return toast('Keep at least one manager with a PIN');
+    if(!ownerMode&&x.role==='admin'&&x.pin&&S.staff.filter(y=>y.role==='admin'&&y.pin).length===1)return toast('Keep at least one admin. Make someone else Admin first.');
+    if(!ownerMode&&isMgrRole(x.role)&&x.pin&&S.staff.filter(y=>isMgrRole(y.role)&&y.pin).length===1&&S.staff.length>1)return toast('Keep at least one manager with a PIN');
     S.staff=S.staff.filter(y=>y!==x);saveCfg();return render()}
   if(d.rshow){confirmKey=null;const s=S.sales.find(x=>x.id===d.rshow);if(s)openReceipt(s,false);return}
   if(d.rcopy){const s=S.sales.find(x=>x.id===d.rcopy);if(!s)return;const txt=receiptText(s);
     try{navigator.clipboard.writeText(txt).then(()=>toast('Receipt copied — paste it into a text or email'),()=>selectReceipt())}catch(err){selectReceipt()}return}
+  if(d.printbill!==undefined){const t=totals(o);printReceipt({bill:true,id:'bill',table:cur,waiter:o.waiter,customer:o.name||'',time:Date.now(),sub:t.sub,disc:0,tax:t.tax,taxPct:S.settings.tax,tip:0,paid:Math.round(t.total*100)/100,
+    items:o.lines.map(l=>({name:l.name,side:l.side||'',qty:l.qty,price:l.price,total:l.price*l.qty}))});return}
   if(d.rprint){const s=S.sales.find(x=>x.id===d.rprint);if(s)printReceipt(s);return}
   if(d.rsave){const s=S.sales.find(x=>x.id===d.rsave);if(s)saveReceipt(s);return}
   if(d.saverc!==undefined){Object.assign(S.settings,{address:document.getElementById('rAddr').value.trim(),phone:document.getElementById('rPhone').value.trim(),
-    gst:document.getElementById('rGst').value.trim(),footer:document.getElementById('rMsg').value.trim()});saveCfg();toast('Receipt details saved');return render()}
+    gst:document.getElementById('rGst').value.trim(),footer:document.getElementById('rMsg').value.trim(),autoPrint:document.getElementById('rAuto').checked});saveCfg();toast('Receipt details saved');return render()}
   if(d.ready){const t=S.tickets.find(x=>x.id===d.ready);if(t){t.status='ready';t.readyAt=Date.now();saveTicket(t)}return render()}
   if(d.served){dropTicket(d.served);return render()}
   if(d.kdone){const [tid,ix]=d.kdone.split(':'),t=S.tickets.find(x=>x.id===tid);if(!t||!t.items[ix])return;t.items[ix].done=!t.items[ix].done;saveTicket(t);
@@ -1072,7 +1206,10 @@ document.addEventListener('input',e=>{
 document.addEventListener('keydown',e=>{if(e.target.id==='msearch'&&e.key==='Enter'){const f=document.querySelector('#items .item:not(:disabled)');if(f){f.click();q='';render();const m=document.getElementById('msearch');if(m)m.focus()}}});
 document.addEventListener('change',e=>{
   const t=e.target,d=t.dataset;if(!d)return;
-  if(d.role){const x=S.staff.find(y=>y.id===d.role);if(x){x.role=t.value;saveCfg();toast(x.name+' is now a '+t.value)}return render()}
+  if(d.role){const x=S.staff.find(y=>y.id===d.role);if(x){
+    if(!ownerMode&&x.role==='admin'&&t.value!=='admin'&&x.pin&&S.staff.filter(y=>y.role==='admin'&&y.pin).length===1){toast('Keep at least one admin. Make someone else Admin first.');return render()}
+    x.role=t.value;saveCfg();toast(x.name+' is now '+(ROLE[t.value]||t.value))}return render()}
+  if(t.id==='autoLockSel'){S.settings.autoLock=+t.value;saveCfg();toast(+t.value?'Screen locks after '+t.value+' minutes':'Auto-lock off');return}
   if(t.id==='rDate'&&t.value){subscribeSales(t.value);dirty=false;return render()}
   if(d.iname){const m=S.menu.find(x=>x.id===d.iname),v=t.value.trim();if(m&&v&&v!==m.name){m.name=v;saveCfg();toast('Name saved')}else if(m)t.value=m.name}
   else if(d.iprice){const m=S.menu.find(x=>x.id===d.iprice),v=parseFloat(t.value);if(m&&!isNaN(v)&&v>=0&&v!==m.price){m.price=Math.round(v*100)/100;saveCfg();toast(`${m.name} now ${fmt(m.price)}`)}else if(m)t.value=m.price}
@@ -1080,11 +1217,6 @@ document.addEventListener('change',e=>{
     if(catList().includes(v)){t.value=old;return toast('That column already exists')}
     S.cats=catList().map(c=>c===old?v:c);S.menu.forEach(m=>{if(m.cat===old)m.cat=v});if(curCat===old)curCat=v;saveCfg();toast('Column renamed');dirty=false;render()}
   else if(d.imove){const m=S.menu.find(x=>x.id===d.imove);if(m&&t.value!==m.cat){m.cat=t.value;saveCfg();toast(`${m.name} moved to ${m.cat}`);dirty=false;render()}}
-});
-document.getElementById('waiterSel').addEventListener('change',e=>{
-  const name=e.target.value,x=S.staff.find(y=>y.name===name);
-  const set=()=>{myWaiter=name;lsSet('mrchef-waiter',myWaiter);renderTop();toast('Signed in as '+name)};
-  if(x&&x.pin){e.target.value=waiterNow();openPin({title:name,sub:'Enter your PIN',pool:[x],onOk:set})}else set();
 });
 setInterval(()=>{
   if(mode==='live'&&followToday&&salesDay!==dayKey())subscribeSales();
@@ -1132,7 +1264,20 @@ const TR=[
 ['Open Menu','Fur Menu-ga','افتح القائمة'],['Edit dishes, prices and sold-out items in the Menu tab.','Ka beddel cuntooyinka, qiimaha iyo kuwa dhammaaday qaybta Menu.','عدّل الأطباق والأسعار والأصناف النافدة من تبويب القائمة.'],
 ['← Back','← Dib u noqo','→ رجوع'],['←','←','→'],['Saved','Waa la kaydiyay','تم الحفظ'],['Receipt details saved','Faahfaahinta rasiidhka waa la kaydiyay','تم حفظ بيانات الإيصال'],
 ['Item name','Magaca shayga','اسم الصنف'],['Price','Qiimaha','السعر'],['Column name','Magaca qaybta','اسم القسم'],
-['Void','Tirtir','إلغاء'],['Manager approval','Oggolaanshaha maamulaha','موافقة المدير'],['Enter your PIN','Geli PIN-kaaga','أدخل رمزك'],['Wrong PIN','PIN khaldan','رمز خاطئ'],
+['Void','Tirtir','إلغاء'],['Print bill','Daabac biilka','اطبع الفاتورة'],['Print receipt after every payment','Daabac rasiidhka lacag bixin kasta kadib','اطبع الإيصال بعد كل دفعة'],['Bill saved. Open it and the print window opens.','Biilka waa la kaydiyay. Fur, daaqadda daabacaadda ayaa furmaysa.','تم حفظ الفاتورة. افتحها وستفتح نافذة الطباعة.'],['Receipt saved. Open it and the print window opens.','Rasiidhka waa la kaydiyay. Fur, daaqadda daabacaadda ayaa furmaysa.','تم حفظ الإيصال. افتحه وستفتح نافذة الطباعة.'],['Owner','Milkiilaha','المالك'],['Owner password','Furaha milkiilaha','كلمة مرور المالك'],['Owner login','Gelitaanka milkiilaha','دخول المالك'],['Create owner password','Samee furaha milkiilaha','أنشئ كلمة مرور المالك'],
+['New owner password','Furaha cusub ee milkiilaha','كلمة مرور جديدة للمالك'],['Enter your owner password.','Geli furaha milkiilaha.','أدخل كلمة مرور المالك.'],['Type it again','Mar kale qor','اكتبها مرة أخرى'],['Save password','Kaydi furaha','احفظ كلمة المرور'],
+['Sign in','Gal','دخول'],['Sign in as Owner','U gal sida milkiilaha','الدخول كمالك'],['Signed in as Owner','Waxaad u gashay sida milkiilaha','تم الدخول كمالك'],['Change owner password','Beddel furaha milkiilaha','غيّر كلمة مرور المالك'],
+['Remove PIN','Ka saar PIN','احذف الرمز'],['Approve with owner password','Ku oggolow furaha milkiilaha','الموافقة بكلمة مرور المالك'],['Wrong password','Furaha waa khalad','كلمة مرور خاطئة'],['Use at least 6 characters','Isticmaal ugu yaraan 6 xaraf','استخدم 6 أحرف على الأقل'],
+['The two passwords are different','Labada fure way kala duwan yihiin','كلمتا المرور مختلفتان'],['Too many tries. Wait 30 seconds.','Isku day badan. Sug 30 ilbiriqsi.','محاولات كثيرة. انتظر 30 ثانية.'],['Owner password saved','Furaha milkiilaha waa la kaydiyay','تم حفظ كلمة مرور المالك'],
+["At least 6 characters. It works only on your own Claude account, so staff can't use it even on a shared tablet.",'Ugu yaraan 6 xaraf. Waxay ku shaqaysaa koontadaada Claude oo keliya, shaqaaluhuna ma isticmaali karaan xataa tablet la wadaago.','6 أحرف على الأقل. تعمل فقط على حساب Claude الخاص بك، فلا يستطيع الموظفون استخدامها حتى على جهاز مشترك.'],
+["You own this Mr Chef. The Owner login works only on your own Claude account, with your owner password. As Owner you can reset any PIN, including the admin's.",'Adiga ayaa leh Mr Chef-kan. Gelitaanka milkiilaha wuxuu ku shaqeeyaa koontadaada Claude oo keliya, iyo furahaaga. Milkiile ahaan waad dib u dejin kartaa PIN kasta, oo ay ku jirto ta maamulaha.','أنت مالك Mr Chef. يعمل دخول المالك فقط على حساب Claude الخاص بك وبكلمة مرورك. كمالك يمكنك إعادة تعيين أي رمز، بما فيه رمز المسؤول.'],["Who's working?",'Yaa shaqaynaya?','من يعمل الآن؟'],['Tap your name, then enter your PIN.','Riix magacaaga, kadibna geli PIN-kaaga.','اضغط على اسمك ثم أدخل رمزك.'],
+['Admin','Maamulaha guud','المسؤول'],['Admin login','Gelitaanka maamulaha','دخول المسؤول'],['Set up admin login','Samee gelitaanka maamulaha','إعداد دخول المسؤول'],['Your name','Magacaaga','اسمك'],
+['Next: choose PIN','Xiga: dooro PIN','التالي: اختر الرمز'],['Choose 4 digits','Dooro 4 lambar','اختر 4 أرقام'],['Lock screen after','Xir shaashadda kadib','قفل الشاشة بعد'],['With no use. The kitchen screen stays open.','Haddii aan la isticmaalin. Shaashadda jikadu way furnaanaysaa.','عند عدم الاستخدام. تبقى شاشة المطبخ مفتوحة.'],
+['Never','Weligeed','أبدًا'],['no PIN','PIN ma leh','بدون رمز'],['No staff yet','Weli shaqaale ma jiro','لا يوجد موظفون بعد'],['Switch user','Beddel isticmaalaha','تبديل المستخدم'],['Lock screen','Xir shaashadda','قفل الشاشة'],
+['The admin is the owner. Only the admin can open settings, add staff and set PINs.','Maamulaha guud waa milkiilaha. Isaga keliya ayaa furi kara dejinta, ku dari kara shaqaale oo dhigi kara PIN.','المسؤول هو المالك. وحده يستطيع فتح الإعدادات وإضافة الموظفين وتعيين الرموز.'],
+['Protect Mr Chef with an admin login. Only the admin can open settings and change staff.','Ku ilaali Mr Chef gelitaan maamule. Maamulaha keliya ayaa furi kara dejinta oo beddeli kara shaqaalaha.','احمِ Mr Chef بدخول المسؤول. وحده المسؤول يفتح الإعدادات ويغيّر الموظفين.'],
+['No admin login yet, so anyone can open settings.','Weli gelitaan maamule ma jiro, qof kastaa wuu furi karaa dejinta.','لا يوجد دخول مسؤول بعد، لذا يمكن لأي شخص فتح الإعدادات.'],['Auto-lock off','Xiritaanka tooska ah waa dansan yahay','القفل التلقائي متوقف'],
+['The admin (owner) controls settings and staff. Managers approve voids, discounts, refunds, menu changes and closing the day. Staff with a PIN sign in with it.','Maamulaha guud (milkiilaha) ayaa maamula dejinta iyo shaqaalaha. Maamulayaashu waxay oggolaadaan tirtirista, qiimo dhimista, lacag celinta, beddelka menu-ga iyo xiritaanka maalinta. Shaqaalaha PIN leh way ku galaan.','المسؤول (المالك) يتحكم في الإعدادات والموظفين. يوافق المديرون على الإلغاء والخصم والاسترجاع وتعديل القائمة وإغلاق اليوم. يدخل الموظف برمزه.'],['Manager approval','Oggolaanshaha maamulaha','موافقة المدير'],['Enter your PIN','Geli PIN-kaaga','أدخل رمزك'],['Wrong PIN','PIN khaldan','رمز خاطئ'],
 ['Enter 4 digits','Geli 4 lambar','أدخل 4 أرقام'],['Pay for','Bixi','ادفع مقابل'],['Whole bill','Biilka oo dhan','الفاتورة كاملة'],['Choose items','Dooro waxyaabaha','اختر الأصناف'],
 ['Split evenly','U qaybi si siman','تقسيم بالتساوي'],['Cash rounding','Lacag-soo-koobid','تقريب النقد'],['Cash is rounded to the nearest 5¢.','Lacagta caddaanka ah waxaa loo soo koobayaa 5¢.','يُقرَّب النقد إلى أقرب 5 سنتات.'],
 ['Close day','Xir maalinta','إغلاق اليوم'],['Re-close day','Mar kale xir maalinta','إعادة إغلاق اليوم'],['Day closed','Maalinta waa la xiray','تم إغلاق اليوم'],['Starting cash in drawer','Lacagta khaanadda ku jirtay bilowga','النقد في الدرج عند البدء'],
@@ -1148,7 +1293,9 @@ const TR=[
 ['Removes every open table, takeout and kitchen order on all screens. Today\'s sales stay.','Waxay tirtiraysaa miis kasta oo furan, qaado iyo dalab jikada shaashadaha oo dhan. Iibka maanta wuu harayaa.','يمسح كل الطاولات المفتوحة وطلبات السفري والمطبخ على كل الشاشات. تبقى مبيعات اليوم.']
 ];
 const PAT=[
-[/^Table (\S+)$/,'Miis $1','طاولة $1'],[/^Manager PIN to (.+)$/,'PIN maamule si loo $1','رمز المدير من أجل $1'],[/^Void 1 × (.+)$/,'Tirtir 1 × $1','إلغاء 1 × $1'],
+[/^Table (\S+)$/,'Miis $1','طاولة $1'],[/^PIN removed for (.+)$/,'PIN-ka waa laga saaray $1','تم حذف رمز $1'],[/^Admin PIN to (.+)$/,'PIN maamulaha guud si loo $1','رمز المسؤول من أجل $1'],[/^Admin PIN for (.+)$/,'PIN maamulaha ee $1','رمز المسؤول لـ $1'],[/^Admin login created for (.+)$/,'Gelitaanka maamulaha waa loo sameeyay $1','تم إنشاء دخول المسؤول لـ $1'],
+[/^(\d+) minutes$/,'$1 daqiiqo','$1 دقيقة'],[/^Screen locks after (\d+) minutes$/,'Shaashaddu way xirmaysaa $1 daqiiqo kadib','تُقفل الشاشة بعد $1 دقيقة'],[/^(.+) is now (Waiter|Manager|Admin)$/,'$1 hadda waa $2','$1 الآن $2'],
+[/^Manager PIN to (.+)$/,'PIN maamule si loo $1','رمز المدير من أجل $1'],[/^Void 1 × (.+)$/,'Tirtir 1 × $1','إلغاء 1 × $1'],
 [/^Voided 1 × (.+)$/,'La tirtiray 1 × $1','أُلغي 1 × $1'],[/^Still to pay: (.+)$/,'Weli la bixin: $1','المتبقي للدفع: $1'],[/^Refunded (.+)$/,'La celiyay $1','تم استرجاع $1'],[/^Signed in as (.+)$/,'Waxaad gashay sida $1','تم الدخول باسم $1'],
 [/^by (.+)$/,'by $1','بواسطة $1'],[/^approved by (.+)$/,'waxaa oggolaaday $1','وافق عليه $1'],[/^New PIN for (.+)$/,'PIN cusub ee $1','رمز جديد لـ $1'],[/^Tap again to refund (.+)$/,'Mar kale riix si aad u celiso $1','اضغط مرة أخرى لاسترجاع $1'],
 [/^(\d+)\/(\d+)$/,'$1/$2','$1/$2'],[/^with (.+)$/,'iyo $1','مع $1'],[/^Takeout #(\d+)$/,'Qaado #$1','سفري #$1'],[/^(\d+) min$/,'$1 daqiiqo','$1 دقيقة'],

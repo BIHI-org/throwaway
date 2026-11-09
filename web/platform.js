@@ -74,6 +74,10 @@
     use: async function (cap) {
       if (cap === 'db') return firestore();
       if (cap === 'downloads') return downloads;
+      // Owner login: on claude.ai only the artifact's owner sees it. A website has no such account,
+      // so every device shows the Owner button and the owner password alone protects it.
+      // Needs the shared database (the POS asks for this only once 'db' is connected).
+      if (cap === 'user') return { isOwner: async function () { return true; }, id: async function () { return 'owner'; } };
       return null;
     }
   };

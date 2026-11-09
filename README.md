@@ -4,6 +4,8 @@ Point of sale for Mr Chef: tables, takeout, kitchen screen, menu editor and dail
 It runs as a website, and phones, tablets and computers can install it as an app.
 
 ```
+src/Mr_Chef_POS.html   the POS as exported from claude.ai (edit or replace this)
+scripts/build.py      turns it into web/index.html
 web/                  the site (deploy this folder as-is, no build step)
   index.html          the POS
   platform.js         connects the POS to Firebase (shared orders) and handles file saving
@@ -43,6 +45,23 @@ The Firebase web keys are not secret; the rules and the sign-in protect the data
 
 It opens full screen, without the browser bar, and still opens with no internet.
 With Firebase on, orders taken offline sync when the connection comes back.
+
+## Updating the app
+
+Save the new export from claude.ai over `src/Mr_Chef_POS.html`, then run:
+
+```bash
+python3 scripts/build.py
+```
+
+That regenerates `web/index.html`. Push to `main` and the site updates.
+
+## Owner login
+
+On claude.ai only the artifact's owner sees the Owner button. A website can't tell who the owner is,
+so every device shows it and the **owner password** alone protects it. It needs Firebase
+(it is hidden in "This device only" mode). Set the owner password as soon as Firebase is connected:
+until then, whoever opens the POS first could set it.
 
 ## Notes
 

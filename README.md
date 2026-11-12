@@ -60,6 +60,29 @@ admin's PIN. It asks for the PIN every time, even when an admin is signed in, an
 a PIN. Unlike Refund, which keeps the bill on record, this removes the bill and its refund record from
 every total.
 
+## Bixi Chef (bixichef.com): many restaurants
+
+`bixichef/` is the same POS for any number of restaurants. Each restaurant signs in with its own email and
+password and only ever sees its own menu, orders and sales. `scripts/build.py` builds it next to the Bismillah site.
+
+```
+bixichef/index.html     the POS (built; do not edit)
+bixichef/platform.js    sign-in, create or choose a restaurant, staff invites, the 👤 account panel
+bixichef/…              offline support, install icon, Firebase keys
+```
+
+- **New restaurant:** bixichef.com → **New restaurant** → name, email, password (optionally a sample menu).
+- **Staff on their own device:** the owner taps **👤 → Invite by email**. The staff member opens bixichef.com →
+  **Invited as staff? Create account** with that email → clicks the link in the confirmation email → **Refresh** → **Join**.
+  A tablet everyone shares just signs in once with the owner's account; staff then use their PINs inside the POS as before.
+- **Bismillah:** its data stays where it is (`shops/mrchef`). Its current site keeps working until the owner links it:
+  put the owner's email in `bismillahOwner()` in `firestore.rules` and publish, then on bixichef.com sign in with that
+  email (confirmed) → **Link an existing restaurant** → code `mrchef`. From then on its old tablets must sign in on bixichef.com.
+
+One-time setup: publish `firestore.rules` (Firestore → Rules), keep **Email/Password** sign-in on, and add `bixichef.com`
+under Authentication → Settings → Authorized domains. Hosting: Cloudflare Pages connected to this repository,
+production branch `main`, no build command, output directory `bixichef`, custom domain `bixichef.com`.
+
 ## Updating the app
 
 Save the new export from claude.ai over `src/Mr_Chef_POS.html`, then run:
@@ -68,7 +91,7 @@ Save the new export from claude.ai over `src/Mr_Chef_POS.html`, then run:
 python3 scripts/build.py
 ```
 
-That regenerates `web/index.html`. Push to `main` and the site updates.
+That regenerates `web/index.html` and `bixichef/index.html`. Push to `main` and the site updates.
 
 ## Owner login
 
